@@ -1,0 +1,1 @@
+# Copyright © 2026 Andrew Wolverton. All Rights Reserved.
