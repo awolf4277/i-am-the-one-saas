@@ -1,1189 +1,380 @@
-// Copyright © 2026 Andrew Wolverton. All Rights Reserved.
+﻿# Copyright © 2026 Andrew Wolverton. All Rights Reserved.
+from __future__ import annotations
 
-import React, { useEffect, useMemo, useState } from "react";
+import os
+import sqlite3
+import uuid
+from datetime import datetime, timezone
+from functools import wraps
+from typing import Any
 
-type ApiHealth = {
-  ok?: boolean;
-  app?: string;
-  brand?: string;
-  system?: string;
-  owner?: string;
-  version?: string;
-  timestamp?: string;
-  ts?: string;
-  counts?: {
-    stores?: number;
-    products?: number;
-    orders?: number;
-  };
-};
+from flask import Blueprint, current_app, jsonify, request
 
-type Store = {
-  id?: string;
-  slug?: string;
-  name?: string;
-  brand?: string;
-  system?: string;
-  owner_name?: string;
-  status?: string;
-  plan?: string;
-  currency?: string;
-  product_count?: number;
-};
+products_bp = Blueprint("products", __name__)
 
-type Product = {
-  id?: string;
-  store_slug?: string;
-  store_id?: string;
-  store_name?: string;
-  sku?: string;
-  name?: string;
-  category?: string;
-  description?: string;
-  price_cents?: number;
-  stock?: number;
-  image_url?: string;
-  is_active?: number;
-};
 
-type Order = {
-  id?: string;
-  store_slug?: string;
-  store_name?: string;
-  buyer_name?: string;
-  buyer_email?: string;
-  buyer_phone?: string;
-  notes?: string;
-  status?: string;
-  payment_status?: string;
-  subtotal_cents?: number;
-  tax_cents?: number;
-  shipping_cents?: number;
-  total_cents?: number;
-  currency?: string;
-  created_at?: string;
-  item_count?: number;
-};
+def now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
 
-type CartLine = {
-  product_id: string;
-  sku: string;
-  name: string;
-  price_cents: number;
-  qty: number;
-  stock: number;
-};
 
-type BuyerInfo = {
-  name: string;
-  email: string;
-  phone: string;
-  notes: string;
-};
+def new_id(prefix: str) -> str:
+    return f"{prefix}_{uuid.uuid4().hex[:12].upper()}"
 
-type ProductForm = {
-  store_slug: string;
-  sku: string;
-  name: string;
-  category: string;
-  description: string;
-  price_cents: string;
-  stock: string;
-  image_url: string;
-};
 
-type LoadState = "booting" | "ready" | "error";
+def db_path() -> str:
+    configured = str(current_app.config.get("DB_PATH") or os.getenv("DB_PATH") or "").strip()
+    if configured:
+        return configured
 
-const API_BASE = ((import.meta as any).env?.VITE_BACKEND_URL || "").replace(/\/$/, "");
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    return os.path.join(base_dir, "data", "i_am_the_one_saas_v3.sqlite3")
 
-function apiUrl(path: string) {
-  return `${API_BASE}${path}`;
-}
 
-function getStoreSlug() {
-  const parts = window.location.pathname.split("/").filter(Boolean);
-  if (parts[0] === "store" && parts[1]) return parts[1];
-  return "demo";
-}
+def connect() -> sqlite3.Connection:
+    path = db_path()
+    folder = os.path.dirname(path)
 
-function money(cents?: number) {
-  const safe = Number.isFinite(Number(cents)) ? Number(cents) : 0;
-  return (safe / 100).toLocaleString(undefined, {
-    style: "currency",
-    currency: "USD"
-  });
-}
+    if folder:
+        os.makedirs(folder, exist_ok=True)
 
-function dateLabel(value?: string) {
-  if (!value) return "—";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleString();
-}
+    con = sqlite3.connect(path)
+    con.row_factory = sqlite3.Row
+    return con
 
-function normalizeProducts(payload: any): Product[] {
-  if (Array.isArray(payload)) return payload;
-  if (Array.isArray(payload?.products)) return payload.products;
-  if (Array.isArray(payload?.items)) return payload.items;
-  if (Array.isArray(payload?.inventory)) return payload.inventory;
-  if (Array.isArray(payload?.data)) return payload.data;
-  return [];
-}
 
-function normalizeStores(payload: any): Store[] {
-  if (Array.isArray(payload)) return payload;
-  if (Array.isArray(payload?.stores)) return payload.stores;
-  if (Array.isArray(payload?.items)) return payload.items;
-  if (Array.isArray(payload?.data)) return payload.data;
-  return [];
-}
+def row_to_dict(row: sqlite3.Row | None) -> dict[str, Any] | None:
+    if row is None:
+        return None
 
-function normalizeOrders(payload: any): Order[] {
-  if (Array.isArray(payload)) return payload;
-  if (Array.isArray(payload?.orders)) return payload.orders;
-  if (Array.isArray(payload?.items)) return payload.items;
-  if (Array.isArray(payload?.data)) return payload.data;
-  return [];
-}
+    return dict(row)
 
-function productKey(product: Product, index: number) {
-  return String(product.id || product.sku || `product-${index}`);
-}
 
-function assetUrl(raw?: string | null) {
-  const value = String(raw || "").trim();
-  if (!value) return "";
-  if (value.startsWith("http://") || value.startsWith("https://")) return value;
-  if (value.startsWith("data:")) return value;
-  if (value.startsWith("/")) return API_BASE ? `${API_BASE}${value}` : value;
-  return value;
-}
+def require_owner(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        expected = str(
+            os.getenv(
+                "OWNER_API_TOKEN",
+                current_app.config.get("OWNER_API_TOKEN", "")
+            )
+        ).strip()
 
-async function apiJson<T>(
-  path: string,
-  options: RequestInit = {},
-  token = ""
-): Promise<T> {
-  const hasBody = Boolean(options.body);
+        auth = request.headers.get("Authorization", "")
+        token = ""
 
-  const headers: Record<string, string> = {
-    Accept: "application/json",
-    ...(hasBody ? { "Content-Type": "application/json" } : {}),
-    ...((options.headers as Record<string, string>) || {})
-  };
+        if auth.lower().startswith("bearer "):
+            token = auth.split(" ", 1)[1].strip()
 
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
+        if not expected or token != expected:
+            return jsonify({"ok": False, "error": "OWNER_AUTH_REQUIRED"}), 401
 
-  const response = await fetch(apiUrl(path), {
-    ...options,
-    headers
-  });
+        return fn(*args, **kwargs)
 
-  const text = await response.text();
-  let payload: any = {};
+    return wrapper
 
-  if (text) {
-    try {
-      payload = JSON.parse(text);
-    } catch {
-      payload = { raw: text };
-    }
-  }
 
-  if (!response.ok) {
-    const message =
-      payload?.message ||
-      payload?.error ||
-      payload?.raw ||
-      `${response.status} ${response.statusText}`;
-
-    throw new Error(String(message));
-  }
-
-  return payload as T;
-}
-
-function App() {
-  const path = window.location.pathname;
-  const storeSlug = getStoreSlug();
-  const isOwner = path.startsWith("/owner");
-  const isStore = path.startsWith("/store");
-
-  const [health, setHealth] = useState<ApiHealth | null>(null);
-  const [stores, setStores] = useState<Store[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [ownerProducts, setOwnerProducts] = useState<Product[]>([]);
-
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [cart, setCart] = useState<CartLine[]>([]);
-  const [buyer, setBuyer] = useState<BuyerInfo>({
-    name: "",
-    email: "",
-    phone: "",
-    notes: ""
-  });
-
-  const [ownerPassword, setOwnerPassword] = useState("");
-  const [ownerToken, setOwnerToken] = useState(() => localStorage.getItem("wolf_owner_token") || "");
-
-  const [loadState, setLoadState] = useState<LoadState>("booting");
-  const [ownerLoading, setOwnerLoading] = useState(false);
-  const [checkingOut, setCheckingOut] = useState(false);
-  const [notice, setNotice] = useState("");
-  const [error, setError] = useState("");
-  const [lastOrder, setLastOrder] = useState<Order | null>(null);
-
-  const selectedProduct = products[selectedIndex] || products[0] || null;
-  const selectedImage = assetUrl(selectedProduct?.image_url);
-
-  const cartTotal = useMemo(() => {
-    return cart.reduce((sum, line) => sum + line.price_cents * line.qty, 0);
-  }, [cart]);
-
-  const cartCount = useMemo(() => {
-    return cart.reduce((sum, line) => sum + line.qty, 0);
-  }, [cart]);
-
-  async function bootStorefront() {
-    setLoadState("booting");
-    setError("");
-
-    try {
-      const [healthData, storesData, productData] = await Promise.all([
-        apiJson<ApiHealth>("/api/health").catch(() => null),
-        apiJson<any>("/api/stores").catch(() => ({ stores: [] })),
-        apiJson<any>(`/api/stores/${storeSlug}/products`)
-      ]);
-
-      setHealth(healthData);
-      setStores(normalizeStores(storesData));
-      setProducts(normalizeProducts(productData));
-      setLoadState("ready");
-    } catch (err: any) {
-      setError(err?.message || "Unable to load storefront.");
-      setLoadState("error");
-    }
-  }
-
-  async function loadOwnerData(token = ownerToken) {
-    if (!token) return;
-
-    setOwnerLoading(true);
-    setError("");
-
-    try {
-      const [ordersData, productsData, storesData, healthData] = await Promise.all([
-        apiJson<any>("/api/owner/orders", {}, token),
-        apiJson<any>("/api/owner/products", {}, token),
-        apiJson<any>("/api/owner/stores", {}, token).catch(() => ({ stores: [] })),
-        apiJson<ApiHealth>("/api/health").catch(() => null)
-      ]);
-
-      setOrders(normalizeOrders(ordersData));
-      setOwnerProducts(normalizeProducts(productsData));
-      setStores(normalizeStores(storesData));
-      setHealth(healthData);
-    } catch (err: any) {
-      setError(err?.message || "Unable to load owner dashboard.");
-      if (String(err?.message || "").includes("OWNER_AUTH_REQUIRED")) {
-        logoutOwner();
-      }
-    } finally {
-      setOwnerLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    bootStorefront();
-  }, [storeSlug]);
-
-  useEffect(() => {
-    if (ownerToken) {
-      loadOwnerData(ownerToken);
-    }
-  }, [ownerToken]);
-
-  function addToCart(product: Product, index: number) {
-    const product_id = String(product.id || "");
-    const sku = String(product.sku || "");
-    const name = product.name || sku || `Product ${index + 1}`;
-    const stock = Math.max(0, Number(product.stock || 0));
-    const price = Number(product.price_cents || 0);
-
-    if (!product_id && !sku) {
-      setNotice("This product is missing an ID/SKU.");
-      return;
+def normalize_product_payload(raw: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "sku": str(raw.get("sku", "")).strip().upper(),
+        "name": str(raw.get("name", "")).strip(),
+        "category": str(raw.get("category", "Premium")).strip() or "Premium",
+        "description": str(raw.get("description", "")).strip(),
+        "price_cents": int(raw.get("price_cents") or 0),
+        "stock": int(raw.get("stock") or 0),
+        "image_url": str(raw.get("image_url", "")).strip(),
+        "is_active": int(raw.get("is_active", 1)),
     }
 
-    if (stock <= 0) {
-      setNotice(`${name} is out of stock.`);
-      return;
-    }
 
-    setCart((previous) => {
-      const found = previous.find((line) => line.product_id === product_id || line.sku === sku);
+@products_bp.get("/api/stores/<slug>/products")
+def list_store_products(slug: str):
+    store_slug = slug.strip().lower()
 
-      if (found) {
-        if (found.qty >= stock) {
-          setNotice(`Stock limit reached for ${name}.`);
-          return previous;
-        }
+    con = connect()
+    try:
+        rows = con.execute(
+            """
+            SELECT
+                id,
+                store_slug,
+                sku,
+                name,
+                category,
+                description,
+                price_cents,
+                stock,
+                image_url,
+                is_active,
+                created_at,
+                updated_at
+            FROM products
+            WHERE store_slug = ?
+              AND COALESCE(is_active, 1) = 1
+            ORDER BY created_at ASC, name ASC
+            """,
+            (store_slug,),
+        ).fetchall()
 
-        setNotice(`${name} quantity updated.`);
-        return previous.map((line) =>
-          line.product_id === found.product_id && line.sku === found.sku
-            ? { ...line, qty: line.qty + 1 }
-            : line
-        );
-      }
-
-      setNotice(`${name} added to cart.`);
-
-      return [
-        ...previous,
-        {
-          product_id,
-          sku,
-          name,
-          price_cents: price,
-          qty: 1,
-          stock
-        }
-      ];
-    });
-  }
-
-  function removeFromCart(product_id: string, sku: string) {
-    setCart((previous) => previous.filter((line) => !(line.product_id === product_id && line.sku === sku)));
-    setNotice("Cart updated.");
-  }
-
-  function updateBuyer(field: keyof BuyerInfo, value: string) {
-    setBuyer((previous) => ({ ...previous, [field]: value }));
-  }
-
-  async function submitCheckout() {
-    if (!cart.length) {
-      setNotice("Cart is empty.");
-      return;
-    }
-
-    if (!buyer.name.trim() || !buyer.email.trim()) {
-      setNotice("Name and email are required before checkout.");
-      return;
-    }
-
-    setCheckingOut(true);
-    setError("");
-
-    try {
-      const payload = await apiJson<any>(`/api/stores/${storeSlug}/checkout`, {
-        method: "POST",
-        body: JSON.stringify({
-          buyer,
-          items: cart.map((line) => ({
-            product_id: line.product_id,
-            sku: line.sku,
-            qty: line.qty
-          }))
-        })
-      });
-
-      setLastOrder(payload.order || null);
-      setCart([]);
-      setBuyer({ name: "", email: "", phone: "", notes: "" });
-
-      if (Array.isArray(payload.updated_products)) {
-        setProducts(payload.updated_products);
-      } else {
-        await bootStorefront();
-      }
-
-      if (ownerToken) {
-        await loadOwnerData(ownerToken);
-      }
-
-      setNotice(`Order created: ${payload?.order?.id || "success"}`);
-    } catch (err: any) {
-      setError(err?.message || "Checkout failed.");
-    } finally {
-      setCheckingOut(false);
-    }
-  }
-
-  async function loginOwner(event: React.FormEvent) {
-    event.preventDefault();
-
-    setOwnerLoading(true);
-    setError("");
-
-    try {
-      const payload = await apiJson<any>("/api/owner/login", {
-        method: "POST",
-        body: JSON.stringify({ password: ownerPassword })
-      });
-
-      const token = String(payload.token || "");
-      if (!token) {
-        throw new Error("Owner login returned no token.");
-      }
-
-      localStorage.setItem("wolf_owner_token", token);
-      setOwnerToken(token);
-      setOwnerPassword("");
-      setNotice("Owner console unlocked.");
-      await loadOwnerData(token);
-    } catch (err: any) {
-      setError(err?.message || "Owner login failed.");
-    } finally {
-      setOwnerLoading(false);
-    }
-  }
-
-  function logoutOwner() {
-    localStorage.removeItem("wolf_owner_token");
-    setOwnerToken("");
-    setOrders([]);
-    setOwnerProducts([]);
-    setNotice("Owner console locked.");
-  }
-
-  async function createOwnerProduct(form: ProductForm) {
-    if (!ownerToken) {
-      setError("Owner token required.");
-      return;
-    }
-
-    const slug = form.store_slug.trim() || "demo";
-
-    try {
-      await apiJson<any>(
-        `/api/stores/${slug}/products`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            sku: form.sku,
-            name: form.name,
-            category: form.category,
-            description: form.description,
-            price_cents: Number(form.price_cents || 0),
-            stock: Number(form.stock || 0),
-            image_url: form.image_url
-          })
-        },
-        ownerToken
-      );
-
-      setNotice("Product created.");
-      await bootStorefront();
-      await loadOwnerData(ownerToken);
-    } catch (err: any) {
-      setError(err?.message || "Product create failed.");
-    }
-  }
-
-  async function updateProductStock(product: Product, nextStock: number) {
-    if (!ownerToken) {
-      setError("Owner token required.");
-      return;
-    }
-
-    const slug = product.store_slug || storeSlug;
-    const id = product.id;
-
-    if (!id) {
-      setError("Product ID missing.");
-      return;
-    }
-
-    try {
-      await apiJson<any>(
-        `/api/stores/${slug}/products/${id}`,
-        {
-          method: "PUT",
-          body: JSON.stringify({
-            stock: Math.max(0, nextStock)
-          })
-        },
-        ownerToken
-      );
-
-      setNotice("Stock updated.");
-      await bootStorefront();
-      await loadOwnerData(ownerToken);
-    } catch (err: any) {
-      setError(err?.message || "Stock update failed.");
-    }
-  }
-
-  return (
-    <main className="v3-app">
-      <OwnershipBar
-        health={health}
-        storeSlug={storeSlug}
-        cartCount={cartCount}
-        onRefresh={() => {
-          bootStorefront();
-          if (ownerToken) loadOwnerData(ownerToken);
-        }}
-      />
-
-      {notice ? <div className="v3-toast">{notice}</div> : null}
-
-      {error ? (
-        <section className="v3-alert">
-          <strong>System message</strong>
-          <span>{error}</span>
-        </section>
-      ) : null}
-
-      {isOwner ? (
-        ownerToken ? (
-          <OwnerConsole
-            health={health}
-            stores={stores}
-            orders={orders}
-            products={ownerProducts}
-            loading={ownerLoading}
-            onRefresh={() => loadOwnerData(ownerToken)}
-            onLogout={logoutOwner}
-            onCreateProduct={createOwnerProduct}
-            onUpdateStock={updateProductStock}
-          />
-        ) : (
-          <OwnerGate
-            password={ownerPassword}
-            setPassword={setOwnerPassword}
-            loading={ownerLoading}
-            onSubmit={loginOwner}
-          />
+        return jsonify(
+            {
+                "ok": True,
+                "store_slug": store_slug,
+                "products": [row_to_dict(row) for row in rows],
+            }
         )
-      ) : isStore ? (
-        <CustomerStorefront
-          storeSlug={storeSlug}
-          health={health}
-          products={products}
-          selectedIndex={selectedIndex}
-          selectedProduct={selectedProduct}
-          selectedImage={selectedImage}
-          loadState={loadState}
-          cart={cart}
-          buyer={buyer}
-          cartTotal={cartTotal}
-          checkingOut={checkingOut}
-          lastOrder={lastOrder}
-          onSelectProduct={setSelectedIndex}
-          onAdd={addToCart}
-          onRemove={removeFromCart}
-          onBuyerChange={updateBuyer}
-          onCheckout={submitCheckout}
-          onClearCart={() => setCart([])}
-        />
-      ) : (
-        <SaasLanding health={health} products={products} stores={stores} />
-      )}
+    finally:
+        con.close()
 
-      <footer className="v3-footer">
-        <span>I AM THE ONE™</span>
-        <span>WOLF OS™</span>
-        <span>Copyright © 2026 Andrew Wolverton. All Rights Reserved.</span>
-      </footer>
-    </main>
-  );
-}
 
-function OwnershipBar({
-  health,
-  storeSlug,
-  cartCount,
-  onRefresh
-}: {
-  health: ApiHealth | null;
-  storeSlug: string;
-  cartCount: number;
-  onRefresh: () => void;
-}) {
-  return (
-    <header className="ownership-bar">
-      <a className="brand-lockup" href="/">
-        <span className="wolf-mark">W</span>
-        <span>
-          <strong>I AM THE ONE™</strong>
-          <small>WOLF OS™ SaaS v3</small>
-        </span>
-      </a>
+@products_bp.get("/api/owner/products")
+@require_owner
+def owner_products():
+    con = connect()
+    try:
+        rows = con.execute(
+            """
+            SELECT
+                p.id,
+                p.store_slug,
+                s.name AS store_name,
+                p.sku,
+                p.name,
+                p.category,
+                p.description,
+                p.price_cents,
+                p.stock,
+                p.image_url,
+                p.is_active,
+                p.created_at,
+                p.updated_at
+            FROM products p
+            LEFT JOIN stores s ON s.slug = p.store_slug
+            ORDER BY p.store_slug ASC, p.created_at ASC, p.name ASC
+            """
+        ).fetchall()
 
-      <nav className="v3-nav">
-        <a href="/store/demo">Customer Store</a>
-        <a href="/owner">Owner Console</a>
-      </nav>
+        return jsonify(
+            {
+                "ok": True,
+                "products": [row_to_dict(row) for row in rows],
+            }
+        )
+    finally:
+        con.close()
 
-      <div className="system-strip">
-        <span className={health?.ok ? "status-dot online" : "status-dot"} />
-        <span>{health?.ok ? "ONLINE" : "CHECKING"}</span>
-        <span className="hide-mobile">STORE: {storeSlug.toUpperCase()}</span>
-        <span>CART: {cartCount}</span>
-        <button className="mini-button" onClick={onRefresh}>
-          Refresh
-        </button>
-      </div>
-    </header>
-  );
-}
 
-function SaasLanding({
-  health,
-  products,
-  stores
-}: {
-  health: ApiHealth | null;
-  products: Product[];
-  stores: Store[];
-}) {
-  return (
-    <section className="landing-grid">
-      <div className="landing-hero">
-        <p className="v3-kicker">Functional SaaS v3 Platform</p>
-        <h1>Luxury storefronts with real checkout and owner operations.</h1>
-        <p>
-          This is now wired as a real SaaS engine: stores, products, checkout,
-          orders, stock decrement, owner login, and WOLF OS™ dashboard control.
-        </p>
+@products_bp.post("/api/stores/<slug>/products")
+@require_owner
+def create_product(slug: str):
+    store_slug = slug.strip().lower()
+    payload = request.get_json(silent=True) or {}
+    data = normalize_product_payload(payload)
 
-        <div className="landing-actions">
-          <a className="v3-button primary" href="/store/demo">
-            Launch Storefront
-          </a>
-          <a className="v3-button secondary" href="/owner">
-            Open Owner Console
-          </a>
-        </div>
-      </div>
+    if not data["sku"]:
+        return jsonify({"ok": False, "error": "SKU_REQUIRED"}), 400
 
-      <aside className="landing-panel">
-        <p className="v3-kicker">Live Backend</p>
-        <h2>{health?.ok ? "Online" : "Checking"}</h2>
+    if not data["name"]:
+        return jsonify({"ok": False, "error": "NAME_REQUIRED"}), 400
 
-        <div className="metric-list">
-          <Metric label="Stores" value={health?.counts?.stores || stores.length || 1} />
-          <Metric label="Products" value={health?.counts?.products || products.length} />
-          <Metric label="Orders" value={health?.counts?.orders || 0} />
-        </div>
+    if data["price_cents"] < 0:
+        return jsonify({"ok": False, "error": "PRICE_INVALID"}), 400
 
-        <div className="shine-box">
-          <strong>Live routes</strong>
-          <span>/store/demo</span>
-          <span>/owner</span>
-        </div>
-      </aside>
-    </section>
-  );
-}
+    if data["stock"] < 0:
+        return jsonify({"ok": False, "error": "STOCK_INVALID"}), 400
 
-function CustomerStorefront({
-  storeSlug,
-  health,
-  products,
-  selectedIndex,
-  selectedProduct,
-  selectedImage,
-  loadState,
-  cart,
-  buyer,
-  cartTotal,
-  checkingOut,
-  lastOrder,
-  onSelectProduct,
-  onAdd,
-  onRemove,
-  onBuyerChange,
-  onCheckout,
-  onClearCart
-}: {
-  storeSlug: string;
-  health: ApiHealth | null;
-  products: Product[];
-  selectedIndex: number;
-  selectedProduct: Product | null;
-  selectedImage: string;
-  loadState: LoadState;
-  cart: CartLine[];
-  buyer: BuyerInfo;
-  cartTotal: number;
-  checkingOut: boolean;
-  lastOrder: Order | null;
-  onSelectProduct: (index: number) => void;
-  onAdd: (product: Product, index: number) => void;
-  onRemove: (product_id: string, sku: string) => void;
-  onBuyerChange: (field: keyof BuyerInfo, value: string) => void;
-  onCheckout: () => void;
-  onClearCart: () => void;
-}) {
-  return (
-    <section className="customer-layout">
-      <aside className="catalog-rail">
-        <div className="rail-heading">
-          <p className="v3-kicker">Live Catalog</p>
-          <h2>{storeSlug.toUpperCase()}</h2>
-        </div>
+    created_at = now_iso()
+    product_id = new_id("prod")
 
-        {loadState === "booting" ? (
-          <div className="ghost-card">Loading premium inventory...</div>
-        ) : products.length ? (
-          <div className="product-list">
-            {products.map((product, index) => (
-              <button
-                className={index === selectedIndex ? "product-row active" : "product-row"}
-                key={productKey(product, index)}
-                onClick={() => onSelectProduct(index)}
-              >
-                <span className="row-index">{String(index + 1).padStart(2, "0")}</span>
-                <span>
-                  <strong>{product.name || product.sku || `Product ${index + 1}`}</strong>
-                  <small>
-                    {product.category || "Premium"} · {money(product.price_cents)} ·{" "}
-                    {Number(product.stock || 0)} stock
-                  </small>
-                </span>
-              </button>
-            ))}
-          </div>
-        ) : (
-          <div className="ghost-card">No products returned yet.</div>
-        )}
-      </aside>
+    con = connect()
+    try:
+        store = con.execute(
+            "SELECT slug FROM stores WHERE slug = ?",
+            (store_slug,),
+        ).fetchone()
 
-      <section className="v3-product-stage">
-        <div className="stage-top">
-          <div>
-            <p className="v3-kicker">Customer Experience</p>
-            <h1>{selectedProduct?.name || "I AM THE ONE™ Storefront"}</h1>
-          </div>
+        if not store:
+            return jsonify({"ok": False, "error": "STORE_NOT_FOUND"}), 404
 
-          <span className={health?.ok ? "v3-pill online" : "v3-pill"}>
-            {health?.ok ? "LIVE API" : "API CHECK"}
-          </span>
-        </div>
+        existing = con.execute(
+            """
+            SELECT id
+            FROM products
+            WHERE store_slug = ?
+              AND sku = ?
+            """,
+            (store_slug, data["sku"]),
+        ).fetchone()
 
-        <div className="product-showcase">
-          <div className="hero-media-card">
-            {selectedImage ? (
-              <img src={selectedImage} alt={selectedProduct?.name || "Product"} />
-            ) : (
-              <div className="fallback-product-mark">
-                {(selectedProduct?.sku || selectedProduct?.name || "IATO")
-                  .slice(0, 4)
-                  .toUpperCase()}
-              </div>
-            )}
+        if existing:
+            return jsonify({"ok": False, "error": "SKU_ALREADY_EXISTS"}), 409
 
-            <div className="media-badge">Real API · Live Inventory</div>
-          </div>
+        con.execute(
+            """
+            INSERT INTO products (
+                id,
+                store_slug,
+                sku,
+                name,
+                category,
+                description,
+                price_cents,
+                stock,
+                image_url,
+                is_active,
+                created_at,
+                updated_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                product_id,
+                store_slug,
+                data["sku"],
+                data["name"],
+                data["category"],
+                data["description"],
+                data["price_cents"],
+                data["stock"],
+                data["image_url"],
+                data["is_active"],
+                created_at,
+                created_at,
+            ),
+        )
 
-          <div className="product-info-card">
-            <p className="v3-kicker">{selectedProduct?.category || "Premium Item"}</p>
-            <h2>{selectedProduct?.name || "Luxury Commerce Item"}</h2>
-            <p>
-              {selectedProduct?.description ||
-                "Real product loaded from the SaaS backend."}
-            </p>
+        con.commit()
 
-            <div className="price-stock-row">
-              <strong>{money(selectedProduct?.price_cents)}</strong>
-              <span>{Number(selectedProduct?.stock || 0)} in stock</span>
-            </div>
+        product = con.execute(
+            "SELECT * FROM products WHERE id = ?",
+            (product_id,),
+        ).fetchone()
 
-            <button
-              className="v3-button primary full"
-              disabled={!selectedProduct || Number(selectedProduct?.stock || 0) <= 0}
-              onClick={() => selectedProduct && onAdd(selectedProduct, selectedIndex)}
-            >
-              Add to Cart
-            </button>
+        return jsonify({"ok": True, "product": row_to_dict(product)}), 201
+    finally:
+        con.close()
 
-            <div className="spec-grid">
-              <span>
-                <small>SKU</small>
-                <strong>{selectedProduct?.sku || "—"}</strong>
-              </span>
-              <span>
-                <small>Store</small>
-                <strong>{storeSlug.toUpperCase()}</strong>
-              </span>
-              <span>
-                <small>Mode</small>
-                <strong>REAL</strong>
-              </span>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      <aside className="checkout-panel">
-        <div className="checkout-heading">
-          <p className="v3-kicker">Real Checkout</p>
-          <button onClick={onClearCart}>Clear</button>
-        </div>
+@products_bp.put("/api/stores/<slug>/products/<product_id>")
+@require_owner
+def update_product(slug: str, product_id: str):
+    store_slug = slug.strip().lower()
+    payload = request.get_json(silent=True) or {}
 
-        <h2>Cart</h2>
+    allowed_fields = {
+        "sku",
+        "name",
+        "category",
+        "description",
+        "price_cents",
+        "stock",
+        "image_url",
+        "is_active",
+    }
 
-        {cart.length ? (
-          <div className="cart-stack">
-            {cart.map((line) => (
-              <div className="cart-item" key={`${line.product_id}-${line.sku}`}>
-                <div>
-                  <strong>{line.name}</strong>
-                  <small>
-                    {line.sku} · Qty {line.qty} · {money(line.price_cents)}
-                  </small>
-                </div>
+    updates: dict[str, Any] = {}
 
-                <button onClick={() => onRemove(line.product_id, line.sku)}>Remove</button>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="empty-cart">No items in cart yet.</div>
-        )}
+    for field in allowed_fields:
+        if field in payload:
+            value = payload[field]
 
-        <div className="buyer-box">
-          <p className="v3-kicker">Customer Info</p>
-          <input
-            placeholder="Full name *"
-            value={buyer.name}
-            onChange={(event) => onBuyerChange("name", event.target.value)}
-          />
-          <input
-            placeholder="Email *"
-            value={buyer.email}
-            onChange={(event) => onBuyerChange("email", event.target.value)}
-          />
-          <input
-            placeholder="Phone"
-            value={buyer.phone}
-            onChange={(event) => onBuyerChange("phone", event.target.value)}
-          />
-          <input
-            placeholder="Order notes"
-            value={buyer.notes}
-            onChange={(event) => onBuyerChange("notes", event.target.value)}
-          />
-        </div>
+            if field == "sku":
+                value = str(value or "").strip().upper()
+                if not value:
+                    return jsonify({"ok": False, "error": "SKU_REQUIRED"}), 400
 
-        <div className="checkout-total">
-          <span>Total</span>
-          <strong>{money(cartTotal)}</strong>
-        </div>
+            if field in {"name", "category", "description", "image_url"}:
+                value = str(value or "").strip()
 
-        <button
-          className="v3-button primary full"
-          disabled={!cart.length || checkingOut}
-          onClick={onCheckout}
-        >
-          {checkingOut ? "Creating Order..." : "Create Real Order"}
-        </button>
+            if field in {"price_cents", "stock", "is_active"}:
+                value = int(value or 0)
 
-        {lastOrder ? (
-          <small className="checkout-note">
-            Last order: {lastOrder.id} · {money(lastOrder.total_cents)} ·{" "}
-            {lastOrder.payment_status || "unpaid"}
-          </small>
-        ) : (
-          <small className="checkout-note">
-            Creates a real SQLite order and decrements stock.
-          </small>
-        )}
-      </aside>
-    </section>
-  );
-}
+            if field == "price_cents" and value < 0:
+                return jsonify({"ok": False, "error": "PRICE_INVALID"}), 400
 
-function OwnerGate({
-  password,
-  setPassword,
-  loading,
-  onSubmit
-}: {
-  password: string;
-  setPassword: (value: string) => void;
-  loading: boolean;
-  onSubmit: (event: React.FormEvent) => void;
-}) {
-  return (
-    <section className="owner-gate">
-      <div className="gate-card">
-        <p className="v3-kicker">WOLF OS™ Owner Login</p>
-        <h1>Real owner access.</h1>
-        <p>
-          This login posts to <code>/api/owner/login</code> and receives a real
-          owner token from the Flask backend.
-        </p>
+            if field == "stock" and value < 0:
+                return jsonify({"ok": False, "error": "STOCK_INVALID"}), 400
 
-        <form onSubmit={onSubmit}>
-          <input
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            placeholder="Owner password"
-            type="password"
-          />
-          <button className="v3-button primary" type="submit" disabled={loading}>
-            {loading ? "Unlocking..." : "Unlock Console"}
-          </button>
-        </form>
+            updates[field] = value
 
-        <small>Local password: WOLF-DEMO</small>
-      </div>
-    </section>
-  );
-}
+    if not updates:
+        return jsonify({"ok": False, "error": "NO_UPDATES_PROVIDED"}), 400
 
-function OwnerConsole({
-  health,
-  stores,
-  orders,
-  products,
-  loading,
-  onRefresh,
-  onLogout,
-  onCreateProduct,
-  onUpdateStock
-}: {
-  health: ApiHealth | null;
-  stores: Store[];
-  orders: Order[];
-  products: Product[];
-  loading: boolean;
-  onRefresh: () => void;
-  onLogout: () => void;
-  onCreateProduct: (form: ProductForm) => Promise<void>;
-  onUpdateStock: (product: Product, nextStock: number) => Promise<void>;
-}) {
-  const [form, setForm] = useState<ProductForm>({
-    store_slug: "demo",
-    sku: "",
-    name: "",
-    category: "Premium",
-    description: "",
-    price_cents: "",
-    stock: "",
-    image_url: ""
-  });
+    updates["updated_at"] = now_iso()
 
-  const inventoryValue = products.reduce((sum, product) => {
-    return sum + Number(product.price_cents || 0) * Number(product.stock || 0);
-  }, 0);
+    set_sql = ", ".join([f"{field} = ?" for field in updates.keys()])
+    values = list(updates.values()) + [product_id, store_slug]
 
-  const lowStock = products.filter((product) => Number(product.stock || 0) <= 3).length;
+    con = connect()
+    try:
+        existing = con.execute(
+            """
+            SELECT id
+            FROM products
+            WHERE id = ?
+              AND store_slug = ?
+            """,
+            (product_id, store_slug),
+        ).fetchone()
 
-  async function submitProduct(event: React.FormEvent) {
-    event.preventDefault();
-    await onCreateProduct(form);
-    setForm({
-      store_slug: "demo",
-      sku: "",
-      name: "",
-      category: "Premium",
-      description: "",
-      price_cents: "",
-      stock: "",
-      image_url: ""
-    });
-  }
+        if not existing:
+            return jsonify({"ok": False, "error": "PRODUCT_NOT_FOUND"}), 404
 
-  function setField(field: keyof ProductForm, value: string) {
-    setForm((previous) => ({ ...previous, [field]: value }));
-  }
+        con.execute(
+            f"""
+            UPDATE products
+            SET {set_sql}
+            WHERE id = ?
+              AND store_slug = ?
+            """,
+            values,
+        )
 
-  return (
-    <section className="owner-console">
-      <div className="owner-hero">
-        <div>
-          <p className="v3-kicker">Operator Mode</p>
-          <h1>WOLF OS™ SaaS Command Center</h1>
-          <p>
-            Real owner dashboard connected to orders, products, stores, inventory,
-            and backend health.
-          </p>
-        </div>
+        con.commit()
 
-        <div className="owner-actions">
-          <button className="v3-button secondary" onClick={onRefresh} disabled={loading}>
-            {loading ? "Refreshing..." : "Refresh"}
-          </button>
-          <button className="v3-button danger" onClick={onLogout}>
-            Lock
-          </button>
-        </div>
-      </div>
+        product = con.execute(
+            "SELECT * FROM products WHERE id = ? AND store_slug = ?",
+            (product_id, store_slug),
+        ).fetchone()
 
-      <div className="metric-grid">
-        <Metric label="API" value={health?.ok ? "Online" : "Check"} />
-        <Metric label="Stores" value={stores.length || health?.counts?.stores || 0} />
-        <Metric label="Products" value={products.length || health?.counts?.products || 0} />
-        <Metric label="Orders" value={orders.length || health?.counts?.orders || 0} />
-        <Metric label="Low Stock" value={lowStock} />
-        <Metric label="Inventory Value" value={money(inventoryValue)} />
-      </div>
+        return jsonify({"ok": True, "product": row_to_dict(product)})
+    finally:
+        con.close()
 
-      <div className="owner-panels">
-        <div className="owner-panel wide">
-          <div className="panel-heading">
-            <div>
-              <p className="v3-kicker">Real Orders</p>
-              <h2>Orders</h2>
-            </div>
-            <span className="v3-pill online">LIVE</span>
-          </div>
 
-          {orders.length ? (
-            <div className="owner-table">
-              {orders.map((order) => (
-                <div className="owner-table-row" key={order.id}>
-                  <strong>{order.id}</strong>
-                  <span>{order.buyer_name}</span>
-                  <span>{money(order.total_cents)}</span>
-                  <span>{order.payment_status || order.status}</span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="ghost-card">No orders yet. Create one from /store/demo.</div>
-          )}
-        </div>
+@products_bp.delete("/api/stores/<slug>/products/<product_id>")
+@require_owner
+def delete_product(slug: str, product_id: str):
+    store_slug = slug.strip().lower()
+    updated_at = now_iso()
 
-        <div className="owner-panel">
-          <div className="panel-heading">
-            <div>
-              <p className="v3-kicker">Create Product</p>
-              <h2>Add Item</h2>
-            </div>
-          </div>
+    con = connect()
+    try:
+        existing = con.execute(
+            """
+            SELECT id
+            FROM products
+            WHERE id = ?
+              AND store_slug = ?
+            """,
+            (product_id, store_slug),
+        ).fetchone()
 
-          <form className="buyer-box" onSubmit={submitProduct}>
-            <input
-              value={form.store_slug}
-              onChange={(event) => setField("store_slug", event.target.value)}
-              placeholder="Store slug"
-            />
-            <input
-              value={form.sku}
-              onChange={(event) => setField("sku", event.target.value)}
-              placeholder="SKU"
-            />
-            <input
-              value={form.name}
-              onChange={(event) => setField("name", event.target.value)}
-              placeholder="Product name"
-            />
-            <input
-              value={form.category}
-              onChange={(event) => setField("category", event.target.value)}
-              placeholder="Category"
-            />
-            <input
-              value={form.description}
-              onChange={(event) => setField("description", event.target.value)}
-              placeholder="Description"
-            />
-            <input
-              value={form.price_cents}
-              onChange={(event) => setField("price_cents", event.target.value)}
-              placeholder="Price cents, example 9900"
-            />
-            <input
-              value={form.stock}
-              onChange={(event) => setField("stock", event.target.value)}
-              placeholder="Stock"
-            />
-            <input
-              value={form.image_url}
-              onChange={(event) => setField("image_url", event.target.value)}
-              placeholder="Image URL"
-            />
-            <button className="v3-button primary full" type="submit">
-              Create Product
-            </button>
-          </form>
-        </div>
-      </div>
+        if not existing:
+            return jsonify({"ok": False, "error": "PRODUCT_NOT_FOUND"}), 404
 
-      <div className="owner-panel">
-        <div className="panel-heading">
-          <div>
-            <p className="v3-kicker">Real Inventory</p>
-            <h2>Products</h2>
-          </div>
-        </div>
+        con.execute(
+            """
+            UPDATE products
+            SET is_active = 0,
+                updated_at = ?
+            WHERE id = ?
+              AND store_slug = ?
+            """,
+            (updated_at, product_id, store_slug),
+        )
 
-        {products.length ? (
-          <div className="inventory-grid">
-            {products.map((product, index) => (
-              <div className="inventory-card" key={productKey(product, index)}>
-                <strong>{product.name || product.sku}</strong>
-                <span>{product.store_slug || product.store_name || "demo"}</span>
-                <span>{product.sku || "NO-SKU"}</span>
-                <span>{money(product.price_cents)}</span>
-                <span>{Number(product.stock || 0)} stock</span>
+        con.commit()
 
-                <div className="landing-actions">
-                  <button
-                    className="v3-button secondary"
-                    onClick={() => onUpdateStock(product, Number(product.stock || 0) - 1)}
-                  >
-                    -1
-                  </button>
-                  <button
-                    className="v3-button secondary"
-                    onClick={() => onUpdateStock(product, Number(product.stock || 0) + 1)}
-                  >
-                    +1
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="ghost-card">No products returned yet.</div>
-        )}
-      </div>
-
-      <div className="owner-panel">
-        <div className="panel-heading">
-          <div>
-            <p className="v3-kicker">Stores</p>
-            <h2>Tenants</h2>
-          </div>
-        </div>
-
-        {stores.length ? (
-          <div className="owner-table">
-            {stores.map((store, index) => (
-              <div className="owner-table-row" key={store.id || store.slug || index}>
-                <strong>{store.name || store.slug}</strong>
-                <span>{store.slug}</span>
-                <span>{store.plan || "v3"}</span>
-                <span>{store.status || "active"}</span>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="ghost-card">No stores returned.</div>
-        )}
-      </div>
-    </section>
-  );
-}
-
-function Metric({ label, value }: { label: string; value: React.ReactNode }) {
-  return (
-    <div className="metric-card">
-      <span>{label}</span>
-      <strong>{value}</strong>
-    </div>
-  );
-}
-
-export default App;
+        return jsonify({"ok": True, "deleted": product_id})
+    finally:
+        con.close()
