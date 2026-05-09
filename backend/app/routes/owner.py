@@ -1,4 +1,4 @@
-# Copyright © 2026 Andrew Wolverton. All Rights Reserved.
+﻿# Copyright Â© 2026 Andrew Wolverton. All Rights Reserved.
 from __future__ import annotations
 
 import hmac
@@ -44,3 +44,4 @@ def owner_session():
             "system": current_app.config["APP_SYSTEM"],
         }
     )
+

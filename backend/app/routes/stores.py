@@ -1,4 +1,4 @@
-# Copyright © 2026 Andrew Wolverton. All Rights Reserved.
+﻿# Copyright Â© 2026 Andrew Wolverton. All Rights Reserved.
 from __future__ import annotations
 
 from flask import Blueprint, jsonify, request
@@ -141,3 +141,4 @@ def update_store(slug: str):
         return jsonify({"ok": False, "error": "STORE_NOT_FOUND"}), 404
 
     return jsonify({"ok": True, "store": store})
+

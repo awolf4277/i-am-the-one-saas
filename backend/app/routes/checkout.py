@@ -1,4 +1,4 @@
-# Copyright © 2026 Andrew Wolverton. All Rights Reserved.
+﻿# Copyright Â© 2026 Andrew Wolverton. All Rights Reserved.
 from __future__ import annotations
 
 from flask import Blueprint, current_app, jsonify, request
@@ -208,3 +208,4 @@ def create_checkout(slug: str):
         ),
         201,
     )
+

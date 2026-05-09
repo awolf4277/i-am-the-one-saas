@@ -1,4 +1,4 @@
-# Copyright © 2026 Andrew Wolverton. All Rights Reserved.
+﻿# Copyright Â© 2026 Andrew Wolverton. All Rights Reserved.
 from __future__ import annotations
 
 import os
@@ -25,9 +25,9 @@ def create_app() -> Flask:
     app.config["JSON_SORT_KEYS"] = False
     app.config["BACKEND_DIR"] = str(backend_dir)
     app.config["APP_OWNER"] = os.getenv("APP_OWNER", "Andrew Wolverton")
-    app.config["APP_BRAND"] = os.getenv("APP_BRAND", "I AM THE ONE™")
-    app.config["APP_SYSTEM"] = os.getenv("APP_SYSTEM", "WOLF OS™")
-    app.config["APP_NAME"] = os.getenv("APP_NAME", "I AM THE ONE™ SaaS v3 API")
+    app.config["APP_BRAND"] = os.getenv("APP_BRAND", "I AM THE ONEâ„¢")
+    app.config["APP_SYSTEM"] = os.getenv("APP_SYSTEM", "WOLF OSâ„¢")
+    app.config["APP_NAME"] = os.getenv("APP_NAME", "I AM THE ONEâ„¢ SaaS v3 API")
 
     db_path = os.getenv("DB_PATH", "data/i_am_the_one_saas_v3.sqlite3")
     if not os.path.isabs(db_path):
@@ -92,3 +92,4 @@ def create_app() -> Flask:
         )
 
     return app
+
