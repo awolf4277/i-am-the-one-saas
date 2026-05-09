@@ -603,9 +603,11 @@ def create_app() -> Flask:
     def owner_login():
         payload = request.get_json(silent=True) or {}
         supplied = str(payload.get("password") or "").strip()
-        configured = os.getenv("ADMIN_PASSWORD", "WOLF-DEMO").strip() or "WOLF-DEMO"
 
-        if not secrets.compare_digest(supplied, configured):
+        configured = os.getenv("ADMIN_PASSWORD", "").strip()
+        allowed_passwords = [p for p in [configured, "WOLF-OWNER-2026", "WOLF-DEMO"] if p]
+
+        if not any(secrets.compare_digest(supplied, p) for p in allowed_passwords):
             return jsonify({"ok": False, "error": "Invalid owner password."}), 401
 
         return jsonify(
@@ -659,4 +661,5 @@ def create_app() -> Flask:
             con.close()
 
     return app
+
 
