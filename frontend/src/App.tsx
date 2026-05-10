@@ -325,19 +325,24 @@ function App() {
     setError("");
 
     try {
-      const [ordersData, productsData, storesData, healthData] = await Promise.all([
-        apiJson<any>("/api/owner/orders", {}, token),
-        apiJson<any>("/api/owner/products", {}, token),
-        apiJson<any>("/api/owner/stores", {}, token).catch(() => ({ stores: [] })),
-        apiJson<ApiHealth>("/api/health").catch(() => null)
-      ]);
-
+      const ordersData = await apiJson<any>("/api/owner/orders", {}, token);
       setOrders(normalizeOrders(ordersData));
+
+      const productsData = await apiJson<any>("/api/owner/products", {}, token).catch(() => ({
+        products: []
+      }));
+
+      const storesData = await apiJson<any>("/api/owner/stores", {}, token).catch(() => ({
+        stores: []
+      }));
+
+      const healthData = await apiJson<ApiHealth>("/api/health").catch(() => null);
+
       setOwnerProducts(normalizeProducts(productsData));
       setStores(normalizeStores(storesData));
       setHealth(healthData);
     } catch (err: any) {
-      setError(err?.message || "Unable to load owner dashboard.");
+      setError(err?.message || "Unable to load owner orders.");
 
       if (String(err?.message || "").includes("OWNER_AUTH_REQUIRED")) {
         logoutOwner();
