@@ -1,4 +1,4 @@
-// Copyright © 2026 Andrew Wolverton. All Rights Reserved.
+﻿// Copyright Â© 2026 Andrew Wolverton. All Rights Reserved.
 
 import React, { useEffect, useMemo, useState } from "react";
 
@@ -116,7 +116,7 @@ function money(cents?: number) {
 }
 
 function dateLabel(value?: string) {
-  if (!value) return "—";
+  if (!value) return "â€”";
 
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
@@ -622,9 +622,9 @@ function App() {
       )}
 
       <footer className="v3-footer">
-        <span>I AM THE ONE™</span>
-        <span>WOLF OS™</span>
-        <span>Copyright © 2026 Andrew Wolverton. All Rights Reserved.</span>
+        <span>I AM THE ONEâ„¢</span>
+        <span>WOLF OSâ„¢</span>
+        <span>Copyright Â© 2026 Andrew Wolverton. All Rights Reserved.</span>
       </footer>
     </main>
   );
@@ -646,8 +646,8 @@ function OwnershipBar({
       <a className="brand-lockup" href="/">
         <span className="wolf-mark">W</span>
         <span>
-          <strong>I AM THE ONE™</strong>
-          <small>WOLF OS™ SaaS v3</small>
+          <strong>I AM THE ONEâ„¢</strong>
+          <small>WOLF OSâ„¢ SaaS v3</small>
         </span>
       </a>
 
@@ -685,7 +685,7 @@ function SaasLanding({
         <h1>Luxury storefronts with real checkout and owner operations.</h1>
         <p>
           This is now wired as a real SaaS engine: stores, products, checkout,
-          orders, stock decrement, owner login, and WOLF OS™ dashboard control.
+          orders, stock decrement, owner login, and WOLF OSâ„¢ dashboard control.
         </p>
 
         <div className="landing-actions">
@@ -779,7 +779,7 @@ function CustomerStorefront({
                 <span>
                   <strong>{product.name || product.sku || `Product ${index + 1}`}</strong>
                   <small>
-                    {product.category || "Premium"} · {money(product.price_cents)} ·{" "}
+                    {product.category || "Premium"} Â· {money(product.price_cents)} Â·{" "}
                     {Number(product.stock || 0)} stock
                   </small>
                 </span>
@@ -795,7 +795,7 @@ function CustomerStorefront({
         <div className="stage-top">
           <div>
             <p className="v3-kicker">Customer Experience</p>
-            <h1>{selectedProduct?.name || "I AM THE ONE™ Storefront"}</h1>
+            <h1>{selectedProduct?.name || "I AM THE ONEâ„¢ Storefront"}</h1>
           </div>
 
           <span className={health?.ok ? "v3-pill online" : "v3-pill"}>
@@ -815,7 +815,7 @@ function CustomerStorefront({
               </div>
             )}
 
-            <div className="media-badge">Real API · Live Inventory</div>
+            <div className="media-badge">Real API Â· Live Inventory</div>
           </div>
 
           <div className="product-info-card">
@@ -842,7 +842,7 @@ function CustomerStorefront({
             <div className="spec-grid">
               <span>
                 <small>SKU</small>
-                <strong>{selectedProduct?.sku || "—"}</strong>
+                <strong>{selectedProduct?.sku || "â€”"}</strong>
               </span>
               <span>
                 <small>Store</small>
@@ -872,7 +872,7 @@ function CustomerStorefront({
                 <div>
                   <strong>{line.name}</strong>
                   <small>
-                    {line.sku} · Qty {line.qty} · {money(line.price_cents)}
+                    {line.sku} Â· Qty {line.qty} Â· {money(line.price_cents)}
                   </small>
                 </div>
 
@@ -927,7 +927,7 @@ function CustomerStorefront({
 
         {lastOrder ? (
           <small className="checkout-note">
-            Last order: {lastOrder.id} · {money(lastOrder.total_cents)} ·{" "}
+            Last order: {lastOrder.id} Â· {money(lastOrder.total_cents)} Â·{" "}
             {lastOrder.payment_status || "unpaid"}
           </small>
         ) : (
@@ -954,7 +954,7 @@ function OwnerGate({
   return (
     <section className="owner-gate">
       <div className="gate-card">
-        <p className="v3-kicker">WOLF OS™ Owner Login</p>
+        <p className="v3-kicker">WOLF OSâ„¢ Owner Login</p>
         <h1>Real owner access.</h1>
         <p>
           This login posts to <code>/api/owner/login</code> and receives a real
@@ -1046,7 +1046,7 @@ function OwnerConsole({
       <div className="owner-hero">
         <div>
           <p className="v3-kicker">Operator Mode</p>
-          <h1>WOLF OS™ SaaS Command Center</h1>
+          <h1>WOLF OSâ„¢ SaaS Command Center</h1>
           <p>
             Real owner dashboard connected to orders, products, stores, inventory,
             and backend health.
