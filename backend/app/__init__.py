@@ -12,6 +12,40 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 
+
+
+def _clean_owner_env_value(raw: object, fallback: str = "") -> str:
+    value = str(raw or "").strip().strip('"').strip("'")
+
+    if not value:
+        return fallback
+
+    value = value.replace("\r", "\n")
+    parts = [part.strip() for part in value.split("\n") if part.strip()]
+
+    # Handles bad Render paste:
+    # OWNER_API_TOKEN
+    # wolf-owner-local-token
+    if len(parts) >= 2 and parts[0].upper().replace(" ", "_") in {"OWNER_API_TOKEN", "ADMIN_PASSWORD"}:
+        value = parts[-1]
+
+    # Handles bad Render paste:
+    # OWNER_API_TOKEN=wolf-owner-local-token
+    if "=" in value:
+        left, right = value.split("=", 1)
+        if left.strip().upper().replace(" ", "_") in {"OWNER_API_TOKEN", "ADMIN_PASSWORD"}:
+            value = right.strip()
+
+    return value.strip().strip('"').strip("'") or fallback
+
+
+def owner_api_token() -> str:
+    return _clean_owner_env_value(
+        os.getenv("OWNER_API_TOKEN", ""),
+        "wolf-owner-local-token",
+    )
+
+
 OWNER = os.getenv("APP_OWNER", "Andrew Wolverton")
 BRAND = os.getenv("APP_BRAND", "I AM THE ONE™")
 SYSTEM = os.getenv("APP_SYSTEM", "WOLF OS™")
@@ -292,7 +326,7 @@ def ensure_schema(app: Flask) -> None:
 
 
 def owner_token() -> str:
-    return os.getenv("OWNER_API_TOKEN", "wolf-owner-local-token").strip() or "wolf-owner-local-token"
+    return owner_api_token().strip() or "wolf-owner-local-token"
 
 
 def require_owner() -> tuple[bool, Any]:
