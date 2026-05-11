@@ -723,45 +723,88 @@ function SaasLanding({
   products: Product[];
   stores: Store[];
 }) {
+  const productCount = products.length || health?.counts?.products || 0;
+  const storeCount = stores.length || health?.counts?.stores || 1;
+  const orderCount = health?.counts?.orders || 0;
+  const featuredProduct = products[0];
+
   return (
     <section className="landing-grid">
       <div className="landing-hero">
-        <p className="v3-kicker">Functional SaaS v3 Platform</p>
-        <h1>Luxury storefronts with real checkout and owner operations.</h1>
+        <p className="v3-kicker">I AM THE ONE™ · WOLF OS™ SaaS</p>
+        <h1>Launch a premium storefront with checkout, orders, and owner control.</h1>
         <p>
-          This is wired as a real SaaS engine: stores, products, checkout,
-          orders, stock decrement, owner login, and WOLF OS™ dashboard control.
+          A live SaaS commerce demo built for creators, small brands, and service
+          sellers who need a clean storefront, real checkout flow, inventory tracking,
+          and an owner dashboard without starting from zero.
         </p>
 
         <div className="landing-actions">
           <a className="v3-button primary" href="/store/demo">
-            Launch Storefront
+            View Live Store Demo
           </a>
           <a className="v3-button secondary" href="/owner">
             Open Owner Console
           </a>
         </div>
+
+        <div className="shine-box">
+          <strong>Demo owner access</strong>
+          <span>Owner URL: /owner</span>
+          <span>Password: WOLF-OWNER-2026</span>
+          <span>Mode: Real API · Real orders · Manual payment</span>
+        </div>
       </div>
 
       <aside className="landing-panel">
-        <p className="v3-kicker">Live Backend</p>
-        <h2>{health?.ok ? "Online" : "Checking"}</h2>
+        <p className="v3-kicker">Live System Status</p>
+        <h2>{health?.ok ? "Online and taking orders" : "Checking backend"}</h2>
 
         <div className="metric-list">
-          <Metric label="Stores" value={health?.counts?.stores || stores.length || 1} />
-          <Metric label="Products" value={health?.counts?.products || products.length} />
-          <Metric label="Orders" value={health?.counts?.orders || 0} />
+          <Metric label="Stores" value={storeCount} />
+          <Metric label="Products" value={productCount} />
+          <Metric label="Orders" value={orderCount} />
         </div>
 
         <div className="shine-box">
-          <strong>Live routes</strong>
-          <span>/store/demo</span>
-          <span>/owner</span>
+          <strong>Featured demo product</strong>
+          <span>{featuredProduct?.name || "Wolf Signature Hoodie"}</span>
+          <span>{money(featuredProduct?.price_cents || 9900)}</span>
+          <span>{Number(featuredProduct?.stock || 0)} live stock</span>
+        </div>
+      </aside>
+
+      <aside className="landing-panel">
+        <p className="v3-kicker">Sellable Packages</p>
+        <h2>Simple offer ladder</h2>
+
+        <div className="metric-list">
+          <Metric label="Demo Setup" value="$499+" />
+          <Metric label="Pro Storefront" value="$1,500+" />
+          <Metric label="SaaS Buildout" value="$5,000+" />
+        </div>
+
+        <div className="shine-box">
+          <strong>What buyers get</strong>
+          <span>Branded storefront</span>
+          <span>Owner dashboard</span>
+          <span>Product and order management</span>
+          <span>Deploy-ready frontend and backend</span>
+        </div>
+
+        <div className="landing-actions">
+          <a className="v3-button primary" href="/store/demo">
+            Start Demo
+          </a>
+          <a className="v3-button secondary" href="mailto:awolf4277@gmail.com?subject=I%20AM%20THE%20ONE%20SaaS%20Setup">
+            Request Setup
+          </a>
         </div>
       </aside>
     </section>
   );
 }
+
 
 function CustomerStorefront({
   storeSlug,
