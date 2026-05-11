@@ -1,0 +1,39 @@
+﻿services:
+  - type: web
+    name: i-am-the-one-saas-api
+    runtime: python
+    rootDir: backend
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:app --bind 0.0.0.0:$PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.7
+      - key: APP_OWNER
+        value: Andrew Wolverton
+      - key: APP_BRAND
+        value: I AM THE ONE™
+      - key: APP_SYSTEM
+        value: WOLF OS™
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: OWNER_PASSWORD
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+
+  - type: web
+    name: i-am-the-one-saas-web
+    runtime: static
+    rootDir: frontend
+    plan: free
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_BACKEND_URL
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
