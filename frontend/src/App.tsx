@@ -732,7 +732,7 @@ function SaasLanding({
     <section className="landing-grid">
       <div className="landing-hero">
         <p className="v3-kicker">I AM THE ONE™ · WOLF OS™ SaaS</p>
-        <h1>Launch a premium storefront with checkout, orders, and owner control.</h1>
+        <h1>Launch a premium SaaS storefront businesses can buy, demo, and deploy fast.</h1>
         <p>
           A live SaaS commerce demo built for creators, small brands, and service
           sellers who need a clean storefront, real checkout flow, inventory tracking,
@@ -752,7 +752,7 @@ function SaasLanding({
           <strong>Demo owner access</strong>
           <span>Owner URL: /owner</span>
           <span>Password: WOLF-OWNER-2026</span>
-          <span>Mode: Real API · Real orders · Manual payment</span>
+          <span>Mode: Real API · Real orders · Manual payment · Buyer-ready demo</span>
         </div>
       </div>
 
@@ -779,7 +779,7 @@ function SaasLanding({
         <h2>Simple offer ladder</h2>
 
         <div className="metric-list">
-          <Metric label="Demo Setup" value="$499+" />
+          <Metric label="Starter Build" value="$499+" />
           <Metric label="Pro Storefront" value="$1,500+" />
           <Metric label="SaaS Buildout" value="$5,000+" />
         </div>
