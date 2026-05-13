@@ -23,7 +23,7 @@
       - key: CORS_ORIGINS
         sync: false
 
-   - type: web
+  - type: web
     name: i-am-the-one-saas-web
     runtime: static
     rootDir: frontend
