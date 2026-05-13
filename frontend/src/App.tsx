@@ -332,7 +332,7 @@ function App() {
         products: []
       }));
 
-      const storesData = await apiJson<any>("/api/owner/stores", {}, token).catch(() => ({
+      const storesData = await apiJson<any>("/api/stores").catch(() => ({
         stores: []
       }));
 
