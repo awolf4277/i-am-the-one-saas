@@ -26,8 +26,10 @@
    - type: web
     name: i-am-the-one-saas-web
     runtime: static
-    buildCommand: cd frontend && npm install && npm run build
-    staticPublishPath: frontend/dist
+    rootDir: frontend
+    plan: free
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
     envVars:
       - key: NODE_VERSION
         value: 22.16.0
