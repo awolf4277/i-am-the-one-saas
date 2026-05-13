@@ -1,6 +1,6 @@
 ﻿services:
   - type: web
-    name: i-am-the-one-saas-api
+    name: i-am-the-one-saas-frontend-live
     runtime: python
     rootDir: backend
     plan: free
@@ -24,7 +24,7 @@
         sync: false
 
   - type: web
-    name: i-am-the-one-saas-web
+    name: i-am-the-one-saas-frontend-live
     runtime: static
     rootDir: frontend
     plan: free
