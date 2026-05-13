@@ -1,11 +1,11 @@
 ﻿services:
   - type: web
-    name: i-am-the-one-saas-frontend-live
+    name: i-am-the-one-saas-api
     runtime: python
     rootDir: backend
     plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn wsgi:app --bind 0.0.0.0:$PORT
+    startCommand: python -m gunicorn wsgi:app --bind 0.0.0.0:$PORT
     healthCheckPath: /api/health
     envVars:
       - key: PYTHON_VERSION
