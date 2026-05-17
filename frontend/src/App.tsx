@@ -245,8 +245,30 @@ async function apiJson<T>(
 }
 
 function App() {
-  const path = window.location.pathname;
-  const storeSlug = getStoreSlug();
+  const readRoutePath = () => {
+    const rawRoute = window.location.hash
+      ? window.location.hash.replace(/^#/, "")
+      : window.location.pathname;
+
+    return rawRoute.startsWith("/") ? rawRoute : `/${rawRoute}`;
+  };
+
+  const [path, setPath] = useState(readRoutePath);
+
+  useEffect(() => {
+    const syncRoute = () => setPath(readRoutePath());
+
+    window.addEventListener("hashchange", syncRoute);
+    window.addEventListener("popstate", syncRoute);
+
+    return () => {
+      window.removeEventListener("hashchange", syncRoute);
+      window.removeEventListener("popstate", syncRoute);
+    };
+  }, []);
+
+  const pathParts = path.split("/").filter(Boolean);
+  const storeSlug = pathParts[0] === "store" && pathParts[1] ? pathParts[1] : getStoreSlug();
 
   const isOwner = path.startsWith("/owner");
   const isStore = path.startsWith("/store");
@@ -698,7 +720,7 @@ function OwnershipBar({
 
       <nav className="v3-nav">
         <a href="/store/demo">Customer Store</a>
-        <a href="/owner">Owner Console</a>
+        <a href="/#owner">Owner Console</a>
       </nav>
 
       <div className="system-strip">
@@ -743,7 +765,7 @@ function SaasLanding({
           <a className="v3-button primary" href="/store/demo">
             View Live Store Demo
           </a>
-          <a className="v3-button secondary" href="/owner">
+          <a className="v3-button secondary" href="/#owner">
             Open Owner Console
           </a>
         </div>
