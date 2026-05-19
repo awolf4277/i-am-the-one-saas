@@ -173,6 +173,26 @@ def ensure_schema(app: Flask) -> None:
             """
         )
 
+        con.execute(
+            """
+            CREATE TABLE IF NOT EXISTS setup_requests (
+                id TEXT PRIMARY KEY,
+                name TEXT,
+                business_name TEXT,
+                email TEXT,
+                phone TEXT,
+                what_i_sell TEXT,
+                budget_range TEXT,
+                timeline TEXT,
+                website TEXT,
+                message TEXT,
+                source TEXT,
+                status TEXT,
+                created_at TEXT
+            )
+            """
+        )
+
         for name, ddl in {
             "id": "TEXT",
             "slug": "TEXT",
@@ -389,6 +409,7 @@ def create_app() -> Flask:
                 "stores": con.execute("SELECT COUNT(*) AS c FROM stores").fetchone()["c"],
                 "products": con.execute("SELECT COUNT(*) AS c FROM products").fetchone()["c"],
                 "orders": con.execute("SELECT COUNT(*) AS c FROM orders").fetchone()["c"],
+                "setup_requests": con.execute("SELECT COUNT(*) AS c FROM setup_requests").fetchone()["c"],
             }
         finally:
             con.close()
@@ -630,6 +651,113 @@ def create_app() -> Flask:
         except Exception as exc:
             con.rollback()
             return jsonify({"ok": False, "error": f"Checkout failed: {type(exc).__name__}: {exc}"}), 500
+        finally:
+            con.close()
+
+    @app.post("/api/setup-requests")
+    def create_setup_request():
+        payload = request.get_json(silent=True) or {}
+
+        name = str(payload.get("name") or "").strip()
+        business_name = str(payload.get("business_name") or "").strip()
+        email = str(payload.get("email") or "").strip()
+        phone = str(payload.get("phone") or "").strip()
+        what_i_sell = str(payload.get("what_i_sell") or payload.get("whatISell") or "").strip()
+        budget_range = str(payload.get("budget_range") or payload.get("budgetRange") or "").strip()
+        timeline = str(payload.get("timeline") or "").strip()
+        website = str(payload.get("website") or "").strip()
+        message = str(payload.get("message") or "").strip()
+        source = str(payload.get("source") or "homepage").strip() or "homepage"
+
+        if not name:
+            return jsonify({"ok": False, "error": "Name is required."}), 400
+        if not email:
+            return jsonify({"ok": False, "error": "Email is required."}), 400
+        if not business_name:
+            return jsonify({"ok": False, "error": "Business name is required."}), 400
+
+        request_id = "REQ-" + secrets.token_hex(5).upper()
+        created_at = now_iso()
+
+        con = connect(app)
+        try:
+            con.execute(
+                """
+                INSERT INTO setup_requests (
+                    id, name, business_name, email, phone, what_i_sell,
+                    budget_range, timeline, website, message, source, status, created_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    request_id,
+                    name,
+                    business_name,
+                    email,
+                    phone,
+                    what_i_sell,
+                    budget_range,
+                    timeline,
+                    website,
+                    message,
+                    source,
+                    "new",
+                    created_at,
+                ),
+            )
+            con.commit()
+
+            return jsonify(
+                {
+                    "ok": True,
+                    "request_id": request_id,
+                    "setup_request": {
+                        "id": request_id,
+                        "name": name,
+                        "business_name": business_name,
+                        "email": email,
+                        "phone": phone,
+                        "what_i_sell": what_i_sell,
+                        "budget_range": budget_range,
+                        "timeline": timeline,
+                        "website": website,
+                        "message": message,
+                        "source": source,
+                        "status": "new",
+                        "created_at": created_at,
+                    },
+                }
+            ), 201
+        except Exception as exc:
+            con.rollback()
+            return jsonify({"ok": False, "error": f"Setup request failed: {type(exc).__name__}: {exc}"}), 500
+        finally:
+            con.close()
+
+    @app.get("/api/owner/setup-requests")
+    def owner_setup_requests():
+        ok, error = require_owner()
+        if not ok:
+            return error
+
+        con = connect(app)
+        try:
+            rows = con.execute(
+                """
+                SELECT *
+                FROM setup_requests
+                ORDER BY created_at DESC
+                LIMIT 100
+                """
+            ).fetchall()
+
+            return jsonify(
+                {
+                    "ok": True,
+                    "count": len(rows),
+                    "setup_requests": [dict(row) for row in rows],
+                }
+            )
         finally:
             con.close()
 
