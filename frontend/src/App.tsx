@@ -65,6 +65,22 @@ type Order = {
   item_count?: number;
 };
 
+type SetupRequest = {
+  id?: string;
+  name?: string;
+  business_name?: string;
+  email?: string;
+  phone?: string;
+  what_i_sell?: string;
+  budget_range?: string;
+  timeline?: string;
+  website?: string;
+  message?: string;
+  source?: string;
+  status?: string;
+  created_at?: string;
+};
+
 type CartLine = {
   product_id: string;
   sku: string;
@@ -175,6 +191,16 @@ function normalizeOrders(payload: any): Order[] {
   return [];
 }
 
+function normalizeSetupRequests(payload: any): SetupRequest[] {
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload?.setup_requests)) return payload.setup_requests;
+  if (Array.isArray(payload?.requests)) return payload.requests;
+  if (Array.isArray(payload?.items)) return payload.items;
+  if (Array.isArray(payload?.data)) return payload.data;
+
+  return [];
+}
+
 function productKey(product: Product, index: number) {
   return String(product.id || product.sku || `product-${index}`);
 }
@@ -277,6 +303,7 @@ function App() {
   const [stores, setStores] = useState<Store[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [setupRequests, setSetupRequests] = useState<SetupRequest[]>([]);
   const [ownerProducts, setOwnerProducts] = useState<Product[]>([]);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -349,6 +376,11 @@ function App() {
     try {
       const ordersData = await apiJson<any>("/api/owner/orders", {}, token);
       setOrders(normalizeOrders(ordersData));
+
+      const setupRequestsData = await apiJson<any>("/api/owner/setup-requests", {}, token).catch(() => ({
+        setup_requests: []
+      }));
+      setSetupRequests(normalizeSetupRequests(setupRequestsData));
 
       const productsData = await apiJson<any>("/api/owner/products", {}, token).catch(() => ({
         products: []
@@ -546,6 +578,7 @@ function App() {
     localStorage.removeItem("wolf_owner_token");
     setOwnerToken("");
     setOrders([]);
+    setSetupRequests([]);
     setOwnerProducts([]);
     setNotice("Owner console locked.");
   }
@@ -648,6 +681,7 @@ function App() {
             health={health}
             stores={stores}
             orders={orders}
+            setupRequests={setupRequests}
             products={ownerProducts}
             loading={ownerLoading}
             onRefresh={() => loadOwnerData(ownerToken)}
@@ -1094,6 +1128,7 @@ function OwnerConsole({
   health,
   stores,
   orders,
+  setupRequests,
   products,
   loading,
   onRefresh,
@@ -1104,6 +1139,7 @@ function OwnerConsole({
   health: ApiHealth | null;
   stores: Store[];
   orders: Order[];
+  setupRequests: SetupRequest[];
   products: Product[];
   loading: boolean;
   onRefresh: () => void;
@@ -1184,6 +1220,39 @@ function OwnerConsole({
       </div>
 
       <div className="owner-panels">
+        <div className="owner-panel wide">
+          <div className="panel-heading">
+            <div>
+              <p className="v3-kicker">Setup Requests</p>
+              <h2>Buyer Leads</h2>
+            </div>
+
+            <span className="v3-pill online">{setupRequests.length} LIVE</span>
+          </div>
+
+          {setupRequests.length ? (
+            <div className="owner-table">
+              {setupRequests.map((request) => (
+                <div className="owner-row" key={request.id || `${request.email}-${request.created_at}`}>
+                  <div>
+                    <strong>{request.business_name || request.name || "Setup request"}</strong>
+                    <span>{request.name || "Unknown buyer"} · {request.email || "No email"}</span>
+                    <span>{request.what_i_sell || "No business details yet"}</span>
+                  </div>
+
+                  <div>
+                    <strong>{request.budget_range || "Budget TBD"}</strong>
+                    <span>{request.timeline || "Timeline TBD"}</span>
+                    <span>{request.phone || request.website || "No phone/site"}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="muted">No setup requests yet.</p>
+          )}
+        </div>
+
         <div className="owner-panel wide">
           <div className="panel-heading">
             <div>
