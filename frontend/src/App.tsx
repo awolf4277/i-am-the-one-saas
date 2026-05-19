@@ -754,11 +754,11 @@ function SaasLanding({
     <section className="landing-grid">
       <div className="landing-hero">
         <p className="v3-kicker">I AM THE ONE™ · WOLF OS™ SaaS</p>
-        <h1>Launch a premium SaaS storefront businesses can buy, demo, and deploy fast.</h1>
+        <h1>Launch a premium storefront with checkout, inventory, and an owner dashboard already built.</h1>
         <p>
-          A live SaaS commerce demo built for creators, small brands, and service
-          sellers who need a clean storefront, real checkout flow, inventory tracking,
-          and an owner dashboard without starting from zero.
+          I AM THE ONE™ gives creators, small brands, and service businesses a
+          buyer-ready commerce system they can demo today, customize fast, and
+          deploy without starting from zero.
         </p>
 
         <div className="landing-actions">
@@ -798,20 +798,20 @@ function SaasLanding({
 
       <aside className="landing-panel">
         <p className="v3-kicker">Sellable Packages</p>
-        <h2>Simple offer ladder</h2>
+        <h2>Clear buyer-ready offers</h2>
 
         <div className="metric-list">
-          <Metric label="Starter Build" value="$499+" />
-          <Metric label="Pro Storefront" value="$1,500+" />
-          <Metric label="SaaS Buildout" value="$5,000+" />
+          <Metric label="Starter Storefront" value="$499+" />
+          <Metric label="Pro Storefront + Dashboard" value="$1,500+" />
+          <Metric label="Custom SaaS Buildout" value="$5,000+" />
         </div>
 
         <div className="shine-box">
           <strong>What buyers get</strong>
-          <span>Branded storefront</span>
-          <span>Owner dashboard</span>
-          <span>Product and order management</span>
-          <span>Deploy-ready frontend and backend</span>
+          <span>Mobile-ready storefront demo</span>
+          <span>Owner dashboard for orders and products</span>
+          <span>Real checkout flow with manual payment mode</span>
+          <span>Deploy-ready frontend and backend foundation</span>
         </div>
 
         <div className="landing-actions">
