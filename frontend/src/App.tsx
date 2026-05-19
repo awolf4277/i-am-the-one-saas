@@ -719,7 +719,7 @@ function OwnershipBar({
       </a>
 
       <nav className="v3-nav">
-        <a href="/store/demo">Customer Store</a>
+        <a href="/#store/demo">Customer Store</a>
         <a href="/#owner">Owner Console</a>
       </nav>
 
@@ -762,7 +762,7 @@ function SaasLanding({
         </p>
 
         <div className="landing-actions">
-          <a className="v3-button primary" href="/store/demo">
+          <a className="v3-button primary" href="/#store/demo">
             View Live Store Demo
           </a>
           <a className="v3-button secondary" href="/#owner">
@@ -772,7 +772,7 @@ function SaasLanding({
 
         <div className="shine-box">
           <strong>Demo owner access</strong>
-          <span>Owner URL: /owner</span>
+          <span>Owner URL: /#owner</span>
           <span>Password: WOLF-OWNER-2026</span>
           <span>Mode: Real API · Real orders · Manual payment · Buyer-ready demo</span>
         </div>
@@ -815,7 +815,7 @@ function SaasLanding({
         </div>
 
         <div className="landing-actions">
-          <a className="v3-button primary" href="/store/demo">
+          <a className="v3-button primary" href="/#store/demo">
             Start Demo
           </a>
           <a className="v3-button secondary" href="mailto:awolf4277@gmail.com?subject=I%20AM%20THE%20ONE%20SaaS%20Setup">
@@ -1352,3 +1352,4 @@ function Metric({ label, value }: { label: string; value: React.ReactNode }) {
 }
 
 export default App;
+
