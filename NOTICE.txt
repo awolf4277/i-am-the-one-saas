@@ -1,0 +1,31 @@
+﻿I AM THE ONE™ · WOLF OS™
+PROPRIETARY SOFTWARE NOTICE
+
+Owner:
+Andrew Wolverton
+
+Contact:
+awolf4277@gmail.com
+
+Copyright:
+Copyright © 2026 Andrew Wolverton. All Rights Reserved.
+
+This project is a proprietary SaaS/storefront starter system.
+
+Protected materials include:
+- Source code
+- Backend architecture
+- Frontend implementation
+- Storefront UI
+- Owner console UI
+- API workflow design
+- Product/order/inventory flow
+- Deployment documentation
+- Client setup documentation
+- I AM THE ONE™ branding
+- WOLF OS™ styling and system language
+- Demo sales copy and package structure
+
+Unauthorized copying, cloning, redistribution, resale, rebranding, sublicensing, modification, publication, or commercial use is prohibited.
+
+Public demo access is for evaluation only.

@@ -1,4 +1,5 @@
-// Copyright © 2026 Andrew Wolverton. All Rights Reserved.
+﻿import "./theftLock";
+// Copyright Â© 2026 Andrew Wolverton. All Rights Reserved.
 
 import React from "react";
 import ReactDOM from "react-dom/client";

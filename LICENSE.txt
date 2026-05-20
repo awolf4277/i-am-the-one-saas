@@ -1,0 +1,9 @@
+﻿Copyright © 2026 Andrew Wolverton. All Rights Reserved.
+
+I AM THE ONE™ and WOLF OS™ are proprietary software, branding, UI concepts, workflows, source code, frontend implementation, backend architecture, deployment structure, documentation, and business system materials owned by Andrew Wolverton.
+
+No permission is granted to copy, clone, redistribute, resell, rebrand, sublicense, publish, modify, or commercially use this source code, demo, design system, backend architecture, frontend implementation, documentation, or related assets without written permission from Andrew Wolverton.
+
+Viewing the public demo, browser assets, screenshots, or frontend JavaScript does not grant any license or usage rights.
+
+Contact: awolf4277@gmail.com

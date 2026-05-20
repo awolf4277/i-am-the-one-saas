@@ -12,3 +12,17 @@ backend/data/
 .DS_Store
 node_modules/
 frontend/dist/
+
+# WOLF OS security lock
+.env
+.env.local
+.env.production.local
+.env.development.local
+backend/.env
+frontend/.env
+frontend/.env.local
+frontend/.env.production.local
+*.sqlite3
+*.db
+backend/data/
+backend/uploads/
