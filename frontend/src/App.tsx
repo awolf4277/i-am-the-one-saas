@@ -1498,15 +1498,19 @@ function OwnerConsole({
           {setupRequests.length ? (
             <div className="owner-table">
               {setupRequests.map((request) => (
-                <div className="owner-row" key={request.id || `${request.email}-${request.created_at}`}>
-                  <div>
+                <div className="owner-row lead-row" key={request.id || `${request.email}-${request.created_at}`}>
+                  <div className="lead-main">
                     <strong>{request.business_name || request.name || "Setup request"}</strong>
-                    <span>{request.name || "Unknown buyer"} · {request.email || "No email"}</span>
-                    <span>{request.what_i_sell || "No business details yet"}</span>
+                    <span className="lead-contact">
+                      {request.name || "Unknown buyer"} · {request.email || "No email"}
+                    </span>
+                    <span className="lead-detail">
+                      {request.what_i_sell || "No business details yet"}
+                    </span>
                   </div>
 
-                  <div>
-                    <strong>{request.budget_range || "Budget TBD"}</strong>
+                  <div className="lead-meta">
+                    <span className="lead-badge">{request.budget_range || "Budget TBD"}</span>
                     <span>{request.timeline || "Timeline TBD"}</span>
                     <span>{request.phone || request.website || "No phone/site"}</span>
                   </div>

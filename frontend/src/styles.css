@@ -1467,3 +1467,56 @@ code {
     grid-template-columns: 1fr;
   }
 }
+
+/* Owner setup request lead cards */
+.lead-row {
+  align-items: stretch;
+  gap: 16px;
+}
+
+.lead-main {
+  display: grid;
+  gap: 6px;
+}
+
+.lead-contact {
+  color: rgba(255, 255, 255, 0.78);
+  font-weight: 700;
+}
+
+.lead-detail {
+  color: rgba(255, 255, 255, 0.68);
+  line-height: 1.5;
+}
+
+.lead-meta {
+  display: grid;
+  justify-items: end;
+  align-content: center;
+  gap: 7px;
+  min-width: 180px;
+  text-align: right;
+}
+
+.lead-badge {
+  display: inline-flex;
+  width: fit-content;
+  border-radius: 999px;
+  padding: 7px 10px;
+  background: rgba(93, 255, 231, 0.10);
+  border: 1px solid rgba(93, 255, 231, 0.22);
+  color: #d9fff9;
+  font-weight: 900;
+}
+
+@media (max-width: 760px) {
+  .lead-row {
+    grid-template-columns: 1fr;
+  }
+
+  .lead-meta {
+    justify-items: start;
+    text-align: left;
+    min-width: 0;
+  }
+}
