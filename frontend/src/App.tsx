@@ -912,6 +912,8 @@ function SaasLanding({
           <Metric label="Custom SaaS Buildout" value="$3,000+" />
         </div>
 
+        <SetupRequestForm />
+
         <div className="shine-box">
           <strong>What buyers get</strong>
           <span>Mobile-ready storefront demo</span>
@@ -1200,6 +1202,192 @@ function OwnerGate({
     </section>
   );
 }
+
+
+function SetupRequestForm() {
+  const [form, setForm] = useState({
+    name: "",
+    business_name: "",
+    email: "",
+    phone: "",
+    what_i_sell: "",
+    budget_range: "",
+    timeline: "",
+    website: "",
+    message: ""
+  });
+
+  const [submitting, setSubmitting] = useState(false);
+  const [sent, setSent] = useState("");
+  const [formError, setFormError] = useState("");
+
+  function updateField(field: keyof typeof form, value: string) {
+    setForm((current) => ({ ...current, [field]: value }));
+  }
+
+  async function submitSetupRequest(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSent("");
+    setFormError("");
+
+    const name = form.name.trim();
+    const email = form.email.trim();
+    const whatISell = form.what_i_sell.trim();
+
+    if (!name || !email || !whatISell) {
+      setFormError("Name, email, and what you sell are required.");
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+
+      await apiJson<any>("/api/setup-requests", {
+        method: "POST",
+        body: JSON.stringify({
+          ...form,
+          name,
+          email,
+          what_i_sell: whatISell,
+          source: "homepage_setup_form"
+        })
+      });
+
+      setSent("Request received. Andrew can review it in the Owner Console.");
+      setForm({
+        name: "",
+        business_name: "",
+        email: "",
+        phone: "",
+        what_i_sell: "",
+        budget_range: "",
+        timeline: "",
+        website: "",
+        message: ""
+      });
+    } catch (err: any) {
+      setFormError(err?.message || "Setup request failed. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <form className="setup-form" onSubmit={submitSetupRequest}>
+      <div className="setup-form-head">
+        <p className="v3-kicker">Request Setup</p>
+        <h3>Tell Andrew what you want to launch</h3>
+        <p>
+          Submit your business details and the request will appear inside the
+          Owner Console as a real lead.
+        </p>
+      </div>
+
+      <div className="setup-form-grid">
+        <label>
+          Name *
+          <input
+            value={form.name}
+            onChange={(event) => updateField("name", event.target.value)}
+            placeholder="Your name"
+          />
+        </label>
+
+        <label>
+          Business
+          <input
+            value={form.business_name}
+            onChange={(event) => updateField("business_name", event.target.value)}
+            placeholder="Business or brand name"
+          />
+        </label>
+
+        <label>
+          Email *
+          <input
+            type="email"
+            value={form.email}
+            onChange={(event) => updateField("email", event.target.value)}
+            placeholder="you@example.com"
+          />
+        </label>
+
+        <label>
+          Phone
+          <input
+            value={form.phone}
+            onChange={(event) => updateField("phone", event.target.value)}
+            placeholder="Optional"
+          />
+        </label>
+
+        <label>
+          What do you sell? *
+          <input
+            value={form.what_i_sell}
+            onChange={(event) => updateField("what_i_sell", event.target.value)}
+            placeholder="Clothing, services, digital products..."
+          />
+        </label>
+
+        <label>
+          Budget range
+          <select
+            value={form.budget_range}
+            onChange={(event) => updateField("budget_range", event.target.value)}
+          >
+            <option value="">Select range</option>
+            <option value="$499+ Starter">$499+ Starter</option>
+            <option value="$1,500+ Pro">$1,500+ Pro</option>
+            <option value="$3,000+ Custom">$3,000+ Custom</option>
+            <option value="Not sure yet">Not sure yet</option>
+          </select>
+        </label>
+
+        <label>
+          Timeline
+          <select
+            value={form.timeline}
+            onChange={(event) => updateField("timeline", event.target.value)}
+          >
+            <option value="">Select timeline</option>
+            <option value="ASAP">ASAP</option>
+            <option value="This week">This week</option>
+            <option value="This month">This month</option>
+            <option value="Exploring">Exploring</option>
+          </select>
+        </label>
+
+        <label>
+          Website/social
+          <input
+            value={form.website}
+            onChange={(event) => updateField("website", event.target.value)}
+            placeholder="Link if you have one"
+          />
+        </label>
+      </div>
+
+      <label className="setup-message">
+        Message
+        <textarea
+          value={form.message}
+          onChange={(event) => updateField("message", event.target.value)}
+          placeholder="Tell me what you want the storefront or SaaS system to do."
+          rows={4}
+        />
+      </label>
+
+      {formError ? <p className="form-error">{formError}</p> : null}
+      {sent ? <p className="form-success">{sent}</p> : null}
+
+      <button className="v3-button" type="submit" disabled={submitting}>
+        {submitting ? "Sending..." : "Send Setup Request"}
+      </button>
+    </form>
+  );
+}
+
 
 function OwnerConsole({
   health,

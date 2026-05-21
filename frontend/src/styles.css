@@ -1376,3 +1376,94 @@ code {
   }
 }
 
+
+/* Sellable demo setup request form */
+.setup-form {
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.055);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.24);
+}
+
+.setup-form-head {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.setup-form-head h3 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.setup-form-head p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.55;
+}
+
+.setup-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.setup-form label {
+  display: grid;
+  gap: 7px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.setup-form input,
+.setup-form select,
+.setup-form textarea {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.22);
+  color: #fff;
+  padding: 11px 12px;
+  outline: none;
+}
+
+.setup-form input:focus,
+.setup-form select:focus,
+.setup-form textarea:focus {
+  border-color: rgba(93, 255, 231, 0.55);
+  box-shadow: 0 0 0 4px rgba(93, 255, 231, 0.08);
+}
+
+.setup-message {
+  margin-top: 12px;
+}
+
+.form-error,
+.form-success {
+  margin: 12px 0;
+  padding: 11px 12px;
+  border-radius: 14px;
+  font-weight: 800;
+}
+
+.form-error {
+  border: 1px solid rgba(255, 84, 112, 0.35);
+  background: rgba(255, 84, 112, 0.10);
+  color: #ffd7df;
+}
+
+.form-success {
+  border: 1px solid rgba(93, 255, 231, 0.35);
+  background: rgba(93, 255, 231, 0.10);
+  color: #d9fff9;
+}
+
+@media (max-width: 760px) {
+  .setup-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
