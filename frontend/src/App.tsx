@@ -835,7 +835,7 @@ function SaasLanding({
     <section className="landing-grid">
       <div className="landing-hero">
         <p className="v3-kicker">I AM THE ONE™ · WOLF OS™ SaaS</p>
-        <h1>Launch a premium storefront with checkout, inventory, and an owner dashboard already built.</h1>
+        <h1>Turn your business into a live storefront with checkout, products, orders, and an owner dashboard ready to run.</h1>
         <p>
           I AM THE ONE™ gives creators, small brands, and service businesses a
           buyer-ready commerce system they can demo today, customize fast, and
@@ -869,7 +869,7 @@ function SaasLanding({
               ) : (
                 <>
                   <p>
-                    Owner console access is available by request for serious demo reviews and client setup discussions.
+                    Owner console access is available by request for serious buyers, client demos, and setup discussions.
                   </p>
                   <div className="cta-row">
                     <a className="primary-btn" href={LOCK_GMAIL_HREF} target="_blank" rel="noreferrer">
@@ -904,12 +904,12 @@ function SaasLanding({
 
       <aside className="landing-panel">
         <p className="v3-kicker">Sellable Packages</p>
-        <h2>Clear buyer-ready offers</h2>
+        <h2>Launch packages for real buyers</h2>
 
         <div className="metric-list">
           <Metric label="Starter Storefront" value="$499+" />
           <Metric label="Pro Storefront + Dashboard" value="$1,500+" />
-          <Metric label="Custom SaaS Buildout" value="$5,000+" />
+          <Metric label="Custom SaaS Buildout" value="$3,000+" />
         </div>
 
         <div className="shine-box">
@@ -1498,6 +1498,7 @@ function Metric({ label, value }: { label: string; value: React.ReactNode }) {
 }
 
 export default App;
+
 
 
 
