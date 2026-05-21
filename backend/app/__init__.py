@@ -470,6 +470,119 @@ def create_app() -> Flask:
         finally:
             con.close()
 
+
+    @app.post("/api/stores/<slug>/products")
+    def owner_create_store_product(slug: str):
+        ok, error = require_owner()
+        if not ok:
+            return error
+
+        payload = request.get_json(silent=True) or {}
+
+        sku = str(payload.get("sku") or "").strip().upper()
+        name = str(payload.get("name") or "").strip()
+        category = str(payload.get("category") or "General").strip() or "General"
+        description = str(payload.get("description") or "").strip()
+        image_url = str(payload.get("image_url") or "").strip()
+
+        try:
+            price_cents = int(payload.get("price_cents") or 0)
+        except (TypeError, ValueError):
+            price_cents = 0
+
+        try:
+            stock = int(payload.get("stock") or 0)
+        except (TypeError, ValueError):
+            stock = 0
+
+        if not sku:
+            return jsonify({"ok": False, "error": "SKU is required."}), 400
+
+        if not name:
+            return jsonify({"ok": False, "error": "Product name is required."}), 400
+
+        if price_cents < 0:
+            return jsonify({"ok": False, "error": "Price cannot be negative."}), 400
+
+        if stock < 0:
+            return jsonify({"ok": False, "error": "Stock cannot be negative."}), 400
+
+        con = connect(app)
+        try:
+            store = con.execute(
+                "SELECT id, slug FROM stores WHERE slug = ? LIMIT 1",
+                (slug,),
+            ).fetchone()
+
+            if not store:
+                return jsonify({"ok": False, "error": f"Store not found: {slug}"}), 404
+
+            duplicate = con.execute(
+                "SELECT id FROM products WHERE store_id = ? AND sku = ? LIMIT 1",
+                (store["id"], sku),
+            ).fetchone()
+
+            if duplicate:
+                return jsonify({"ok": False, "error": f"SKU already exists: {sku}"}), 409
+
+            base_id = "".join(
+                ch.lower() if ch.isalnum() else "-"
+                for ch in (sku or name)
+            ).strip("-")
+
+            product_id = base_id or f"product-{secrets.token_hex(4)}"
+
+            existing_id = con.execute(
+                "SELECT id FROM products WHERE id = ? LIMIT 1",
+                (product_id,),
+            ).fetchone()
+
+            if existing_id:
+                product_id = f"{product_id}-{secrets.token_hex(3)}"
+
+            created_at = now_iso()
+
+            con.execute(
+                """
+                INSERT INTO products (
+                    id, store_id, store_slug, sku, name, category, description,
+                    price_cents, stock, image_url, created_at, updated_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    product_id,
+                    store["id"],
+                    store["slug"],
+                    sku,
+                    name,
+                    category,
+                    description,
+                    price_cents,
+                    stock,
+                    image_url,
+                    created_at,
+                    created_at,
+                ),
+            )
+
+            con.commit()
+
+            row = con.execute(
+                """
+                SELECT id, store_id, sku, name, category, description, price_cents, stock, image_url, updated_at
+                FROM products
+                WHERE id = ?
+                LIMIT 1
+                """,
+                (product_id,),
+            ).fetchone()
+
+            return jsonify({"ok": True, "product": product_dict(row)}), 201
+        finally:
+            con.close()
+
+
     @app.post("/api/stores/<slug>/checkout")
     def checkout(slug: str):
         payload = request.get_json(silent=True) or {}
