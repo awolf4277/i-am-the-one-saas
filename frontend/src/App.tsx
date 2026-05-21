@@ -2,6 +2,34 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 
+
+const LOCK_SHOW_DEMO_PASSWORD =
+  String(import.meta.env.VITE_SHOW_DEMO_PASSWORD || "").toLowerCase() === "true" &&
+  String(import.meta.env.VITE_OWNER_DEMO_PASSWORD || "").trim().length > 0;
+
+const LOCK_OWNER_DEMO_PASSWORD = String(import.meta.env.VITE_OWNER_DEMO_PASSWORD || "").trim();
+
+const LOCK_OWNER_EMAIL = "awolf4277@gmail.com";
+const LOCK_CONTACT_SUBJECT = encodeURIComponent("I AM THE ONE™ SaaS Demo Inquiry");
+const LOCK_CONTACT_BODY = encodeURIComponent(`Hi Andrew,
+
+I saw the I AM THE ONE™ SaaS demo and I am interested in talking about a build.
+
+Name:
+Business:
+Package interested in:
+Budget:
+Timeline:
+What I need:
+`);
+
+const LOCK_MAILTO_HREF = `mailto:${LOCK_OWNER_EMAIL}?subject=${LOCK_CONTACT_SUBJECT}&body=${LOCK_CONTACT_BODY}`;
+
+const LOCK_GMAIL_HREF = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
+  LOCK_OWNER_EMAIL
+)}&su=${LOCK_CONTACT_SUBJECT}&body=${LOCK_CONTACT_BODY}`;
+
+
 type ApiHealth = {
   ok?: boolean;
   app?: string;
@@ -805,10 +833,35 @@ function SaasLanding({
         </div>
 
         <div className="shine-box">
-          <strong>Demo owner access</strong>
-          <span>Owner URL: /#owner</span>
-          <span>Password: WOLF-OWNER-2026</span>
-          <span>Mode: Real API · Real orders · Manual payment · Buyer-ready demo</span>
+          <p className="eyebrow">Owner Console Demo</p>
+
+              {LOCK_SHOW_DEMO_PASSWORD ? (
+                <>
+                  <p>
+                    <strong>Owner URL:</strong> /#owner
+                  </p>
+                  <p>
+                    <strong>Password:</strong> {LOCK_OWNER_DEMO_PASSWORD}
+                  </p>
+                  <p>
+                    <strong>Mode:</strong> Local demo access enabled
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p>
+                    Owner console access is available by request for serious demo reviews and client setup discussions.
+                  </p>
+                  <div className="cta-row">
+                    <a className="primary-btn" href={LOCK_GMAIL_HREF} target="_blank" rel="noreferrer">
+                      Request Owner Demo Access
+                    </a>
+                    <a className="secondary-btn" href={LOCK_MAILTO_HREF}>
+                      Email Andrew
+                    </a>
+                  </div>
+                </>
+              )}
         </div>
       </div>
 
@@ -1123,7 +1176,7 @@ function OwnerGate({
           </button>
         </form>
 
-        <small>Owner passwords: WOLF-OWNER-2026 or WOLF-DEMO</small>
+        <small>Owner passwords:  or WOLF-DEMO</small>
       </div>
     </section>
   );
