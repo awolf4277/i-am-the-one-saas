@@ -1,62 +1,34 @@
-\# I AM THE ONE™ SaaS Platform
+# I AM THE ONE™ SaaS v3
 
+Premium storefront + owner dashboard system powered by WOLF OS™.
 
+## What Works
 
-Powered by WOLF OS™
+- Live storefront
+- Owner console
+- Owner login
+- Live product creation
+- Live orders
+- Inventory-aware checkout
+- Setup request lead capture
+- Render deployment
+- GitHub version control
 
+## Packages
 
+### Starter Storefront
+Starting at $499+
+
+### Pro Storefront + Owner Dashboard
+Starting at $1,500+
+
+### Custom SaaS Buildout
+Starting at $3,000+
+
+## Owner
+
+Andrew Wolverton  
+I AM THE ONE™  
+WOLF OS™
 
 Copyright © 2026 Andrew Wolverton. All Rights Reserved.
-
-
-
-\## Purpose
-
-
-
-This is the SaaS foundation for I AM THE ONE™ v3.
-
-
-
-The v3 project is the working demo and sellable package.
-
-
-
-This SaaS project is the next platform version designed for:
-
-
-
-\- Multiple stores
-
-\- Multiple business owners
-
-\- Store slugs
-
-\- Owner dashboards
-
-\- Product management
-
-\- Orders
-
-\- Media slots
-
-\- Billing foundation
-
-\- Platform admin controls
-
-
-
-\## Project Structure
-
-
-
-```text
-
-backend/
-
-frontend/
-
-docs/
-
-package-docs/
-
