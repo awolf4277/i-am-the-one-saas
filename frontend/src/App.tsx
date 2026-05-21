@@ -158,7 +158,26 @@ function cleanApiBase(raw: unknown) {
   }
 }
 
-const API_BASE = cleanApiBase((import.meta as any).env?.VITE_BACKEND_URL);
+const RENDER_API_BASE = "https://i-am-the-one-saas-api.onrender.com";
+
+function productionSafeApiBase() {
+  const raw = cleanApiBase((import.meta as any).env?.VITE_BACKEND_URL);
+
+  if (typeof window !== "undefined") {
+    const host = window.location.hostname;
+
+    if (
+      host.includes("i-am-the-one-saas-frontend-live.onrender.com") &&
+      (!raw || raw.includes("127.0.0.1") || raw.includes("localhost"))
+    ) {
+      return RENDER_API_BASE;
+    }
+  }
+
+  return raw || RENDER_API_BASE;
+}
+
+const API_BASE = productionSafeApiBase();
 
 function apiUrl(path: string) {
   const cleanPath = path.startsWith("/") ? path : `/${path}`;
@@ -1479,5 +1498,6 @@ function Metric({ label, value }: { label: string; value: React.ReactNode }) {
 }
 
 export default App;
+
 
 
