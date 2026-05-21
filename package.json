@@ -1,0 +1,10 @@
+{
+  "name": "i-am-the-one-saas-root",
+  "private": true,
+  "scripts": {
+    "frontend:dev": "cd frontend && npm run dev",
+    "frontend:build": "cd frontend && npm run build",
+    "frontend:preview": "cd frontend && npm run preview",
+    "build": "cd frontend && npm run build"
+  }
+}
