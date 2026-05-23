@@ -1,0 +1,19 @@
+﻿<svg width="1200" height="900" viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#05070b"/>
+      <stop offset="50%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#0f766e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="900" fill="url(#g)"/>
+  <rect x="165" y="145" width="870" height="525" rx="48" fill="#08111f" stroke="#5dffe7" stroke-width="8"/>
+  <rect x="225" y="220" width="260" height="120" rx="28" fill="#5dffe7" opacity=".22"/>
+  <rect x="525" y="220" width="450" height="56" rx="18" fill="#fff" opacity=".14"/>
+  <rect x="525" y="310" width="340" height="56" rx="18" fill="#fff" opacity=".10"/>
+  <rect x="225" y="390" width="750" height="70" rx="20" fill="#fff" opacity=".08"/>
+  <rect x="225" y="495" width="620" height="70" rx="20" fill="#fff" opacity=".08"/>
+  <circle cx="900" cy="545" r="48" fill="#5dffe7" opacity=".75"/>
+  <text x="600" y="770" text-anchor="middle" font-family="Arial" font-size="58" font-weight="900" fill="#fff">OPERATOR CONSOLE LICENSE</text>
+  <text x="600" y="828" text-anchor="middle" font-family="Arial" font-size="30" fill="#5dffe7">Orders · Products · Leads · Control</text>
+</svg>

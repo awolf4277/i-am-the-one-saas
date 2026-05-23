@@ -286,7 +286,7 @@ def ensure_schema(app: Flask) -> None:
                 "Premium black signature hoodie for I AM THE ONE™ buyers.",
                 9900,
                 12,
-                "https://placehold.co/900x700/png?text=WOLF+SIGNATURE+HOODIE",
+                "/products/wolf-signature-hoodie.svg",
             ),
             (
                 "wolf-core",
@@ -297,7 +297,7 @@ def ensure_schema(app: Flask) -> None:
                 "Foundational operator system package for modern storefront control.",
                 9900,
                 25,
-                "https://placehold.co/900x700/png?text=WOLF+OS+CORE",
+                "/products/wolf-core.svg",
             ),
             (
                 "iato-launch",
@@ -308,7 +308,7 @@ def ensure_schema(app: Flask) -> None:
                 "Starter package for branded storefront deployment.",
                 29900,
                 7,
-                "https://placehold.co/900x700/png?text=I+AM+THE+ONE",
+                "/products/iato-launch-kit.svg",
             ),
             (
                 "operator-license",
@@ -319,7 +319,7 @@ def ensure_schema(app: Flask) -> None:
                 "Owner dashboard and storefront control package.",
                 49900,
                 5,
-                "https://placehold.co/900x700/png?text=OPERATOR+CONSOLE",
+                "/products/operator-console.svg",
             ),
         ]
 
@@ -1038,6 +1038,7 @@ def create_app() -> Flask:
             con.close()
 
     return app
+
 
 
 

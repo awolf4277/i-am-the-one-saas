@@ -1,0 +1,18 @@
+﻿<svg width="1200" height="900" viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#030712"/>
+      <stop offset="55%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#14b8a6"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="900" fill="url(#g)"/>
+  <rect x="185" y="150" width="830" height="520" rx="44" fill="#0b1220" stroke="#5dffe7" stroke-width="8"/>
+  <rect x="245" y="220" width="710" height="72" rx="20" fill="#5dffe7" opacity=".22"/>
+  <rect x="245" y="330" width="300" height="230" rx="28" fill="#fff" opacity=".10"/>
+  <rect x="585" y="330" width="370" height="70" rx="20" fill="#fff" opacity=".14"/>
+  <rect x="585" y="430" width="290" height="70" rx="20" fill="#fff" opacity=".10"/>
+  <rect x="585" y="530" width="240" height="64" rx="999" fill="#5dffe7"/>
+  <text x="600" y="770" text-anchor="middle" font-family="Arial" font-size="58" font-weight="900" fill="#fff">I AM THE ONE™ LAUNCH KIT</text>
+  <text x="600" y="828" text-anchor="middle" font-family="Arial" font-size="30" fill="#5dffe7">Storefront · Checkout · Owner Dashboard</text>
+</svg>

@@ -252,19 +252,26 @@ function productKey(product: Product, index: number) {
   return String(product.id || product.sku || `product-${index}`);
 }
 
-function assetUrl(raw?: string | null) {
-  const value = String(raw || "").trim();
+function assetUrl(value?: string | null) {
+  const raw = String(value || "").trim();
 
-  if (!value) return "";
-  if (value.startsWith("http://") || value.startsWith("https://")) return value;
-  if (value.startsWith("data:")) return value;
+  if (!raw) return "";
 
-  if (value.startsWith("/")) {
-    return `${API_BASE}${value}`;
+  if (raw.startsWith("http://") || raw.startsWith("https://") || raw.startsWith("data:")) {
+    return raw;
   }
 
-  return value;
+  if (raw.startsWith("/products/")) {
+    return raw;
+  }
+
+  if (raw.startsWith("/")) {
+    return raw;
+  }
+
+  return `/${raw}`;
 }
+
 
 async function apiJson<T>(
   path: string,

@@ -1,0 +1,15 @@
+﻿<svg width="1200" height="900" viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#05070b"/>
+      <stop offset="45%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#0f766e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="900" fill="url(#g)"/>
+  <circle cx="960" cy="130" r="180" fill="#5dffe7" opacity=".14"/>
+  <rect x="370" y="170" width="460" height="520" rx="72" fill="#111" stroke="#5dffe7" stroke-width="8"/>
+  <path d="M455 250h290l65 130-75 36-28-54v245H493V362l-28 54-75-36 65-130z" fill="#171717" stroke="#e5e7eb" stroke-width="10"/>
+  <text x="600" y="780" text-anchor="middle" font-family="Arial" font-size="54" font-weight="900" fill="#fff">WOLF SIGNATURE HOODIE</text>
+  <text x="600" y="835" text-anchor="middle" font-family="Arial" font-size="30" fill="#5dffe7">I AM THE ONE™ · WOLF OS™</text>
+</svg>
