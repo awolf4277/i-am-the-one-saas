@@ -72,10 +72,4 @@ Copyright Â© 2026 Andrew Wolverton. All Rights Reserved.
 
 ![09-landing-hero](docs/screenshots/09-landing-hero.png)
 
-### 10-raw-with-chat-overlay
-
-![10-raw-with-chat-overlay](docs/screenshots/10-raw-with-chat-overlay.png)
-
-<!-- SCREENSHOTS_END -->
-
 
