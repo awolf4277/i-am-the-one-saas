@@ -1156,10 +1156,47 @@ function CustomerStorefront({
         </button>
 
         {lastOrder ? (
-          <small className="checkout-note">
-            Last order: {lastOrder.id} · {money(lastOrder.total_cents)} ·{" "}
-            {lastOrder.payment_status || "unpaid"}
-          </small>
+          <div className="checkout-success-card">
+            <div className="success-badge">ORDER CREATED</div>
+
+            <h3>Order Created</h3>
+
+            <p>
+              This order is saved in WOLF OS™ and visible in the Owner Console.
+            </p>
+
+            <div className="success-grid">
+              <span>Order ID</span>
+              <strong>{lastOrder.id || "Generated"}</strong>
+
+              <span>Buyer</span>
+              <strong>{lastOrder.buyer_name || "Customer"}</strong>
+
+              <span>Email</span>
+              <strong>{lastOrder.buyer_email || "On file"}</strong>
+
+              <span>Total</span>
+              <strong>{money(lastOrder.total_cents)}</strong>
+
+              <span>Payment</span>
+              <strong>{lastOrder.payment_status || "manual / unpaid"}</strong>
+            </div>
+
+            <div className="payment-instructions">
+              <strong>Manual payment mode</strong>
+              <span>
+                Send payment instructions to the buyer, then mark the order paid from
+                the owner workflow later.
+              </span>
+            </div>
+
+            <button
+              className="v3-button secondary full"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            >
+              Back to Store
+            </button>
+          </div>
         ) : (
           <small className="checkout-note">
             Creates a real SQLite order and decrements stock.
