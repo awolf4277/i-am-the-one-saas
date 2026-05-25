@@ -1584,6 +1584,23 @@ function OwnerConsole({
                   <span>{order.buyer_name || "Unknown buyer"}</span>
                   <span>{money(order.total_cents)}</span>
                   <span>{order.payment_status || order.status || "pending"}</span>
+
+                  {order.id && order.buyer_email ? (
+                    <a
+                      className="owner-mini-link"
+                      href={apiUrl(
+                        `/api/orders/${order.id}/download?email=${encodeURIComponent(
+                          order.buyer_email
+                        )}`
+                      )}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Delivery
+                    </a>
+                  ) : (
+                    <span>No email</span>
+                  )}
                 </div>
               ))}
             </div>

@@ -1856,3 +1856,24 @@ textarea:focus {
     text-align: left;
   }
 }
+
+/* Owner delivery link */
+.owner-mini-link {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: fit-content;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(93, 255, 231, 0.28);
+  background: rgba(93, 255, 231, 0.10);
+  color: #d9fff9;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.owner-mini-link:hover {
+  border-color: rgba(93, 255, 231, 0.50);
+  background: rgba(93, 255, 231, 0.16);
+}
