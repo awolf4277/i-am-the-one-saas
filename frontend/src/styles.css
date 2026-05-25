@@ -1772,3 +1772,87 @@ textarea:focus {
     text-align: left;
   }
 }
+
+/* DIGITAL_DOWNLOAD_SUCCESS_V1 */
+
+.checkout-success-card {
+  margin-top: 18px;
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(93, 255, 231, 0.28);
+  background:
+    radial-gradient(circle at top left, rgba(93, 255, 231, 0.14), transparent 38%),
+    rgba(255, 255, 255, 0.055);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
+}
+
+.checkout-success-card h3 {
+  margin: 10px 0 6px;
+  font-size: 1.35rem;
+}
+
+.checkout-success-card p {
+  margin: 0 0 14px;
+  opacity: 0.82;
+  line-height: 1.45;
+}
+
+.success-badge {
+  display: inline-flex;
+  width: fit-content;
+  padding: 7px 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(93, 255, 231, 0.34);
+  background: rgba(93, 255, 231, 0.10);
+  color: #bffff7;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.success-grid {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 10px 14px;
+  margin: 14px 0;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.success-grid span {
+  opacity: 0.66;
+  font-size: 0.84rem;
+}
+
+.success-grid strong {
+  text-align: right;
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+.payment-instructions {
+  display: grid;
+  gap: 5px;
+  margin: 14px 0;
+  padding: 13px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.payment-instructions span {
+  opacity: 0.78;
+  line-height: 1.42;
+}
+
+@media (max-width: 760px) {
+  .success-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .success-grid strong {
+    text-align: left;
+  }
+}

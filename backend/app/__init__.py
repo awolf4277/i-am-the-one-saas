@@ -767,6 +767,83 @@ def create_app() -> Flask:
         finally:
             con.close()
 
+    @app.get("/api/orders/<order_id>/download")
+    def order_download(order_id: str):
+        from flask import Response
+
+        buyer_email = str(request.args.get("email") or "").strip().lower()
+
+        if not buyer_email:
+            return jsonify({"ok": False, "error": "Buyer email required."}), 400
+
+        con = connect(app)
+
+        try:
+            order = con.execute(
+                "SELECT * FROM orders WHERE id = ? LIMIT 1",
+                (order_id,),
+            ).fetchone()
+
+            if not order:
+                return jsonify({"ok": False, "error": "Order not found."}), 404
+
+            stored_email = str(order["buyer_email"] or "").strip().lower()
+
+            if stored_email != buyer_email:
+                return jsonify({"ok": False, "error": "Download access denied."}), 403
+
+            items = con.execute(
+                """
+                SELECT sku, name, qty, unit_amount_cents, line_total_cents
+                FROM order_items
+                WHERE order_id = ?
+                ORDER BY id ASC
+                """,
+                (order_id,),
+            ).fetchall()
+        finally:
+            con.close()
+
+        def cents(value):
+            return f"${(int(value or 0) / 100):,.2f}"
+
+        lines = [
+            "I AM THE ONE™ / WOLF OS™ DIGITAL DELIVERY",
+            "",
+            f"Order ID: {order['id']}",
+            f"Buyer: {order['buyer_name'] or 'Customer'}",
+            f"Email: {order['buyer_email'] or ''}",
+            f"Payment Status: {order['payment_status'] or 'manual / unpaid'}",
+            f"Order Total: {cents(order['total_cents'])}",
+            "",
+            "Items:",
+        ]
+
+        for item in items:
+            lines.append(
+                f"- {item['name']} ({item['sku']}) x{item['qty']} = {cents(item['line_total_cents'])}"
+            )
+
+        lines += [
+            "",
+            "Delivery Instructions:",
+            "Your order was created successfully.",
+            "For manual payment mode, the owner confirms payment and delivers the final product/package.",
+            "",
+            "Copyright © 2026 Andrew Wolverton. All Rights Reserved.",
+        ]
+
+        body = "\n".join(lines)
+
+        return Response(
+            body,
+            mimetype="text/plain",
+            headers={
+                "Content-Disposition": f'attachment; filename="{order_id}-delivery.txt"'
+            },
+        )
+
+
     @app.post("/api/setup-requests")
     def create_setup_request():
         payload = request.get_json(silent=True) or {}
@@ -1036,6 +1113,7 @@ def create_app() -> Flask:
             return jsonify({"ok": True, "count": len(products), "products": products})
         finally:
             con.close()
+
 
     return app
 
