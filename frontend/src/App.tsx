@@ -1553,10 +1553,29 @@ function OwnerConsole({
                     </span>
                   </div>
 
-                  <div className="lead-meta">
+                                    <div className="lead-meta">
                     <span className="lead-badge">{request.budget_range || "Budget TBD"}</span>
                     <span>{request.timeline || "Timeline TBD"}</span>
                     <span>{request.phone || request.website || "No phone/site"}</span>
+                  </div>
+
+                  <div className="lead-actions">
+                    <a
+                      className="owner-mini-link"
+                      href={`mailto:${request.email || ""}?subject=${encodeURIComponent(
+                        "Your I AM THE ONE™ setup request"
+                      )}&body=${encodeURIComponent(
+                        `Hi ${request.name || "there"},
+
+Thanks for requesting setup help for ${
+                          request.business_name || "your business"
+                        }. I can help you get your storefront/demo set up.
+
+- Andrew Wolverton`
+                      )}`}
+                    >
+                      Email Buyer
+                    </a>
                   </div>
                 </div>
               ))}
