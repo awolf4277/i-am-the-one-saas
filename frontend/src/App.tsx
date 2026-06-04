@@ -929,6 +929,54 @@ function SaasLanding({
           <span>Deploy-ready frontend and backend foundation</span>
         </div>
 
+        <div className="shine-box">
+          <strong>Demo Close Kit</strong>
+          <span>
+            Copy a ready-to-send pitch for buyers, then open the live store or
+            owner console during a demo.
+          </span>
+
+          <div className="landing-actions">
+            <button
+              className="v3-button primary"
+              type="button"
+              onClick={() => {
+                const origin = window.location.origin;
+
+                navigator.clipboard.writeText(
+                  `I built a live storefront + owner dashboard demo for small brands, creators, and service businesses.
+
+It includes:
+- Customer storefront
+- Product catalog
+- Cart and checkout
+- Owner console
+- Orders
+- Inventory controls
+- Buyer lead capture
+
+Live Store Demo: ${origin}/#store/demo
+Owner Console Demo: ${origin}/#owner
+
+If you want something like this customized for your business, I can help set it up.`
+                );
+
+                alert("Demo pitch copied.");
+              }}
+            >
+              Copy Demo Pitch
+            </button>
+
+            <a className="v3-button secondary" href="/#store/demo">
+              Store Demo
+            </a>
+
+            <a className="v3-button secondary" href="/#owner">
+              Owner Console
+            </a>
+          </div>
+        </div>
+
         <div className="landing-actions">
           <a className="v3-button primary" href="/#store/demo">
             Start Demo
