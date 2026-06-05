@@ -46,6 +46,25 @@ type ApiHealth = {
   };
 };
 
+type AnalyticsSummary = {
+  ok?: boolean;
+  total_visits?: number;
+  visits_today?: number;
+  landing_visits?: number;
+  store_visits?: number;
+  owner_visits?: number;
+  setup_request_submits?: number;
+  demo_pitch_copies?: number;
+  conversion_rate?: number;
+};
+
+type AnalyticsEventName =
+  | "landing_page_visit"
+  | "store_visit"
+  | "owner_visit"
+  | "setup_request_submit"
+  | "demo_pitch_copy";
+
 type Store = {
   id?: string;
   slug?: string;
@@ -324,6 +343,25 @@ async function apiJson<T>(
   return payload as T;
 }
 
+async function trackAnalyticsEvent(event_name: AnalyticsEventName, path = "") {
+  try {
+    await apiJson<any>("/api/analytics/event", {
+      method: "POST",
+      body: JSON.stringify({
+        event_name,
+        path:
+          path ||
+          (typeof window !== "undefined"
+            ? `${window.location.pathname}${window.location.hash}`
+            : ""),
+        source: "frontend"
+      })
+    });
+  } catch {
+    // Analytics should never block the storefront or owner console.
+  }
+}
+
 function App() {
   const readRoutePath = () => {
     const rawRoute = window.location.hash
@@ -358,6 +396,7 @@ function App() {
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [setupRequests, setSetupRequests] = useState<SetupRequest[]>([]);
+  const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null);
   const [ownerProducts, setOwnerProducts] = useState<Product[]>([]);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -436,6 +475,9 @@ function App() {
       }));
       setSetupRequests(normalizeSetupRequests(setupRequestsData));
 
+      const analyticsData = await apiJson<AnalyticsSummary>("/api/owner/analytics", {}, token).catch(() => null);
+      setAnalytics(analyticsData);
+
       const productsData = await apiJson<any>("/api/owner/products", {}, token).catch(() => ({
         products: []
       }));
@@ -464,6 +506,16 @@ function App() {
     bootStorefront();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeSlug]);
+
+  useEffect(() => {
+    const eventName: AnalyticsEventName = isOwner
+      ? "owner_visit"
+      : isStore
+        ? "store_visit"
+        : "landing_page_visit";
+
+    trackAnalyticsEvent(eventName, path);
+  }, [path, isOwner, isStore]);
 
   useEffect(() => {
     if (ownerToken) {
@@ -633,6 +685,7 @@ function App() {
     setOwnerToken("");
     setOrders([]);
     setSetupRequests([]);
+    setAnalytics(null);
     setOwnerProducts([]);
     setNotice("Owner console locked.");
   }
@@ -736,6 +789,7 @@ function App() {
             stores={stores}
             orders={orders}
             setupRequests={setupRequests}
+            analytics={analytics}
             products={ownerProducts}
             loading={ownerLoading}
             onRefresh={() => loadOwnerData(ownerToken)}
@@ -960,6 +1014,8 @@ Owner Console Demo: ${origin}/#owner
 
 If you want something like this customized for your business, I can help set it up.`
                 );
+
+                trackAnalyticsEvent("demo_pitch_copy", window.location.pathname + window.location.hash);
 
                 alert("Demo pitch copied.");
               }}
@@ -1345,6 +1401,8 @@ function SetupRequestForm() {
         })
       });
 
+      await trackAnalyticsEvent("setup_request_submit", window.location.pathname + window.location.hash);
+
       setSent("Request received. Andrew can review it in the Owner Console.");
       setForm({
         name: "",
@@ -1486,6 +1544,7 @@ function OwnerConsole({
   stores,
   orders,
   setupRequests,
+  analytics,
   products,
   loading,
   onRefresh,
@@ -1497,6 +1556,7 @@ function OwnerConsole({
   stores: Store[];
   orders: Order[];
   setupRequests: SetupRequest[];
+  analytics: AnalyticsSummary | null;
   products: Product[];
   loading: boolean;
   onRefresh: () => void;
@@ -1574,6 +1634,9 @@ function OwnerConsole({
         <Metric label="Orders" value={orders.length || health?.counts?.orders || 0} />
         <Metric label="Low Stock" value={lowStock} />
         <Metric label="Inventory Value" value={money(inventoryValue)} />
+        <Metric label="Visits Today" value={analytics?.visits_today ?? 0} />
+        <Metric label="Total Visits" value={analytics?.total_visits ?? 0} />
+        <Metric label="Lead Rate" value={`${analytics?.conversion_rate ?? 0}%`} />
       </div>
 
       <div className="owner-panels">
