@@ -1,4 +1,4 @@
-﻿# Copyright © 2026 Andrew Wolverton. All Rights Reserved.
+# Copyright © 2026 Andrew Wolverton. All Rights Reserved.
 from __future__ import annotations
 
 import os
@@ -1114,6 +1114,13 @@ def create_app() -> Flask:
         finally:
             con.close()
 
+
+    from .routes.analytics import analytics_bp, init_analytics_db
+
+    with app.app_context():
+        init_analytics_db()
+
+    app.register_blueprint(analytics_bp)
 
     return app
 
