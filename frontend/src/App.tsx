@@ -1640,6 +1640,148 @@ function OwnerConsole({
       </div>
 
       <div className="owner-panels">
+        <div className="owner-panel wide close-kit-panel">
+          <div className="panel-heading">
+            <div>
+              <p className="v3-kicker">Close Kit</p>
+              <h2>Buyer Closing Tools</h2>
+            </div>
+
+            <span className="v3-pill online">READY</span>
+          </div>
+
+          <p className="muted close-kit-copy">
+            Copy-ready sales tools for turning a live demo, setup request, or buyer conversation into a paid build.
+          </p>
+
+          <div className="close-kit-actions">
+            <button
+              type="button"
+              className="close-kit-button"
+              onClick={() =>
+                navigator.clipboard.writeText(
+                  `I built a live storefront + owner dashboard demo that shows how your business can sell online, capture leads, track orders, and manage products from one simple command center.
+
+The demo includes:
+- Buyer-ready storefront
+- Product/service offers
+- Cart or request flow
+- Owner dashboard
+- Orders, inventory, and lead capture
+- Launch-ready structure
+
+This is built to help you move faster without starting from zero.`
+                )
+              }
+            >
+              Copy Buyer Pitch
+            </button>
+
+            <button
+              type="button"
+              className="close-kit-button"
+              onClick={() =>
+                navigator.clipboard.writeText(
+                  `Proposal Summary
+
+System: I AM THE ONE™ / WOLF OS™ SaaS
+Package Options:
+- Starter Storefront: $499+
+- Pro Storefront + Owner Dashboard: $1,500+
+- Custom SaaS Buildout: $3,000+
+
+Core Build Includes:
+- Live storefront
+- Product/service offer cards
+- Cart, checkout, or request flow
+- Owner dashboard
+- Order tracking
+- Inventory controls
+- Buyer lead capture
+- Basic analytics/status panel
+- Launch-ready brand structure
+
+Next Step:
+Confirm business details, offer list, pricing, timeline, payment method, and launch direction.`
+                )
+              }
+            >
+              Copy Proposal Summary
+            </button>
+
+            <button
+              type="button"
+              className="close-kit-button"
+              onClick={() =>
+                navigator.clipboard.writeText(
+                  `Hey ${setupRequests[0]?.name || "there"},
+
+I reviewed the demo direction for ${setupRequests[0]?.business_name || "your business"}.
+
+Based on what you sell — ${setupRequests[0]?.what_i_sell || "your products or services"} — I would recommend starting with a clean storefront and owner dashboard so you can present offers, capture buyer interest, and manage orders from one place.
+
+The next step would be confirming:
+1. Your main offers
+2. Pricing
+3. Timeline
+4. Brand direction
+5. Deposit/payment method
+6. Launch plan
+
+Once that is confirmed, the build can move from demo into production setup.
+
+- Andrew Wolverton`
+                )
+              }
+            >
+              Copy Setup Follow-up
+            </button>
+
+            <button
+              type="button"
+              className="close-kit-button primary"
+              onClick={() =>
+                navigator.clipboard.writeText(
+                  `FULL CLOSE KIT
+
+Buyer Pitch:
+I built a live storefront + owner dashboard demo that shows how your business can sell online, capture leads, track orders, and manage products from one simple command center.
+
+System:
+I AM THE ONE™ storefront + WOLF OS™ owner dashboard.
+
+Offer:
+Starter Storefront: $499+
+Pro Storefront + Owner Dashboard: $1,500+
+Custom SaaS Buildout: $3,000+
+
+Includes:
+- Live storefront
+- Product/service cards
+- Cart, checkout, or request flow
+- Owner dashboard
+- Order tracking
+- Inventory controls
+- Buyer lead capture
+- Analytics/status panel
+- Launch-ready structure
+
+Current Demo Strength:
+- ${setupRequests.length} live buyer leads loaded
+- Commercial product catalog active
+- Owner console online
+- Demo orders visible
+- Inventory value: ${money(inventoryValue)}
+
+Close:
+If the demo direction looks good, the next step is confirming content, pricing, timeline, deposit, and launch plan.`
+                )
+              }
+            >
+              Copy Full Close Kit
+            </button>
+          </div>
+        </div>
         <div className="owner-panel wide">
           <div className="panel-heading">
             <div>

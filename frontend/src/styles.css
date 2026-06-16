@@ -2211,3 +2211,49 @@ textarea:focus {
     scroll-behavior: auto !important;
   }
 }
+
+/* Close Kit owner-console panel */
+.close-kit-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.close-kit-copy {
+  max-width: 820px;
+  margin-bottom: 1rem;
+}
+
+.close-kit-actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.close-kit-button {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.07);
+  color: inherit;
+  border-radius: 16px;
+  padding: 0.85rem 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  text-align: center;
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.close-kit-button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.32);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.close-kit-button.primary {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08));
+  border-color: rgba(255, 255, 255, 0.34);
+}
+
+@media (max-width: 900px) {
+  .close-kit-actions {
+    grid-template-columns: 1fr;
+  }
+}
