@@ -1,5 +1,5 @@
-/* Copyright © 2026 Andrew Wolverton. All Rights Reserved. */
-/* I AM THE ONE™ / WOLF OS™ — Gold + Silver v3 SaaS Skin */
+﻿/* Copyright Â© 2026 Andrew Wolverton. All Rights Reserved. */
+/* I AM THE ONEâ„¢ / WOLF OSâ„¢ â€” Gold + Silver v3 SaaS Skin */
 
 :root {
   font-family:
@@ -19,7 +19,7 @@
   --gold-2: #c9962d;
   --gold-3: #fff2b7;
 
-  --silver: #f4f7fb;wtf is the end button
+  --silver: #f4f7fb;
 
   --silver-2: #aeb6c3;
   --silver-3: #d9dde6;
@@ -1140,7 +1140,7 @@ input:focus {
   }
 }
 /* =========================================================
-   DEMO POLISH v1 � safe visual layer
+   DEMO POLISH v1 ï¿½ safe visual layer
    Keeps backend + React logic untouched.
 ========================================================= */
 
@@ -1880,7 +1880,7 @@ textarea:focus {
 }
 
 /* ================================
-   WOLF OS™ Premium Visual Pass v1
+   WOLF OSâ„¢ Premium Visual Pass v1
    Frontend-only polish
 ================================ */
 
@@ -2279,3 +2279,4 @@ textarea:focus {
 .close-kit-status[hidden] {
   display: none;
 }
+
