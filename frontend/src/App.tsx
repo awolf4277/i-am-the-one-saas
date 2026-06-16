@@ -3,6 +3,29 @@
 import React, { useEffect, useMemo, useState } from "react";
 
 
+
+
+function copyCloseKitText(label: string, copyText: string) {
+  navigator.clipboard
+    .writeText(copyText)
+    .then(() => {
+      const status = document.getElementById("close-kit-status");
+
+      if (!status) return;
+
+      status.textContent = `Copied ${label}!`;
+      status.removeAttribute("hidden");
+
+      window.setTimeout(() => {
+        status.setAttribute("hidden", "true");
+        status.textContent = "";
+      }, 1400);
+    })
+    .catch(() => {
+      window.alert("Copy failed. Please try again.");
+    });
+}
+
 const LOCK_SHOW_DEMO_PASSWORD =
   String(import.meta.env.VITE_SHOW_DEMO_PASSWORD || "").toLowerCase() === "true" &&
   String(import.meta.env.VITE_OWNER_DEMO_PASSWORD || "").trim().length > 0;
@@ -396,6 +419,15 @@ function App() {
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [setupRequests, setSetupRequests] = useState<SetupRequest[]>([]);
+
+  const [copiedCloseKit, setCopiedCloseKit] = useState("");
+
+  const copyCloseKit = async (label: string, text: string) => {
+    await navigator.clipboard.writeText(text);
+    setCopiedCloseKit(label);
+    window.setTimeout(() => setCopiedCloseKit(""), 1400);
+  };
+
   const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null);
   const [ownerProducts, setOwnerProducts] = useState<Product[]>([]);
 
@@ -1654,12 +1686,15 @@ function OwnerConsole({
             Copy-ready sales tools for turning a live demo, setup request, or buyer conversation into a paid build.
           </p>
 
+          <p id="close-kit-status" className="close-kit-status" hidden aria-live="polite"></p>
+
           <div className="close-kit-actions">
             <button
               type="button"
               className="close-kit-button"
               onClick={() =>
-                navigator.clipboard.writeText(
+                copyCloseKitText(
+                  "Buyer Pitch",
                   `I built a live storefront + owner dashboard demo that shows how your business can sell online, capture leads, track orders, and manage products from one simple command center.
 
 The demo includes:
@@ -1681,7 +1716,8 @@ This is built to help you move faster without starting from zero.`
               type="button"
               className="close-kit-button"
               onClick={() =>
-                navigator.clipboard.writeText(
+                copyCloseKitText(
+                  "Proposal Summary",
                   `Proposal Summary
 
 System: I AM THE ONE™ / WOLF OS™ SaaS
@@ -1713,7 +1749,8 @@ Confirm business details, offer list, pricing, timeline, payment method, and lau
               type="button"
               className="close-kit-button"
               onClick={() =>
-                navigator.clipboard.writeText(
+                copyCloseKitText(
+                  "Setup Follow-up",
                   `Hey ${setupRequests[0]?.name || "there"},
 
 I reviewed the demo direction for ${setupRequests[0]?.business_name || "your business"}.
@@ -1741,7 +1778,8 @@ Once that is confirmed, the build can move from demo into production setup.
               type="button"
               className="close-kit-button primary"
               onClick={() =>
-                navigator.clipboard.writeText(
+                copyCloseKitText(
+                  "Full Close Kit",
                   `FULL CLOSE KIT
 
 Buyer Pitch:
@@ -1782,6 +1820,7 @@ If the demo direction looks good, the next step is confirming content, pricing, 
             </button>
           </div>
         </div>
+
         <div className="owner-panel wide">
           <div className="panel-heading">
             <div>
