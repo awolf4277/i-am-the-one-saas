@@ -1646,6 +1646,12 @@ function OwnerConsole({
             Real owner dashboard connected to orders, products, stores, inventory,
             and backend health.
           </p>
+
+          <div className="demo-ready-strip">
+            <span className="demo-ready-dot" />
+            <strong>DEMO READY</strong>
+            <span>Sales tools active · Leads loaded · Close Kit ready</span>
+          </div>
         </div>
 
         <div className="owner-actions">
