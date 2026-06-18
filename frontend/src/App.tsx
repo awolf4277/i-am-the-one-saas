@@ -1637,7 +1637,7 @@ function OwnerConsole({
   }
 
   return (
-    <section className="owner-console">
+    <section id="owner-console" className="owner-console">
       <div className="owner-hero">
         <div>
           <p className="v3-kicker">Operator Mode</p>
@@ -1652,9 +1652,31 @@ function OwnerConsole({
             <strong>DEMO READY</strong>
             <span>Sales tools active · Leads loaded · Close Kit ready</span>
           </div>
+
+          <p id="pitch-mode-note" className="pitch-mode-note" hidden>
+            Pitch Mode is showing the clean sales view: checklist, close kit, leads, orders, and proof.
+          </p>
         </div>
 
         <div className="owner-actions">
+          <button
+            type="button"
+            className="v3-button secondary"
+            onClick={(event) => {
+              const consoleEl = document.getElementById("owner-console");
+              const note = document.getElementById("pitch-mode-note");
+              const enabled = consoleEl?.classList.toggle("pitch-mode") ?? false;
+
+              if (note) note.hidden = !enabled;
+
+              event.currentTarget.textContent = enabled ? "Full Console" : "Pitch Mode";
+              event.currentTarget.classList.toggle("primary", enabled);
+              event.currentTarget.classList.toggle("secondary", !enabled);
+            }}
+          >
+            Pitch Mode
+          </button>
+
           <button className="v3-button secondary" onClick={onRefresh} disabled={loading}>
             {loading ? "Refreshing..." : "Refresh"}
           </button>

@@ -2386,3 +2386,40 @@ textarea:focus {
     grid-template-columns: 1fr;
   }
 }
+
+/* Owner console Pitch Mode */
+.pitch-mode-note {
+  max-width: 780px;
+  margin: 0.8rem 0 0;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.owner-console.pitch-mode .create-product-panel,
+.owner-console.pitch-mode .inventory-create-panel,
+.owner-console.pitch-mode .product-create-panel {
+  display: none;
+}
+
+/* Fallback: hide form-heavy admin controls in pitch mode while keeping proof panels visible */
+.owner-console.pitch-mode form:not(.setup-form) {
+  display: none;
+}
+
+.owner-console.pitch-mode .owner-panel:has(input),
+.owner-console.pitch-mode .owner-panel:has(textarea) {
+  display: none;
+}
+
+.owner-console.pitch-mode .owner-panel:has(.owner-row) {
+  display: block;
+}
+
+.owner-console.pitch-mode .launch-checklist-panel,
+.owner-console.pitch-mode .close-kit-panel {
+  display: block;
+}
+
+.pitch-mode-note[hidden] {
+  display: none;
+}
