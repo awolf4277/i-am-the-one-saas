@@ -1853,6 +1853,19 @@ If the demo direction looks good, the next step is confirming content, pricing, 
 
                                     <div className="lead-meta">
                     <span className="lead-badge">{request.budget_range || "Budget TBD"}</span>
+                    <span
+                      className={`lead-badge ${
+                        `${request.budget_range || ""} ${request.timeline || ""}`.toLowerCase().includes("1500") ||
+                        `${request.budget_range || ""} ${request.timeline || ""}`.toLowerCase().includes("this week")
+                          ? "lead-hot"
+                          : "lead-follow"
+                      }`}
+                    >
+                      {`${request.budget_range || ""} ${request.timeline || ""}`.toLowerCase().includes("1500") ||
+                      `${request.budget_range || ""} ${request.timeline || ""}`.toLowerCase().includes("this week")
+                        ? "HOT LEAD"
+                        : "FOLLOW UP"}
+                    </span>
                     <span>{request.timeline || "Timeline TBD"}</span>
                     <span>{request.phone || request.website || "No phone/site"}</span>
                   </div>
