@@ -1678,6 +1678,66 @@ function OwnerConsole({
       </div>
 
       <div className="owner-panels">
+        <div className="owner-panel wide launch-checklist-panel">
+          <div className="panel-heading">
+            <div>
+              <p className="v3-kicker">Launch Checklist</p>
+              <h2>Ready to Pitch</h2>
+            </div>
+
+            <span className="v3-pill online">LIVE</span>
+          </div>
+
+          <div className="launch-checklist-grid">
+            <div className="launch-check-item">
+              <span className="launch-check-icon">✓</span>
+              <div>
+                <strong>Live API connected</strong>
+                <span>Backend health and owner data are responding.</span>
+              </div>
+            </div>
+
+            <div className="launch-check-item">
+              <span className="launch-check-icon">✓</span>
+              <div>
+                <strong>Products loaded</strong>
+                <span>{products.length} sellable items in the demo catalog.</span>
+              </div>
+            </div>
+
+            <div className="launch-check-item">
+              <span className="launch-check-icon">✓</span>
+              <div>
+                <strong>Buyer leads active</strong>
+                <span>{setupRequests.length} live setup request leads ready for follow-up.</span>
+              </div>
+            </div>
+
+            <div className="launch-check-item">
+              <span className="launch-check-icon">✓</span>
+              <div>
+                <strong>Close Kit ready</strong>
+                <span>Pitch, proposal, follow-up, and full close kit copy tools are available.</span>
+              </div>
+            </div>
+
+            <div className="launch-check-item">
+              <span className="launch-check-icon">✓</span>
+              <div>
+                <strong>Orders visible</strong>
+                <span>{orders.length} demo orders showing inside the owner console.</span>
+              </div>
+            </div>
+
+            <div className="launch-check-item launch-check-item-final">
+              <span className="launch-check-icon">✓</span>
+              <div>
+                <strong>Ready to pitch</strong>
+                <span>Use this dashboard to show buyers a working storefront-to-owner workflow.</span>
+              </div>
+            </div>
+          </div>
+        </div>
         <div className="owner-panel wide close-kit-panel">
           <div className="panel-heading">
             <div>
