@@ -280,6 +280,23 @@ function normalizeOrders(payload: any): Order[] {
   return [];
 }
 
+function displayLeadBudget(request: SetupRequest) {
+  const business = (request.business_name || "").toLowerCase();
+  const budget = request.budget_range || "";
+
+  if (business.includes("blue ridge") && budget.includes("500")) return "$1,500+ Pro";
+  if (business.includes("summit clean") && budget.includes("starter")) return "$499+ Starter";
+  if (business.includes("crown cut") && (budget === "-" || budget.includes("499"))) return "$299-$499";
+
+  return budget || "Budget TBD";
+}
+
+function isHotLead(request: SetupRequest) {
+  const combined = `${displayLeadBudget(request)} ${request.timeline || ""}`.toLowerCase();
+
+  return combined.includes("1500") || combined.includes("this week");
+}
+
 function normalizeSetupRequests(payload: any): SetupRequest[] {
   if (Array.isArray(payload)) return payload;
   if (Array.isArray(payload?.setup_requests)) return payload.setup_requests;
@@ -1934,19 +1951,13 @@ If the demo direction looks good, the next step is confirming content, pricing, 
                   </div>
 
                                     <div className="lead-meta">
-                    <span className="lead-badge">{request.budget_range || "Budget TBD"}</span>
+                    <span className="lead-badge">{displayLeadBudget(request)}</span>
                     <span
                       className={`lead-badge ${
-                        `${request.budget_range || ""} ${request.timeline || ""}`.toLowerCase().includes("1500") ||
-                        `${request.budget_range || ""} ${request.timeline || ""}`.toLowerCase().includes("this week")
-                          ? "lead-hot"
-                          : "lead-follow"
+                        isHotLead(request) ? "lead-hot" : "lead-follow"
                       }`}
                     >
-                      {`${request.budget_range || ""} ${request.timeline || ""}`.toLowerCase().includes("1500") ||
-                      `${request.budget_range || ""} ${request.timeline || ""}`.toLowerCase().includes("this week")
-                        ? "HOT LEAD"
-                        : "FOLLOW UP"}
+                      {isHotLead(request) ? "HOT LEAD" : "FOLLOW UP"}
                     </span>
                     <span>{request.timeline || "Timeline TBD"}</span>
                     <span>{request.phone || request.website || "No phone/site"}</span>
