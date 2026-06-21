@@ -340,6 +340,238 @@ def ensure_schema(app: Flask) -> None:
                     (*item[:2], "demo", *item[2:], now_iso(), now_iso()),
                 )
 
+
+        # Sales-ready demo fullness seed.
+        # This keeps Render production looking full even if the SQLite file resets on deploy/restart.
+        sales_ready_products = [
+            (
+                "prod_starter_storefront",
+                "store_demo",
+                "WOLF-STARTER",
+                "Starter Storefront",
+                "SaaS Package",
+                "A clean buyer-ready storefront with products, cart, checkout flow, and launch-ready branding.",
+                49900,
+                9,
+                "https://placehold.co/900x700/111827/FFFFFF?text=Starter+Storefront",
+            ),
+            (
+                "prod_pro_dashboard",
+                "store_demo",
+                "WOLF-PRO",
+                "Pro Storefront + Owner Dashboard",
+                "SaaS Package",
+                "Premium storefront plus WOLF OS™ owner console for orders, products, inventory, and buyer leads.",
+                150000,
+                5,
+                "https://placehold.co/900x700/111827/FFFFFF?text=Pro+Dashboard",
+            ),
+            (
+                "prod_custom_saas",
+                "store_demo",
+                "WOLF-CUSTOM",
+                "Custom SaaS Buildout Deposit",
+                "SaaS Package",
+                "Deposit for a custom SaaS buildout with storefront, admin tools, lead capture, and launch support.",
+                300000,
+                3,
+                "https://placehold.co/900x700/111827/FFFFFF?text=Custom+SaaS",
+            ),
+            (
+                "prod_launch_kit",
+                "store_demo",
+                "WOLF-LAUNCH-KIT",
+                "Digital Launch Kit",
+                "Launch",
+                "Brand copy, offer cards, product structure, demo pitch, and buyer-ready launch materials.",
+                29900,
+                12,
+                "https://placehold.co/900x700/111827/FFFFFF?text=Launch+Kit",
+            ),
+            (
+                "prod_brand_audit",
+                "store_demo",
+                "WOLF-AUDIT",
+                "Brand + Storefront Audit",
+                "Launch",
+                "Fast review of a business offer, buyer path, storefront structure, and next launch steps.",
+                19900,
+                7,
+                "https://placehold.co/900x700/111827/FFFFFF?text=Brand+Audit",
+            ),
+        ]
+
+        for item in sales_ready_products:
+            existing = con.execute(
+                "SELECT id FROM products WHERE sku = ? LIMIT 1",
+                (item[2],),
+            ).fetchone()
+            if not existing:
+                con.execute(
+                    """
+                    INSERT INTO products (
+                        id, store_id, store_slug, sku, name, category, description,
+                        price_cents, stock, image_url, created_at, updated_at
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (*item[:2], "demo", *item[2:], now_iso(), now_iso()),
+                )
+
+        sales_ready_leads = [
+            (
+                "REQ-DEMO-BLUE-RIDGE",
+                "Taylor Reed",
+                "Blue Ridge Apparel",
+                "taylor@example.com",
+                "555-0199",
+                "Premium apparel, branded merch, hoodies, tees, and a buyer-ready storefront.",
+                "$1,500+ Pro",
+                "This week",
+                "",
+                "Looking for a premium apparel storefront with products, checkout, and a simple owner dashboard.",
+                "startup_sales_ready_seed",
+                "live",
+            ),
+            (
+                "REQ-DEMO-SUMMIT",
+                "Jordan Miles",
+                "Summit Clean Exteriors",
+                "jordan@example.com",
+                "555-0188",
+                "Pressure washing packages, exterior cleaning quotes, and local service leads.",
+                "$499+ Starter",
+                "Next 7 days",
+                "",
+                "Need a clean service storefront for pressure washing packages and quote requests.",
+                "startup_sales_ready_seed",
+                "live",
+            ),
+            (
+                "REQ-DEMO-CROWN-CUT",
+                "Marcus King",
+                "Crown Cut Studio",
+                "marcus@example.com",
+                "555-0177",
+                "Barber services, haircut packages, booking interest, and branded local offers.",
+                "$299-$499",
+                "Soon",
+                "",
+                "Want a simple barber shop demo with services, booking interest, and branded offer cards.",
+                "startup_sales_ready_seed",
+                "live",
+            ),
+        ]
+
+        for lead in sales_ready_leads:
+            existing = con.execute(
+                "SELECT id FROM setup_requests WHERE id = ? LIMIT 1",
+                (lead[0],),
+            ).fetchone()
+            if not existing:
+                con.execute(
+                    """
+                    INSERT INTO setup_requests (
+                        id, name, business_name, email, phone, what_i_sell,
+                        budget_range, timeline, website, message, source, status, created_at
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (*lead, now_iso()),
+                )
+
+        sales_ready_orders = [
+            (
+                "ORD-DEMO-BLUE-RIDGE",
+                "Taylor Reed",
+                "taylor@example.com",
+                "555-0199",
+                "Setup Call",
+                150000,
+                [
+                    ("prod_pro_dashboard", "WOLF-PRO", "Pro Storefront + Owner Dashboard", 1, 150000),
+                ],
+            ),
+            (
+                "ORD-DEMO-SUMMIT",
+                "Jordan Miles",
+                "jordan@example.com",
+                "555-0188",
+                "Digital Delivery",
+                49900,
+                [
+                    ("prod_starter_storefront", "WOLF-STARTER", "Starter Storefront", 1, 49900),
+                ],
+            ),
+            (
+                "ORD-DEMO-CROWN-CUT",
+                "Marcus King",
+                "marcus@example.com",
+                "555-0177",
+                "Launch Kit",
+                29900,
+                [
+                    ("prod_launch_kit", "WOLF-LAUNCH-KIT", "Digital Launch Kit", 1, 29900),
+                ],
+            ),
+        ]
+
+        for order in sales_ready_orders:
+            order_id, buyer_name, buyer_email, buyer_phone, notes, total_cents, lines = order
+            existing = con.execute(
+                "SELECT id FROM orders WHERE id = ? LIMIT 1",
+                (order_id,),
+            ).fetchone()
+            if not existing:
+                con.execute(
+                    """
+                    INSERT INTO orders (
+                        id, store_id, store_slug, buyer_name, buyer_email, buyer_phone, notes,
+                        subtotal_cents, tax_cents, shipping_cents, discount_cents, total_cents,
+                        currency, payment_mode, payment_status, status, created_at
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        order_id,
+                        "store_demo",
+                        "demo",
+                        buyer_name,
+                        buyer_email,
+                        buyer_phone,
+                        notes,
+                        total_cents,
+                        0,
+                        0,
+                        0,
+                        total_cents,
+                        "USD",
+                        "manual",
+                        "unpaid",
+                        "created",
+                        now_iso(),
+                    ),
+                )
+
+                for product_id, sku, name, qty, unit_amount_cents in lines:
+                    con.execute(
+                        """
+                        INSERT INTO order_items (
+                            order_id, product_id, sku, name, qty, unit_amount_cents, line_total_cents
+                        )
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                        """,
+                        (
+                            order_id,
+                            product_id,
+                            sku,
+                            name,
+                            qty,
+                            unit_amount_cents,
+                            qty * unit_amount_cents,
+                        ),
+                    )
+
         con.commit()
     finally:
         con.close()
