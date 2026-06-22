@@ -1013,13 +1013,24 @@ function SaasLanding({
       </aside>
 
       <aside className="landing-panel">
-        <p className="v3-kicker">Sellable Packages</p>
-        <h2>Launch packages for real buyers</h2>
+        <p className="v3-kicker">Hire Andrew / Launch Packages</p>
+        <h2>Turn a small business into a live storefront + owner dashboard.</h2>
+        <p>
+          Built by Andrew Wolverton. I AM THE ONE™ / WOLF OS™ gives businesses a
+          branded buying flow, buyer lead capture, and a simple command center
+          instead of starting from zero.
+        </p>
 
         <div className="metric-list">
           <Metric label="Starter Storefront" value="$499+" />
           <Metric label="Pro Storefront + Dashboard" value="$1,500+" />
           <Metric label="Custom SaaS Buildout" value="$3,000+" />
+        </div>
+
+        <div className="shine-box">
+          <strong>Best fit</strong>
+          <span>Clothing brands, barbers, beauty studios, pressure washing, cleaning, food trucks, and local service businesses.</span>
+          <span>Use the live demo to pick a package, request setup, and start with a real system foundation.</span>
         </div>
 
         <SetupRequestForm />
@@ -1472,7 +1483,7 @@ function SetupRequestForm() {
   }
 
   return (
-    <form className="setup-form" onSubmit={submitSetupRequest}>
+    <form id="request-setup-form" className="setup-form" onSubmit={submitSetupRequest}>
       <div className="setup-form-head">
         <p className="v3-kicker">Request Setup</p>
         <h3>Tell Andrew what you want to launch</h3>
