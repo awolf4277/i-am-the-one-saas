@@ -1097,14 +1097,18 @@ If you want something like this customized for your business, I can help set it 
           <a className="v3-button primary" href="/#store/demo">
             Start Demo
           </a>
-          <a
+          <button
+            type="button"
             className="v3-button secondary"
-            href="https://mail.google.com/mail/?view=cm&fs=1&to=awolf4277%40gmail.com&su=I%20AM%20THE%20ONE%20SaaS%20Setup%20Request&body=Hi%20Andrew%2C%0A%0AI%20am%20interested%20in%20a%20storefront%20or%20SaaS%20setup.%0A%0ABusiness%20name%3A%0AWhat%20I%20sell%3A%0ABudget%20range%3A%0ATimeline%3A%0AWebsite%20or%20social%20link%3A%0A%0AI%20saw%20the%20live%20demo%20and%20would%20like%20to%20talk%20about%20setup.%0A"
-            target="_blank"
-            rel="noreferrer"
+            onClick={() => {
+              document.getElementById("request-setup-form")?.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              });
+            }}
           >
             Request Setup
-          </a>
+          </button>
         </div>
       </aside>
     </section>
