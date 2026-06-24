@@ -52,6 +52,11 @@ const LOCK_GMAIL_HREF = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeU
   LOCK_OWNER_EMAIL
 )}&su=${LOCK_CONTACT_SUBJECT}&body=${LOCK_CONTACT_BODY}`;
 
+const CLOVER_STARTER_DEPOSIT_LINK = String(import.meta.env.VITE_CLOVER_STARTER_DEPOSIT_LINK || "");
+const CLOVER_STARTER_FULL_LINK = String(import.meta.env.VITE_CLOVER_STARTER_FULL_LINK || "");
+const CLOVER_PRO_DEPOSIT_LINK = String(import.meta.env.VITE_CLOVER_PRO_DEPOSIT_LINK || "");
+
+
 
 type ApiHealth = {
   ok?: boolean;
@@ -1035,6 +1040,8 @@ function SaasLanding({
 
         <SetupRequestForm />
 
+        <PaymentOptions />
+
         <div className="shine-box">
           <strong>What buyers get</strong>
           <span>Mobile-ready storefront demo</span>
@@ -1415,6 +1422,74 @@ function OwnerGate({
   );
 }
 
+
+function PaymentOptions() {
+  const scrollToSetup = () => {
+    document.getElementById("request-setup-form")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
+  const hasAnyCloverLink =
+    CLOVER_STARTER_DEPOSIT_LINK || CLOVER_STARTER_FULL_LINK || CLOVER_PRO_DEPOSIT_LINK;
+
+  return (
+    <div className="shine-box payment-options-box">
+      <strong>Payment Options</strong>
+      <span>
+        Clover-ready checkout path. Start with a setup request, then pay a deposit
+        or package invoice through a secure Clover payment link.
+      </span>
+
+      <div className="landing-actions payment-actions">
+        {CLOVER_STARTER_DEPOSIT_LINK ? (
+          <a
+            className="v3-button primary"
+            href={CLOVER_STARTER_DEPOSIT_LINK}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Pay Starter Deposit
+          </a>
+        ) : (
+          <button type="button" className="v3-button primary" onClick={scrollToSetup}>
+            Request Starter Deposit Link
+          </button>
+        )}
+
+        {CLOVER_STARTER_FULL_LINK ? (
+          <a
+            className="v3-button secondary"
+            href={CLOVER_STARTER_FULL_LINK}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Pay Starter $499
+          </a>
+        ) : null}
+
+        {CLOVER_PRO_DEPOSIT_LINK ? (
+          <a
+            className="v3-button secondary"
+            href={CLOVER_PRO_DEPOSIT_LINK}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Pay Pro Deposit
+          </a>
+        ) : null}
+      </div>
+
+      {!hasAnyCloverLink ? (
+        <span>
+          No Clover link is public yet. Submit the setup form and Andrew can send
+          the correct deposit link for your package.
+        </span>
+      ) : null}
+    </div>
+  );
+}
 
 function SetupRequestForm() {
   const [form, setForm] = useState({
