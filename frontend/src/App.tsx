@@ -1042,6 +1042,8 @@ function SaasLanding({
 
         <PaymentOptions />
 
+        <PremiumBuyerProof />
+
         <div className="shine-box">
           <strong>What buyers get</strong>
           <span>Mobile-ready storefront demo</span>
@@ -1422,6 +1424,61 @@ function OwnerGate({
   );
 }
 
+
+function PremiumBuyerProof() {
+  return (
+    <>
+      <div className="shine-box">
+        <strong>Why this is different</strong>
+        <span>
+          This is not a static website pitch. The demo already runs with a live API,
+          products, orders, buyer leads, owner login, payment-ready setup, and a
+          dashboard workflow a business can understand immediately.
+        </span>
+        <span>
+          Your build starts from a working system foundation, then gets customized
+          around your brand, offers, customer flow, and payment/deposit process.
+        </span>
+      </div>
+
+      <div className="metric-list">
+        <Metric label="Starter Deposit" value="$250" />
+        <Metric label="Starter Delivery" value="3-7 days" />
+        <Metric label="Revision Round" value="1 included" />
+      </div>
+
+      <div className="shine-box">
+        <strong>How a client build works</strong>
+        <span>1. Submit the setup request with your business details.</span>
+        <span>2. Pick Starter, Pro, or Custom based on what you need.</span>
+        <span>3. Pay the deposit to lock the build.</span>
+        <span>4. Andrew customizes the storefront, offers, dashboard flow, and launch copy.</span>
+        <span>5. You receive a live link you can show customers.</span>
+      </div>
+
+      <div className="shine-box">
+        <strong>Scope clarity</strong>
+        <span>
+          Starter is for getting live fast. Deeper dashboards, payment integrations,
+          automations, custom admin tools, and advanced workflows move into Pro or
+          Custom pricing.
+        </span>
+        <span>
+          This keeps the build clean, protects the timeline, and makes sure every
+          client gets the right package instead of an endless cheap custom project.
+        </span>
+      </div>
+
+      <div className="shine-box">
+        <strong>Buyer FAQ</strong>
+        <span><strong>Do I need products?</strong> No. Services, packages, bookings, quote requests, and digital offers work too.</span>
+        <span><strong>Can this use Clover?</strong> Yes. Start with secure Clover payment links, then upgrade to deeper checkout later.</span>
+        <span><strong>Is this custom?</strong> The foundation is already built. Your version gets customized around your brand and business flow.</span>
+        <span><strong>Do I own my business content?</strong> Yes. Your brand, offers, copy, and customer-facing content are yours.</span>
+      </div>
+    </>
+  );
+}
 
 function PaymentOptions() {
   const scrollToSetup = () => {
