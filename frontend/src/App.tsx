@@ -1555,11 +1555,50 @@ function BuyerConversionPolish() {
 }
 
 function PaymentOptions() {
-  const scrollToSetup = () => {
-    document.getElementById("request-setup-form")?.scrollIntoView({
+  const requestDepositLink = () => {
+    const form = document.getElementById("request-setup-form");
+    const message = form?.querySelector("textarea") as HTMLTextAreaElement | null;
+    const status = document.getElementById("deposit-link-status");
+
+    form?.scrollIntoView({
       behavior: "smooth",
       block: "start",
     });
+
+    const depositNote =
+      "I want the Starter Storefront and need the Clover/deposit payment link. I understand Starter is $499+ with a $250 deposit to start.";
+
+    if (message) {
+      const currentValue = message.value.trim();
+      const nextValue = currentValue.includes("Starter Storefront")
+        ? currentValue
+        : currentValue
+          ? `${currentValue}\n\n${depositNote}`
+          : depositNote;
+
+      const valueSetter = Object.getOwnPropertyDescriptor(message, "value")?.set;
+      const prototype = Object.getPrototypeOf(message);
+      const prototypeValueSetter = Object.getOwnPropertyDescriptor(prototype, "value")?.set;
+
+      if (prototypeValueSetter && valueSetter !== prototypeValueSetter) {
+        prototypeValueSetter.call(message, nextValue);
+      } else if (valueSetter) {
+        valueSetter.call(message, nextValue);
+      } else {
+        message.value = nextValue;
+      }
+
+      message.dispatchEvent(new Event("input", { bubbles: true }));
+      message.dispatchEvent(new Event("change", { bubbles: true }));
+
+      setTimeout(() => message.focus(), 350);
+    }
+
+    if (status) {
+      status.textContent =
+        "Starter deposit request added. Finish your contact details and send the setup request.";
+      status.removeAttribute("hidden");
+    }
   };
 
   const hasAnyCloverLink =
@@ -1584,7 +1623,7 @@ function PaymentOptions() {
             Pay Starter Deposit
           </a>
         ) : (
-          <button type="button" className="v3-button primary" onClick={scrollToSetup}>
+          <button type="button" className="v3-button primary" onClick={requestDepositLink}>
             Request Starter Deposit Link
           </button>
         )}
@@ -1612,15 +1651,23 @@ function PaymentOptions() {
         ) : null}
       </div>
 
+      <span id="deposit-link-status" className="close-kit-status" hidden>
+        Starter deposit request added. Finish your contact details and send the setup request.
+      </span>
+
       {!hasAnyCloverLink ? (
         <span>
-          No Clover link is public yet. Submit the setup form and Andrew can send
-          the correct deposit link for your package.
+          No Clover link is public yet. Click the button to add a Starter deposit
+          request to the setup form, then Andrew can send the correct payment link.
         </span>
       ) : null}
     </div>
   );
 }
+
+
+
+
 
 function SetupRequestForm() {
   const [form, setForm] = useState({
