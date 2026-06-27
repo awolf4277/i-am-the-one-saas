@@ -1044,6 +1044,8 @@ function SaasLanding({
 
         <PremiumBuyerProof />
 
+        <BuyerConversionPolish />
+
         <div className="shine-box">
           <strong>What buyers get</strong>
           <span>Mobile-ready storefront demo</span>
@@ -1475,6 +1477,78 @@ function PremiumBuyerProof() {
         <span><strong>Can this use Clover?</strong> Yes. Start with secure Clover payment links, then upgrade to deeper checkout later.</span>
         <span><strong>Is this custom?</strong> The foundation is already built. Your version gets customized around your brand and business flow.</span>
         <span><strong>Do I own my business content?</strong> Yes. Your brand, offers, copy, and customer-facing content are yours.</span>
+      </div>
+    </>
+  );
+}
+
+function BuyerConversionPolish() {
+  const scrollToSetup = () => {
+    document.getElementById("request-setup-form")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
+  return (
+    <>
+      <div className="shine-box">
+        <strong>What happens after deposit?</strong>
+        <span>1. Andrew confirms your business details, offers, and launch goal.</span>
+        <span>2. Your services, products, or packages are added to the storefront.</span>
+        <span>3. The page copy, buyer flow, and call-to-action are customized.</span>
+        <span>4. Your setup request, quote, or payment/deposit path is connected.</span>
+        <span>5. You receive a live link you can show customers.</span>
+        <span>6. One revision round is included for Starter builds.</span>
+      </div>
+
+      <div className="shine-box">
+        <strong>Starter package boundaries</strong>
+        <span>Starter is designed to get a business live fast with a clean, buyer-ready foundation.</span>
+        <span>Starter includes a branded storefront, offer/service cards, setup/request flow, live link, and one revision round.</span>
+        <span>
+          Starter does not include custom payment API integration, advanced booking logic,
+          unlimited revisions, multi-user accounts, complex automations, or custom database workflows.
+        </span>
+        <span>Those upgrades are available in Pro or Custom packages.</span>
+      </div>
+
+      <div className="shine-box">
+        <strong>Examples by business type</strong>
+        <span><strong>Barbers:</strong> haircut packages, beard trims, VIP grooming, booking interest, and local lead capture.</span>
+        <span><strong>Cleaners:</strong> house cleaning, pressure washing, driveway cleaning, quote requests, and service packages.</span>
+        <span><strong>Clothing brands:</strong> hoodies, tees, merch bundles, product cards, orders, and inventory-ready structure.</span>
+        <span><strong>Food trucks:</strong> menu items, catering requests, pickup interest, events, and contact flow.</span>
+        <span><strong>Creators:</strong> digital products, service packages, launch offers, and buyer inquiry capture.</span>
+      </div>
+
+      <div className="shine-box">
+        <strong>Client intake checklist</strong>
+        <span>Business name and contact info</span>
+        <span>Logo, colors, photos, and brand style if available</span>
+        <span>Services, products, prices, or package offers</span>
+        <span>Preferred payment/deposit method, including Clover link if available</span>
+        <span>Website, social links, and launch deadline</span>
+        <span>Deposit status before custom work begins</span>
+      </div>
+
+      <div className="shine-box premium-cta-box">
+        <strong>Ready to start?</strong>
+        <span>
+          Submit the setup form, pick a package, and Andrew will confirm the next
+          step before any custom work begins.
+        </span>
+        <div className="landing-actions payment-actions">
+          <button type="button" className="v3-button primary" onClick={scrollToSetup}>
+            Request Setup
+          </button>
+          <a className="v3-button secondary" href="/#store/demo">
+            View Store Demo
+          </a>
+          <a className="v3-button secondary" href="/#owner">
+            Open Owner Console
+          </a>
+        </div>
       </div>
     </>
   );
