@@ -306,6 +306,70 @@ function isHotLead(request: SetupRequest) {
   return combined.includes("1500") || combined.includes("this week");
 }
 
+function buildClientBrief(request: SetupRequest) {
+  const businessName = request.business_name || "Business TBD";
+  const contactName = request.name || "Contact TBD";
+  const email = request.email || "Email TBD";
+  const phone = request.phone || "Phone TBD";
+  const whatTheySell = request.what_i_sell || "Offer details TBD";
+  const budget = displayLeadBudget(request);
+  const timeline = request.timeline || "Timeline TBD";
+  const website = request.website || "Website/social TBD";
+  const message = request.message || "No extra message yet.";
+
+  const lowerBudget = budget.toLowerCase();
+  const recommendedPackage =
+    lowerBudget.includes("1500") || lowerBudget.includes("pro")
+      ? "Pro Storefront + Dashboard"
+      : lowerBudget.includes("3000") || lowerBudget.includes("custom")
+        ? "Custom SaaS Buildout"
+        : "Starter Storefront";
+
+  const nextStep =
+    recommendedPackage === "Starter Storefront"
+      ? "Confirm scope, collect $250 starter deposit, then customize the first live build."
+      : recommendedPackage === "Pro Storefront + Dashboard"
+        ? "Confirm dashboard needs, collect Pro deposit, then prepare storefront + owner console buildout."
+        : "Schedule a custom scope call, confirm workflow requirements, and collect 40%-50% deposit.";
+
+  return `CLIENT BRIEF
+
+Business:
+${businessName}
+
+Contact:
+${contactName}
+${email}
+${phone}
+
+What they sell:
+${whatTheySell}
+
+Budget:
+${budget}
+
+Timeline:
+${timeline}
+
+Website / Social:
+${website}
+
+Message:
+${message}
+
+Recommended Package:
+${recommendedPackage}
+
+Suggested Next Step:
+${nextStep}
+
+Demo Link:
+https://i-am-the-one-saas-frontend-live-v2.onrender.com/
+
+Owner Proof:
+Leads, orders, products, launch checklist, Close Kit, payment-ready setup, and Blacklight presentation mode are available in WOLF OS™.`;
+}
+
 function normalizeSetupRequests(payload: any): SetupRequest[] {
   if (Array.isArray(payload)) return payload;
   if (Array.isArray(payload?.setup_requests)) return payload.setup_requests;
@@ -2248,7 +2312,14 @@ If the demo direction looks good, the next step is confirming content, pricing, 
                   </div>
 
                   <div className="lead-actions">
-                    <a
+                                          <button
+                        type="button"
+                        className="mini-link"
+                        onClick={() => copyCloseKitText("Client brief", buildClientBrief(request))}
+                      >
+                        Copy Client Brief
+                      </button>
+<a
                       className="owner-mini-link"
                       href={`mailto:${request.email || ""}?subject=${encodeURIComponent(
                         "Your I AM THE ONE™ setup request"
