@@ -1596,7 +1596,7 @@ function PaymentOptions() {
 
     if (status) {
       status.textContent =
-        "Starter deposit request added. Finish your contact details and send the setup request.";
+        "$250 Starter deposit request added. Finish your contact details and send the setup request.";
       status.removeAttribute("hidden");
     }
   };
@@ -1624,7 +1624,7 @@ function PaymentOptions() {
           </a>
         ) : (
           <button type="button" className="v3-button primary" onClick={requestDepositLink}>
-            Request Starter Deposit Link
+            Request $250 Starter Deposit Link
           </button>
         )}
 
@@ -1652,13 +1652,12 @@ function PaymentOptions() {
       </div>
 
       <span id="deposit-link-status" className="close-kit-status" hidden>
-        Starter deposit request added. Finish your contact details and send the setup request.
+        $250 Starter deposit request added. Finish your contact details and send the setup request.
       </span>
 
       {!hasAnyCloverLink ? (
         <span>
-          No Clover link is public yet. Click the button to add a Starter deposit
-          request to the setup form, then Andrew can send the correct payment link.
+          No Clover link is public yet. Click the button to add a $250 Starter deposit request to the setup form, then Andrew can send the correct payment link.
         </span>
       ) : null}
     </div>
