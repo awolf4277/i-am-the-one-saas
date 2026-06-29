@@ -52,6 +52,10 @@ const LOCK_GMAIL_HREF = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeU
   LOCK_OWNER_EMAIL
 )}&su=${LOCK_CONTACT_SUBJECT}&body=${LOCK_CONTACT_BODY}`;
 
+if (typeof window !== "undefined" && window.localStorage.getItem("wolfBlacklightMode") === "on") {
+  document.documentElement.classList.add("blacklight-mode");
+}
+
 const CLOVER_STARTER_DEPOSIT_LINK = String(import.meta.env.VITE_CLOVER_STARTER_DEPOSIT_LINK || "");
 const CLOVER_STARTER_FULL_LINK = String(import.meta.env.VITE_CLOVER_STARTER_FULL_LINK || "");
 const CLOVER_PRO_DEPOSIT_LINK = String(import.meta.env.VITE_CLOVER_PRO_DEPOSIT_LINK || "");
@@ -964,6 +968,17 @@ function SaasLanding({
           <a className="v3-button secondary" href="/#owner">
             Open Owner Console
           </a>
+          <button
+            type="button"
+            className="v3-button blacklight-toggle"
+            onClick={(event) => {
+              const enabled = document.documentElement.classList.toggle("blacklight-mode");
+              window.localStorage.setItem("wolfBlacklightMode", enabled ? "on" : "off");
+              event.currentTarget.textContent = enabled ? "Normal Mode" : "Blacklight Mode";
+            }}
+          >
+            Blacklight Mode
+          </button>
         </div>
 
         <div className="shine-box">
