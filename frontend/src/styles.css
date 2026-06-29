@@ -2573,3 +2573,84 @@ html.blacklight-mode .v3-logo {
     drop-shadow(0 0 24px rgba(168, 85, 247, 0.3));
 }
 
+
+/* Buyer details accordion */
+.buyer-details-accordion {
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 24px;
+  padding: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), transparent 34%),
+    rgba(255, 255, 255, 0.045);
+  box-shadow: 0 20px 70px rgba(15, 23, 42, 0.18);
+}
+
+.buyer-details-accordion summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 1.15rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.buyer-details-accordion summary::-webkit-details-marker {
+  display: none;
+}
+
+.buyer-details-accordion summary::after {
+  content: "+";
+  width: 2.1rem;
+  height: 2.1rem;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+
+.buyer-details-accordion[open] summary::after {
+  content: "−";
+}
+
+.buyer-details-accordion summary span {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.buyer-details-accordion summary small {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.buyer-details-grid {
+  display: grid;
+  gap: 1rem;
+  padding: 0 1.25rem 1.25rem;
+}
+
+@media (min-width: 900px) {
+  .buyer-details-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+html.blacklight-mode .buyer-details-accordion {
+  background:
+    linear-gradient(135deg, rgba(8, 13, 28, 0.92), rgba(13, 8, 28, 0.82)),
+    radial-gradient(circle at top left, rgba(34, 211, 238, 0.16), transparent 34%) !important;
+  border-color: rgba(168, 85, 247, 0.34) !important;
+  box-shadow:
+    0 0 0 1px rgba(34, 211, 238, 0.08),
+    0 0 32px rgba(168, 85, 247, 0.16),
+    0 18px 60px rgba(0, 0, 0, 0.5) !important;
+}
+
+html.blacklight-mode .buyer-details-accordion summary::after {
+  border-color: rgba(34, 211, 238, 0.38);
+  box-shadow: 0 0 18px rgba(34, 211, 238, 0.18);
+}
+

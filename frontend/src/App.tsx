@@ -966,7 +966,7 @@ function SaasLanding({
             View Live Store Demo
           </a>
           <a className="v3-button secondary" href="/#owner">
-            Open Owner Console
+            See Business Dashboard
           </a>
           <button
             type="button"
@@ -982,7 +982,7 @@ function SaasLanding({
         </div>
 
         <div className="shine-box">
-          <p className="eyebrow">Owner Console Demo</p>
+          <p className="eyebrow">Business Dashboard Demo</p>
 
               {LOCK_SHOW_DEMO_PASSWORD ? (
                 <>
@@ -1096,7 +1096,7 @@ It includes:
 - Buyer lead capture
 
 Live Store Demo: ${origin}/#store/demo
-Owner Console Demo: ${origin}/#owner
+Business Dashboard Demo: ${origin}/#owner
 
 If you want something like this customized for your business, I can help set it up.`
                 );
@@ -1463,39 +1463,11 @@ function PremiumBuyerProof() {
         <Metric label="Starter Delivery" value="3-7 days" />
         <Metric label="Revision Round" value="1 included" />
       </div>
-
-      <div className="shine-box">
-        <strong>How a client build works</strong>
-        <span>1. Submit the setup request with your business details.</span>
-        <span>2. Pick Starter, Pro, or Custom based on what you need.</span>
-        <span>3. Pay the deposit to lock the build.</span>
-        <span>4. Andrew customizes the storefront, offers, dashboard flow, and launch copy.</span>
-        <span>5. You receive a live link you can show customers.</span>
-      </div>
-
-      <div className="shine-box">
-        <strong>Scope clarity</strong>
-        <span>
-          Starter is for getting live fast. Deeper dashboards, payment integrations,
-          automations, custom admin tools, and advanced workflows move into Pro or
-          Custom pricing.
-        </span>
-        <span>
-          This keeps the build clean, protects the timeline, and makes sure every
-          client gets the right package instead of an endless cheap custom project.
-        </span>
-      </div>
-
-      <div className="shine-box">
-        <strong>Buyer FAQ</strong>
-        <span><strong>Do I need products?</strong> No. Services, packages, bookings, quote requests, and digital offers work too.</span>
-        <span><strong>Can this use Clover?</strong> Yes. Start with secure Clover payment links, then upgrade to deeper checkout later.</span>
-        <span><strong>Is this custom?</strong> The foundation is already built. Your version gets customized around your brand and business flow.</span>
-        <span><strong>Do I own my business content?</strong> Yes. Your brand, offers, copy, and customer-facing content are yours.</span>
-      </div>
     </>
   );
 }
+
+
 
 function BuyerConversionPolish() {
   const scrollToSetup = () => {
@@ -1507,45 +1479,73 @@ function BuyerConversionPolish() {
 
   return (
     <>
-      <div className="shine-box">
-        <strong>What happens after deposit?</strong>
-        <span>1. Andrew confirms your business details, offers, and launch goal.</span>
-        <span>2. Your services, products, or packages are added to the storefront.</span>
-        <span>3. The page copy, buyer flow, and call-to-action are customized.</span>
-        <span>4. Your setup request, quote, or payment/deposit path is connected.</span>
-        <span>5. You receive a live link you can show customers.</span>
-        <span>6. One revision round is included for Starter builds.</span>
-      </div>
+      <details className="buyer-details-accordion">
+        <summary>
+          <span>
+            <strong>Full Buyer Details</strong>
+            <small>Process, scope, examples, FAQ, and what happens after deposit.</small>
+          </span>
+        </summary>
 
-      <div className="shine-box">
-        <strong>Starter package boundaries</strong>
-        <span>Starter is designed to get a business live fast with a clean, buyer-ready foundation.</span>
-        <span>Starter includes a branded storefront, offer/service cards, setup/request flow, live link, and one revision round.</span>
-        <span>
-          Starter does not include custom payment API integration, advanced booking logic,
-          unlimited revisions, multi-user accounts, complex automations, or custom database workflows.
-        </span>
-        <span>Those upgrades are available in Pro or Custom packages.</span>
-      </div>
+        <div className="buyer-details-grid">
+          <div className="shine-box">
+            <strong>How a client build works</strong>
+            <span>1. Submit the setup request with your business details.</span>
+            <span>2. Pick Starter, Pro, or Custom based on what you need.</span>
+            <span>3. Pay the deposit to lock the build.</span>
+            <span>4. Andrew customizes the storefront, offers, dashboard flow, and launch copy.</span>
+            <span>5. You receive a live link you can show customers.</span>
+          </div>
 
-      <div className="shine-box">
-        <strong>Examples by business type</strong>
-        <span><strong>Barbers:</strong> haircut packages, beard trims, VIP grooming, booking interest, and local lead capture.</span>
-        <span><strong>Cleaners:</strong> house cleaning, pressure washing, driveway cleaning, quote requests, and service packages.</span>
-        <span><strong>Clothing brands:</strong> hoodies, tees, merch bundles, product cards, orders, and inventory-ready structure.</span>
-        <span><strong>Food trucks:</strong> menu items, catering requests, pickup interest, events, and contact flow.</span>
-        <span><strong>Creators:</strong> digital products, service packages, launch offers, and buyer inquiry capture.</span>
-      </div>
+          <div className="shine-box">
+            <strong>What happens after deposit?</strong>
+            <span>1. Andrew confirms your business details, offers, and launch goal.</span>
+            <span>2. Your services, products, or packages are added to the storefront.</span>
+            <span>3. The page copy, buyer flow, and call-to-action are customized.</span>
+            <span>4. Your setup request, quote, or payment/deposit path is connected.</span>
+            <span>5. You receive a live link you can show customers.</span>
+            <span>6. One revision round is included for Starter builds.</span>
+          </div>
 
-      <div className="shine-box">
-        <strong>Client intake checklist</strong>
-        <span>Business name and contact info</span>
-        <span>Logo, colors, photos, and brand style if available</span>
-        <span>Services, products, prices, or package offers</span>
-        <span>Preferred payment/deposit method, including Clover link if available</span>
-        <span>Website, social links, and launch deadline</span>
-        <span>Deposit status before custom work begins</span>
-      </div>
+          <div className="shine-box">
+            <strong>Starter package boundaries</strong>
+            <span>Starter is designed to get a business live fast with a clean, buyer-ready foundation.</span>
+            <span>Starter includes a branded storefront, offer/service cards, setup/request flow, live link, and one revision round.</span>
+            <span>
+              Starter does not include custom payment API integration, advanced booking logic,
+              unlimited revisions, multi-user accounts, complex automations, or custom database workflows.
+            </span>
+            <span>Those upgrades are available in Pro or Custom packages.</span>
+          </div>
+
+          <div className="shine-box">
+            <strong>Examples by business type</strong>
+            <span><strong>Barbers:</strong> haircut packages, beard trims, VIP grooming, booking interest, and local lead capture.</span>
+            <span><strong>Cleaners:</strong> house cleaning, pressure washing, driveway cleaning, quote requests, and service packages.</span>
+            <span><strong>Clothing brands:</strong> hoodies, tees, merch bundles, product cards, orders, and inventory-ready structure.</span>
+            <span><strong>Food trucks:</strong> menu items, catering requests, pickup interest, events, and contact flow.</span>
+            <span><strong>Creators:</strong> digital products, service packages, launch offers, and buyer inquiry capture.</span>
+          </div>
+
+          <div className="shine-box">
+            <strong>Client intake checklist</strong>
+            <span>Business name and contact info</span>
+            <span>Logo, colors, photos, and brand style if available</span>
+            <span>Services, products, prices, or package offers</span>
+            <span>Preferred payment/deposit method, including Clover link if available</span>
+            <span>Website, social links, and launch deadline</span>
+            <span>Deposit status before custom work begins</span>
+          </div>
+
+          <div className="shine-box">
+            <strong>Buyer FAQ</strong>
+            <span><strong>Do I need products?</strong> No. Services, packages, bookings, quote requests, and digital offers work too.</span>
+            <span><strong>Can this use Clover?</strong> Yes. Start with secure Clover payment links, then upgrade to deeper checkout later.</span>
+            <span><strong>Is this custom?</strong> The foundation is already built. Your version gets customized around your brand and business flow.</span>
+            <span><strong>Do I own my business content?</strong> Yes. Your brand, offers, copy, and customer-facing content are yours.</span>
+          </div>
+        </div>
+      </details>
 
       <div className="shine-box premium-cta-box">
         <strong>Ready to start?</strong>
@@ -1561,13 +1561,15 @@ function BuyerConversionPolish() {
             View Store Demo
           </a>
           <a className="v3-button secondary" href="/#owner">
-            Open Owner Console
+            See Business Dashboard
           </a>
         </div>
       </div>
     </>
   );
 }
+
+
 
 function PaymentOptions() {
   const requestDepositLink = () => {
