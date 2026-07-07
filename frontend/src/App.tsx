@@ -475,6 +475,154 @@ async function trackAnalyticsEvent(event_name: AnalyticsEventName, path = "") {
   }
 }
 
+
+type CockpitGaugeProps = {
+  label: string;
+  value: React.ReactNode;
+  sub: string;
+  percent: number;
+};
+
+function CockpitGauge({ label, value, sub, percent }: CockpitGaugeProps) {
+  const safePercent = Math.max(0, Math.min(100, percent));
+  const sweep = safePercent * 2.55;
+  const needleRotation = -128 + safePercent * 2.56;
+
+  const gaugeBackground = `conic-gradient(from 218deg, rgba(125,255,189,0.95) 0deg, rgba(255,208,87,0.95) ${sweep}deg, rgba(255,255,255,0.08) ${sweep}deg 285deg, transparent 285deg 360deg)`;
+
+  return (
+    <article className="cockpit-gauge">
+      <div className="cockpit-gauge-face">
+        <div className="cockpit-gauge-fill" style={{ background: gaugeBackground }} />
+        <div
+          className="cockpit-gauge-needle"
+          style={{ transform: `rotate(${needleRotation}deg)` }}
+        />
+        <div className="cockpit-gauge-core">
+          <strong>{value}</strong>
+          <span>{label}</span>
+        </div>
+      </div>
+
+      <p>{sub}</p>
+    </article>
+  );
+}
+
+function SiteCockpitRibbon({
+  health,
+  productCount,
+  orderCount,
+  leadCount
+}: {
+  health: ApiHealth | null;
+  productCount: number;
+  orderCount: number;
+  leadCount: number;
+}) {
+  return (
+    <section className="site-cockpit-ribbon" aria-label="WOLF OS cockpit status">
+      <div className="cockpit-ribbon-main">
+        <span className={health?.ok ? "cockpit-led online" : "cockpit-led"} />
+        <div>
+          <strong>{health?.ok ? "ENGINE ONLINE" : "ENGINE CHECK"}</strong>
+          <span>WOLF OS™ command cockpit active</span>
+        </div>
+      </div>
+
+      <div className="cockpit-ribbon-stat">
+        <small>RPM</small>
+        <strong>{health?.ok ? "8.7K" : "IDLE"}</strong>
+      </div>
+
+      <div className="cockpit-ribbon-stat">
+        <small>PRODUCTS</small>
+        <strong>{productCount}</strong>
+      </div>
+
+      <div className="cockpit-ribbon-stat">
+        <small>ORDERS</small>
+        <strong>{orderCount}</strong>
+      </div>
+
+      <div className="cockpit-ribbon-stat">
+        <small>LEADS</small>
+        <strong>{leadCount}</strong>
+      </div>
+    </section>
+  );
+}
+
+function WolfCockpitPanel({
+  health,
+  productCount,
+  storeCount,
+  orderCount,
+  featuredProduct
+}: {
+  health: ApiHealth | null;
+  productCount: number;
+  storeCount: number;
+  orderCount: number;
+  featuredProduct?: Product;
+}) {
+  const launchPercent = health?.ok ? 91 : 46;
+  const buyerFlowPercent = Math.min(96, 68 + productCount * 3);
+  const inventoryPercent = Math.min(96, 58 + productCount * 4);
+  const orderPercent = Math.min(98, 48 + orderCount * 8);
+
+  return (
+    <section className="wolf-cockpit-panel">
+      <div className="cockpit-header">
+        <div>
+          <p className="cockpit-kicker">WOLF OS™ COCKPIT</p>
+          <h2>Supercar-style control center for the live SaaS demo.</h2>
+          <p>
+            Storefront, checkout, products, orders, buyer leads, and the owner
+            dashboard now feel like one premium command machine.
+          </p>
+        </div>
+
+        <div className="cockpit-status-stack">
+          <span>{health?.ok ? "ENGINE: ONLINE" : "ENGINE: CHECK"}</span>
+          <span>MODE: DEMO READY</span>
+          <span>API: {health?.ok ? "LIVE" : "VERIFYING"}</span>
+        </div>
+      </div>
+
+      <div className="cockpit-gauge-grid">
+        <CockpitGauge
+          label="Launch RPM"
+          value={health?.ok ? "8.7K" : "IDLE"}
+          sub="Storefront and owner dashboard status."
+          percent={launchPercent}
+        />
+
+        <CockpitGauge
+          label="Buyer Flow"
+          value={`${buyerFlowPercent}%`}
+          sub="Landing → store → checkout → dashboard."
+          percent={buyerFlowPercent}
+        />
+
+        <CockpitGauge
+          label="Inventory"
+          value={productCount}
+          sub={`${storeCount} store system with live product data.`}
+          percent={inventoryPercent}
+        />
+
+        <CockpitGauge
+          label="Orders"
+          value={orderCount}
+          sub={`Featured: ${featuredProduct?.name || "Wolf Signature Hoodie"} · ${money(featuredProduct?.price_cents || 9900)}`}
+          percent={orderPercent}
+        />
+      </div>
+    </section>
+  );
+}
+
 function App() {
   const readRoutePath = () => {
     const rawRoute = window.location.hash
@@ -895,6 +1043,13 @@ function App() {
         }}
       />
 
+      <SiteCockpitRibbon
+        health={health}
+        productCount={products.length || ownerProducts.length || health?.counts?.products || 0}
+        orderCount={orders.length || health?.counts?.orders || 0}
+        leadCount={setupRequests.length}
+      />
+
       {notice ? <div className="v3-toast">{notice}</div> : null}
 
       {error ? (
@@ -1016,6 +1171,16 @@ function SaasLanding({
 
   return (
     <section className="landing-grid">
+      <div className="landing-cockpit-span">
+        <WolfCockpitPanel
+          health={health}
+          productCount={productCount}
+          storeCount={storeCount}
+          orderCount={orderCount}
+          featuredProduct={featuredProduct}
+        />
+      </div>
+
       <div className="landing-hero">
         <p className="v3-kicker">I AM THE ONE™ · WOLF OS™ SaaS</p>
         <h1>Turn your business into a live storefront with checkout, products, orders, and an owner dashboard ready to run.</h1>
@@ -2529,6 +2694,7 @@ function Metric({ label, value }: { label: string; value: React.ReactNode }) {
 }
 
 export default App;
+
 
 
 
