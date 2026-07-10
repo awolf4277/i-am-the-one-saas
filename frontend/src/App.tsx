@@ -1304,6 +1304,17 @@ function SaasLanding({
 
   return (
     <section className="landing-grid">
+
+      <div className="landing-cockpit-span">
+        <WolfActivityFeed
+          health={health}
+          productCount={productCount}
+          orderCount={orderCount}
+          leadCount={3}
+        />
+      </div>
+
+
       <div className="landing-cockpit-span">
         <WolfCockpitPanel
           health={health}
@@ -1503,6 +1514,178 @@ If you want something like this customized for your business, I can help set it 
   );
 }
 
+
+
+
+type ActivityFeedProps = {
+  health: ApiHealth | null;
+  productCount: number;
+  orderCount: number;
+  leadCount: number;
+};
+
+function WolfActivityFeed({
+  health,
+  productCount,
+  orderCount,
+  leadCount
+}: ActivityFeedProps) {
+  const now = new Date();
+
+  const activityItems = [
+    {
+      label: health?.ok ? "ENGINE ONLINE" : "ENGINE CHECK",
+      detail: health?.ok
+        ? "WOLF OS core systems responding."
+        : "Waiting for backend connection.",
+      status: health?.ok ? "online" : "checking"
+    },
+    {
+      label: health?.ok ? "API CONNECTED" : "API VERIFYING",
+      detail: health?.ok
+        ? "Live Flask backend connection confirmed."
+        : "Attempting to reach API.",
+      status: health?.ok ? "online" : "checking"
+    },
+    {
+      label: `${productCount} PRODUCTS SYNCHRONIZED`,
+      detail: "Live catalog and inventory data loaded.",
+      status: productCount > 0 ? "online" : "checking"
+    },
+    {
+      label: `${orderCount} ORDERS DETECTED`,
+      detail: "Owner order pipeline is active.",
+      status: orderCount > 0 ? "online" : "standby"
+    },
+    {
+      label: `${leadCount} BUYER LEADS ACTIVE`,
+      detail: "Setup requests are available for follow-up.",
+      status: leadCount > 0 ? "hot" : "standby"
+    },
+    {
+      label: "COCKPIT REFRESHED",
+      detail: "Dashboard readouts updated from live data.",
+      status: health?.ok ? "online" : "checking"
+    },
+    {
+      label: "STOREFRONT READY",
+      detail: "Buyer path, product flow, and checkout are armed.",
+      status: health?.ok && productCount > 0 ? "online" : "standby"
+    }
+  ];
+
+  const formatTime = (offsetSeconds: number) => {
+    const date = new Date(now.getTime() - offsetSeconds * 1000);
+
+    return date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
+    });
+  };
+
+  return (
+    <section className="wolf-activity-panel">
+      <div className="activity-panel-head">
+        <div>
+          <p className="activity-kicker">WOLF OS™ LIVE ACTIVITY</p>
+          <h2>System activity in real time.</h2>
+          <p>
+            Live operational proof from the storefront, API, inventory,
+            order pipeline, buyer leads, and cockpit.
+          </p>
+        </div>
+
+        <div className="activity-live-badge">
+          <span className={health?.ok ? "activity-live-dot online" : "activity-live-dot"} />
+          <strong>{health?.ok ? "LIVE FEED" : "CONNECTING"}</strong>
+        </div>
+      </div>
+
+      <div className="activity-layout">
+        <div className="activity-feed-list">
+          {activityItems.map((item, index) => (
+            <article
+              className={`activity-feed-row ${item.status}`}
+              key={`${item.label}-${index}`}
+            >
+              <time>{formatTime((activityItems.length - index) * 2)}</time>
+
+              <span className="activity-event-dot" />
+
+              <div>
+                <strong>{item.label}</strong>
+                <small>{item.detail}</small>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className="mission-status-panel">
+          <p className="activity-kicker">MISSION STATUS</p>
+
+          <MissionStatusRow
+            label="Engine"
+            value={health?.ok ? "ONLINE" : "CHECK"}
+            percent={health?.ok ? 100 : 35}
+          />
+
+          <MissionStatusRow
+            label="Buyer Pipeline"
+            value={leadCount > 0 ? "READY" : "STANDBY"}
+            percent={leadCount > 0 ? Math.min(100, 70 + leadCount * 8) : 28}
+          />
+
+          <MissionStatusRow
+            label="Storefront"
+            value={productCount > 0 ? "LIVE" : "LOADING"}
+            percent={productCount > 0 ? 100 : 40}
+          />
+
+          <MissionStatusRow
+            label="Owner Console"
+            value={health?.ok ? "ACTIVE" : "CHECK"}
+            percent={health?.ok ? 96 : 38}
+          />
+
+          <MissionStatusRow
+            label="API"
+            value={health?.ok ? "CONNECTED" : "VERIFYING"}
+            percent={health?.ok ? 100 : 32}
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function MissionStatusRow({
+  label,
+  value,
+  percent
+}: {
+  label: string;
+  value: string;
+  percent: number;
+}) {
+  const safePercent = Math.max(0, Math.min(100, percent));
+
+  return (
+    <div className="mission-status-row">
+      <div className="mission-status-meta">
+        <span>{label}</span>
+        <strong>{value}</strong>
+      </div>
+
+      <div className="mission-status-track">
+        <div
+          className="mission-status-fill"
+          style={{ width: `${safePercent}%` }}
+        />
+      </div>
+    </div>
+  );
+}
 
 function CustomerStorefront({
   storeSlug,

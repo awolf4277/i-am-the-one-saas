@@ -3279,3 +3279,288 @@ html.blacklight-mode .premium-cta-box {
 }
 
 
+/* WOLF OS live activity feed */
+.wolf-activity-panel {
+  grid-column: 1 / -1;
+  margin: 0 0 10px;
+  padding: 26px;
+  border: 1px solid rgba(125, 255, 189, 0.18);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(125, 255, 189, 0.14), transparent 34%),
+    radial-gradient(circle at 90% 8%, rgba(255, 208, 87, 0.1), transparent 30%),
+    linear-gradient(135deg, rgba(255,255,255,0.065), rgba(255,255,255,0.02)),
+    rgba(2, 5, 8, 0.9);
+  box-shadow:
+    0 30px 100px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.wolf-activity-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 38px 38px;
+  mask-image: radial-gradient(circle at center, black, transparent 82%);
+  pointer-events: none;
+}
+
+.activity-panel-head {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 22px;
+  align-items: start;
+}
+
+.activity-kicker {
+  margin: 0 0 8px;
+  color: #7dffbd;
+  font-size: 0.76rem;
+  font-weight: 950;
+  letter-spacing: 0.2em;
+}
+
+.activity-panel-head h2 {
+  margin: 0 0 10px;
+  font-size: clamp(1.55rem, 3vw, 2.45rem);
+  letter-spacing: -0.05em;
+}
+
+.activity-panel-head p {
+  max-width: 760px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.activity-live-badge {
+  min-width: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px 15px;
+  border: 1px solid rgba(125, 255, 189, 0.2);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.35);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+}
+
+.activity-live-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #ffd057;
+  box-shadow: 0 0 18px rgba(255, 208, 87, 0.4);
+}
+
+.activity-live-dot.online {
+  background: #7dffbd;
+  box-shadow: 0 0 20px rgba(125, 255, 189, 0.55);
+  animation: activityPulse 1.8s ease-in-out infinite;
+}
+
+.activity-layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.75fr);
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.activity-feed-list,
+.mission-status-panel {
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.018)),
+    rgba(0, 0, 0, 0.34);
+}
+
+.activity-feed-list {
+  display: grid;
+  gap: 8px;
+}
+
+.activity-feed-row {
+  display: grid;
+  grid-template-columns: 82px 12px 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 11px 12px;
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.025);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
+}
+
+.activity-feed-row:hover {
+  transform: translateX(4px);
+  border-color: rgba(125, 255, 189, 0.2);
+  background: rgba(125, 255, 189, 0.04);
+}
+
+.activity-feed-row time {
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.06em;
+}
+
+.activity-event-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.activity-feed-row.online .activity-event-dot {
+  background: #7dffbd;
+  box-shadow: 0 0 16px rgba(125, 255, 189, 0.5);
+}
+
+.activity-feed-row.hot .activity-event-dot {
+  background: #ffd057;
+  box-shadow: 0 0 16px rgba(255, 208, 87, 0.5);
+}
+
+.activity-feed-row.checking .activity-event-dot {
+  background: #ffd057;
+}
+
+.activity-feed-row.standby .activity-event-dot {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.activity-feed-row strong,
+.activity-feed-row small {
+  display: block;
+}
+
+.activity-feed-row strong {
+  color: rgba(255, 255, 255, 0.93);
+  font-size: 0.86rem;
+  letter-spacing: 0.02em;
+}
+
+.activity-feed-row small {
+  margin-top: 3px;
+  color: rgba(255, 255, 255, 0.52);
+  line-height: 1.4;
+}
+
+.mission-status-panel {
+  display: grid;
+  align-content: start;
+  gap: 16px;
+}
+
+.mission-status-row {
+  display: grid;
+  gap: 8px;
+}
+
+.mission-status-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.mission-status-meta span {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.mission-status-meta strong {
+  color: rgba(255, 255, 255, 0.94);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+}
+
+.mission-status-track {
+  height: 9px;
+  overflow: hidden;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.mission-status-fill {
+  height: 100%;
+  border-radius: inherit;
+  background:
+    linear-gradient(90deg, #7dffbd, #ffd057);
+  box-shadow:
+    0 0 18px rgba(125, 255, 189, 0.3),
+    0 0 24px rgba(255, 208, 87, 0.16);
+  transition: width 650ms ease;
+}
+
+@keyframes activityPulse {
+  0%,
+  100% {
+    opacity: 0.65;
+    transform: scale(0.92);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .activity-live-dot.online {
+    animation: none;
+  }
+
+  .activity-feed-row,
+  .mission-status-fill {
+    transition: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .activity-panel-head,
+  .activity-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .activity-live-badge {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .wolf-activity-panel {
+    padding: 20px;
+    border-radius: 24px;
+  }
+
+  .activity-feed-row {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+
+  .activity-event-dot {
+    display: none;
+  }
+}
+
+
