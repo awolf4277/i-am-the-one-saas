@@ -623,7 +623,134 @@ function WolfCockpitPanel({
   );
 }
 
+
+
+function WolfIgnitionSequence({
+  onComplete
+}: {
+  onComplete: () => void;
+}) {
+  const [progress, setProgress] = useState(0);
+  const [message, setMessage] = useState("Initializing WOLF Core...");
+
+  useEffect(() => {
+    const start = performance.now();
+    const duration = 3100;
+
+    const frame = (now: number) => {
+      const elapsed = now - start;
+      const nextProgress = Math.min(100, Math.round((elapsed / duration) * 100));
+
+      setProgress(nextProgress);
+
+      if (nextProgress < 22) {
+        setMessage("Initializing WOLF Core...");
+      } else if (nextProgress < 46) {
+        setMessage("Connecting Live API...");
+      } else if (nextProgress < 68) {
+        setMessage("Synchronizing Inventory...");
+      } else if (nextProgress < 88) {
+        setMessage("Loading Cockpit...");
+      } else if (nextProgress < 100) {
+        setMessage("Arming Launch Systems...");
+      } else {
+        setMessage("ENGINE ONLINE");
+      }
+
+      if (elapsed < duration) {
+        window.requestAnimationFrame(frame);
+      } else {
+        window.setTimeout(onComplete, 350);
+      }
+    };
+
+    const animationFrame = window.requestAnimationFrame(frame);
+
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+    };
+  }, [onComplete]);
+
+  return (
+    <div className="wolf-ignition-overlay" role="status" aria-live="polite">
+      <div className="ignition-speed-lines" />
+
+      <div className="ignition-panel">
+        <div className="ignition-brand">
+          <span className="ignition-mark">W</span>
+
+          <div>
+            <p>WOLF OS™</p>
+            <small>I AM THE ONE™ SaaS v3.1</small>
+          </div>
+        </div>
+
+        <div className="ignition-tree" aria-hidden="true">
+          <span className={progress >= 15 ? "active" : ""} />
+          <span className={progress >= 32 ? "active" : ""} />
+          <span className={progress >= 49 ? "active amber" : ""} />
+          <span className={progress >= 66 ? "active amber" : ""} />
+          <span className={progress >= 83 ? "active amber" : ""} />
+          <span className={progress >= 98 ? "active green" : ""} />
+        </div>
+
+        <div className="ignition-copy">
+          <p className="ignition-kicker">TOP FUEL STARTUP SEQUENCE</p>
+          <h1>{message}</h1>
+
+          <div className="ignition-progress-track">
+            <div
+              className="ignition-progress-fill"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+
+          <div className="ignition-progress-meta">
+            <span>{progress}%</span>
+            <span>3.10 SEC BOOT</span>
+          </div>
+        </div>
+
+        <div className="ignition-readouts">
+          <div>
+            <span>API</span>
+            <strong>{progress >= 46 ? "CONNECTED" : "CHECKING"}</strong>
+          </div>
+
+          <div>
+            <span>INVENTORY</span>
+            <strong>{progress >= 68 ? "SYNCED" : "LOADING"}</strong>
+          </div>
+
+          <div>
+            <span>COCKPIT</span>
+            <strong>{progress >= 88 ? "ARMED" : "STANDBY"}</strong>
+          </div>
+
+          <div>
+            <span>ENGINE</span>
+            <strong>{progress >= 100 ? "ONLINE" : "IGNITION"}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function App() {
+
+  const [showIgnition, setShowIgnition] = useState(() => {
+    if (typeof window === "undefined") return true;
+
+    return window.sessionStorage.getItem("wolf_ignition_complete") !== "true";
+  });
+
+  const completeIgnition = () => {
+    window.sessionStorage.setItem("wolf_ignition_complete", "true");
+    setShowIgnition(false);
+  };
+
+
   const readRoutePath = () => {
     const rawRoute = window.location.hash
       ? window.location.hash.replace(/^#/, "")
@@ -1030,6 +1157,12 @@ function App() {
 
   return (
     <main className="v3-app">
+
+      {showIgnition ? (
+        <WolfIgnitionSequence onComplete={completeIgnition} />
+      ) : null}
+
+
       <OwnershipBar
         health={health}
         storeSlug={storeSlug}
