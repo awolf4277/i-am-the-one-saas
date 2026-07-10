@@ -1687,6 +1687,255 @@ function MissionStatusRow({
   );
 }
 
+
+
+type BusinessIntelligenceProps = {
+  health: ApiHealth | null;
+  products: Product[];
+  orders: Order[];
+  setupRequests: SetupRequest[];
+  analytics: AnalyticsSummary | null;
+};
+
+function BusinessIntelligencePanel({
+  health,
+  products,
+  orders,
+  setupRequests,
+  analytics
+}: BusinessIntelligenceProps) {
+  const inventoryValue = products.reduce((sum, product) => {
+    return sum + Number(product.price_cents || 0) * Number(product.stock || 0);
+  }, 0);
+
+  const totalRevenue = orders.reduce((sum, order) => {
+    return sum + Number(order.total_cents || 0);
+  }, 0);
+
+  const averageOrder = orders.length
+    ? Math.round(totalRevenue / orders.length)
+    : 0;
+
+  const lowStockCount = products.filter((product) => {
+    return Number(product.stock || 0) <= 3;
+  }).length;
+
+  const totalVisits = Number(analytics?.total_visits || 0);
+  const visitsToday = Number(analytics?.visits_today || 0);
+
+  const leadRate = totalVisits > 0
+    ? Math.round((setupRequests.length / totalVisits) * 100)
+    : Number(analytics?.conversion_rate || 0);
+
+  const storeHealth = Math.max(
+    0,
+    Math.min(
+      100,
+      50 +
+        (health?.ok ? 20 : 0) +
+        Math.min(products.length * 2, 15) +
+        Math.min(orders.length * 2, 10) +
+        Math.min(setupRequests.length, 5) -
+        lowStockCount * 2
+    )
+  );
+
+  const topProduct = [...products]
+    .sort((a, b) => {
+      return Number(b.price_cents || 0) - Number(a.price_cents || 0);
+    })[0];
+
+  const systemValue = inventoryValue + totalRevenue;
+
+  return (
+    <section className="business-intelligence-panel">
+      <div className="bi-panel-head">
+        <div>
+          <p className="bi-kicker">WOLF OS™ BUSINESS INTELLIGENCE</p>
+          <h2>Operational numbers that make the system feel real.</h2>
+          <p>
+            Revenue, inventory, buyer activity, store health, and performance
+            indicators generated from the current live system data.
+          </p>
+        </div>
+
+        <div className="bi-health-score">
+          <span>STORE HEALTH</span>
+          <strong>{storeHealth}%</strong>
+          <small>{health?.ok ? "Operational" : "Connection check"}</small>
+        </div>
+      </div>
+
+      <div className="bi-metric-grid">
+        <BiMetric
+          label="System Value"
+          value={money(systemValue)}
+          detail="Inventory value plus captured order value."
+          status="green"
+        />
+
+        <BiMetric
+          label="Captured Revenue"
+          value={money(totalRevenue)}
+          detail={`${orders.length} orders currently detected.`}
+          status="gold"
+        />
+
+        <BiMetric
+          label="Average Order"
+          value={money(averageOrder)}
+          detail="Average value across current orders."
+          status="green"
+        />
+
+        <BiMetric
+          label="Inventory Value"
+          value={money(inventoryValue)}
+          detail={`${products.length} products in the live catalog.`}
+          status="blue"
+        />
+
+        <BiMetric
+          label="Buyer Conversion"
+          value={`${leadRate}%`}
+          detail={`${setupRequests.length} live buyer leads captured.`}
+          status={leadRate > 0 ? "gold" : "muted"}
+        />
+
+        <BiMetric
+          label="Visits Today"
+          value={visitsToday}
+          detail={`${totalVisits} total tracked visits.`}
+          status="blue"
+        />
+
+        <BiMetric
+          label="Low Stock"
+          value={lowStockCount}
+          detail={
+            lowStockCount > 0
+              ? "Products need owner attention."
+              : "Inventory levels are healthy."
+          }
+          status={lowStockCount > 0 ? "red" : "green"}
+        />
+
+        <BiMetric
+          label="API Status"
+          value={health?.ok ? "LIVE" : "CHECK"}
+          detail={health?.version || "WOLF OS backend status."}
+          status={health?.ok ? "green" : "red"}
+        />
+      </div>
+
+      <div className="bi-summary-grid">
+        <article className="bi-summary-card">
+          <p className="bi-kicker">TOP PRODUCT SIGNAL</p>
+          <h3>{topProduct?.name || "No product loaded"}</h3>
+
+          <div className="bi-summary-rows">
+            <span>Price</span>
+            <strong>{money(topProduct?.price_cents)}</strong>
+
+            <span>Stock</span>
+            <strong>{Number(topProduct?.stock || 0)}</strong>
+
+            <span>Category</span>
+            <strong>{topProduct?.category || "Premium"}</strong>
+          </div>
+        </article>
+
+        <article className="bi-summary-card">
+          <p className="bi-kicker">PIPELINE SIGNAL</p>
+          <h3>
+            {setupRequests.length > 0
+              ? `${setupRequests.length} buyer leads active`
+              : "Waiting for buyer activity"}
+          </h3>
+
+          <div className="bi-summary-rows">
+            <span>Orders</span>
+            <strong>{orders.length}</strong>
+
+            <span>Leads</span>
+            <strong>{setupRequests.length}</strong>
+
+            <span>Lead Rate</span>
+            <strong>{leadRate}%</strong>
+          </div>
+        </article>
+
+        <article className="bi-summary-card">
+          <p className="bi-kicker">SYSTEM READINESS</p>
+          <h3>{storeHealth >= 90 ? "Launch-ready" : "Operational"}</h3>
+
+          <div className="bi-readiness-bars">
+            <BiReadiness label="API" percent={health?.ok ? 100 : 35} />
+            <BiReadiness
+              label="Catalog"
+              percent={Math.min(100, 55 + products.length * 5)}
+            />
+            <BiReadiness
+              label="Orders"
+              percent={Math.min(100, 50 + orders.length * 8)}
+            />
+            <BiReadiness
+              label="Leads"
+              percent={Math.min(100, 55 + setupRequests.length * 10)}
+            />
+          </div>
+        </article>
+      </div>
+    </section>
+  );
+}
+
+function BiMetric({
+  label,
+  value,
+  detail,
+  status
+}: {
+  label: string;
+  value: React.ReactNode;
+  detail: string;
+  status: "green" | "gold" | "blue" | "red" | "muted";
+}) {
+  return (
+    <article className={`bi-metric-card ${status}`}>
+      <span>{label}</span>
+      <strong>{value}</strong>
+      <small>{detail}</small>
+    </article>
+  );
+}
+
+function BiReadiness({
+  label,
+  percent
+}: {
+  label: string;
+  percent: number;
+}) {
+  const safePercent = Math.max(0, Math.min(100, percent));
+
+  return (
+    <div className="bi-readiness-row">
+      <div>
+        <span>{label}</span>
+        <strong>{safePercent}%</strong>
+      </div>
+
+      <div className="bi-readiness-track">
+        <div
+          className="bi-readiness-fill"
+          style={{ width: `${safePercent}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
 function CustomerStorefront({
   storeSlug,
   health,
@@ -2533,7 +2782,16 @@ function OwnerConsole({
         </div>
       </div>
 
-      <div className="metric-grid">
+      
+      <BusinessIntelligencePanel
+        health={health}
+        products={products}
+        orders={orders}
+        setupRequests={setupRequests}
+        analytics={analytics}
+      />
+
+<div className="metric-grid">
         <Metric label="API" value={health?.ok ? "Online" : "Check"} />
         <Metric label="Stores" value={stores.length || health?.counts?.stores || 0} />
         <Metric label="Products" value={products.length || health?.counts?.products || 0} />
