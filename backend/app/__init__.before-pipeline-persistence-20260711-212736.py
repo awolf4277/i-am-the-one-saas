@@ -1,7 +1,5 @@
-﻿# Copyright Â© 2026 Andrew Wolverton. All Rights Reserved.
+# Copyright © 2026 Andrew Wolverton. All Rights Reserved.
 from __future__ import annotations
-
-from uuid import uuid4
 
 import os
 import secrets
@@ -49,13 +47,9 @@ def owner_api_token() -> str:
 
 
 OWNER = os.getenv("APP_OWNER", "Andrew Wolverton")
-BRAND = os.getenv("APP_BRAND", "I AM THE ONEâ„¢")
-SYSTEM = os.getenv("APP_SYSTEM", "WOLF OSâ„¢")
-APP_NAME = os.getenv("APP_NAME", "I AM THE ONEâ„¢ SaaS v3 API")
-
-
-def new_id(prefix: str) -> str:
-    return f"{prefix}-{uuid4().hex[:12].upper()}"
+BRAND = os.getenv("APP_BRAND", "I AM THE ONE™")
+SYSTEM = os.getenv("APP_SYSTEM", "WOLF OS™")
+APP_NAME = os.getenv("APP_NAME", "I AM THE ONE™ SaaS v3 API")
 
 
 def now_iso() -> str:
@@ -199,43 +193,6 @@ def ensure_schema(app: Flask) -> None:
             """
         )
 
-        con.execute(
-            """
-            CREATE TABLE IF NOT EXISTS pipeline_deals (
-                lead_id TEXT PRIMARY KEY,
-                stage TEXT NOT NULL DEFAULT 'New',
-                deal_value INTEGER NOT NULL DEFAULT 0,
-                next_action TEXT NOT NULL DEFAULT '',
-                updated_at TEXT NOT NULL
-            )
-            """
-        )
-
-        con.execute(
-            """
-            CREATE TABLE IF NOT EXISTS pipeline_activity (
-                id TEXT PRIMARY KEY,
-                lead_id TEXT NOT NULL,
-                activity_type TEXT NOT NULL,
-                old_value TEXT,
-                new_value TEXT,
-                summary TEXT NOT NULL,
-                created_at TEXT NOT NULL
-            )
-            """
-        )
-
-        con.execute(
-            """
-            CREATE INDEX IF NOT EXISTS
-            idx_pipeline_activity_lead_created
-            ON pipeline_activity (
-                lead_id,
-                created_at DESC
-            )
-            """
-        )
-
         for name, ddl in {
             "id": "TEXT",
             "slug": "TEXT",
@@ -326,7 +283,7 @@ def ensure_schema(app: Flask) -> None:
                 "WOLF-001",
                 "Wolf Signature Hoodie",
                 "Apparel",
-                "Premium black signature hoodie for I AM THE ONEâ„¢ buyers.",
+                "Premium black signature hoodie for I AM THE ONE™ buyers.",
                 9900,
                 12,
                 "/products/wolf-signature-hoodie.svg",
@@ -335,7 +292,7 @@ def ensure_schema(app: Flask) -> None:
                 "wolf-core",
                 "store_demo",
                 "WOLF-CORE",
-                "WOLF OSâ„¢ Core",
+                "WOLF OS™ Core",
                 "Software",
                 "Foundational operator system package for modern storefront control.",
                 9900,
@@ -346,7 +303,7 @@ def ensure_schema(app: Flask) -> None:
                 "iato-launch",
                 "store_demo",
                 "IATO-LAUNCH",
-                "I AM THE ONEâ„¢ Launch Kit",
+                "I AM THE ONE™ Launch Kit",
                 "Launch",
                 "Starter package for branded storefront deployment.",
                 29900,
@@ -404,7 +361,7 @@ def ensure_schema(app: Flask) -> None:
                 "WOLF-PRO",
                 "Pro Storefront + Owner Dashboard",
                 "SaaS Package",
-                "Premium storefront plus WOLF OSâ„¢ owner console for orders, products, inventory, and buyer leads.",
+                "Premium storefront plus WOLF OS™ owner console for orders, products, inventory, and buyer leads.",
                 150000,
                 5,
                 "https://placehold.co/900x700/111827/FFFFFF?text=Pro+Dashboard",
@@ -663,7 +620,7 @@ def create_app() -> Flask:
                 "brand": BRAND,
                 "system": SYSTEM,
                 "owner": OWNER,
-                "message": "I AM THE ONEâ„¢ SaaS API is live.",
+                "message": "I AM THE ONE™ SaaS API is live.",
                 "endpoints": [
                     "/api/health",
                     "/api/stores",
@@ -840,36 +797,6 @@ def create_app() -> Flask:
                     created_at,
                 ),
             )
-
-            for (
-                activity_type,
-                old_value,
-                new_value,
-                summary,
-            ) in activity_items:
-                con.execute(
-                    """
-                    INSERT INTO pipeline_activity (
-                        id,
-                        lead_id,
-                        activity_type,
-                        old_value,
-                        new_value,
-                        summary,
-                        created_at
-                    )
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                    """,
-                    (
-                        new_id("ACT"),
-                        lead_id,
-                        activity_type,
-                        old_value,
-                        new_value,
-                        summary,
-                        updated_at,
-                    ),
-                )
 
             con.commit()
 
@@ -1113,7 +1040,7 @@ def create_app() -> Flask:
             return f"${(int(value or 0) / 100):,.2f}"
 
         lines = [
-            "I AM THE ONEâ„¢ / WOLF OSâ„¢ DIGITAL DELIVERY",
+            "I AM THE ONE™ / WOLF OS™ DIGITAL DELIVERY",
             "",
             f"Order ID: {order['id']}",
             f"Buyer: {order['buyer_name'] or 'Customer'}",
@@ -1135,7 +1062,7 @@ def create_app() -> Flask:
             "Your order was created successfully.",
             "For manual payment mode, the owner confirms payment and delivers the final product/package.",
             "",
-            "Copyright Â© 2026 Andrew Wolverton. All Rights Reserved.",
+            "Copyright © 2026 Andrew Wolverton. All Rights Reserved.",
         ]
 
         body = "\n".join(lines)
@@ -1253,795 +1180,6 @@ def create_app() -> Flask:
                     "setup_requests": [dict(row) for row in rows],
                 }
             )
-        finally:
-            con.close()
-
-    @app.get("/api/owner/pipeline/activity")
-    def owner_pipeline_activity():
-        ok, error = require_owner()
-
-        if not ok:
-            return error
-
-        lead_id = str(
-            request.args.get("lead_id") or ""
-        ).strip()
-
-        try:
-            limit = int(
-                request.args.get("limit") or 50
-            )
-        except (TypeError, ValueError):
-            limit = 50
-
-        limit = max(
-            1,
-            min(limit, 200),
-        )
-
-        con = connect(app)
-
-        try:
-            params = []
-
-            sql = """
-                SELECT
-                    pa.id,
-                    pa.lead_id,
-                    pa.activity_type,
-                    pa.old_value,
-                    pa.new_value,
-                    pa.summary,
-                    pa.created_at,
-                    sr.business_name,
-                    sr.name,
-                    sr.email
-                FROM pipeline_activity pa
-                LEFT JOIN setup_requests sr
-                    ON sr.id = pa.lead_id
-            """
-
-            if lead_id:
-                sql += """
-                    WHERE pa.lead_id = ?
-                """
-
-                params.append(lead_id)
-
-            sql += """
-                ORDER BY pa.created_at DESC
-                LIMIT ?
-            """
-
-            params.append(limit)
-
-            rows = con.execute(
-                sql,
-                tuple(params),
-            ).fetchall()
-
-            return jsonify(
-                {
-                    "ok": True,
-                    "count": len(rows),
-                    "activities": [
-                        dict(row)
-                        for row in rows
-                    ],
-                }
-            )
-
-        finally:
-            con.close()
-
-    @app.get("/api/owner/pipeline-activity")
-    def owner_pipeline_activity_log():
-        ok, error = require_owner()
-
-        if not ok:
-            return error
-
-        lead_id = str(
-            request.args.get("lead_id") or ""
-        ).strip()
-
-        try:
-            limit = int(
-                request.args.get("limit") or 50
-            )
-        except (TypeError, ValueError):
-            limit = 50
-
-        limit = max(
-            1,
-            min(limit, 200),
-        )
-
-        con = connect(app)
-
-        try:
-            params = []
-
-            sql = """
-                SELECT
-                    pa.id,
-                    pa.lead_id,
-                    pa.activity_type,
-                    pa.old_value,
-                    pa.new_value,
-                    pa.summary,
-                    pa.created_at,
-                    sr.business_name,
-                    sr.name,
-                    sr.email
-                FROM pipeline_activity pa
-                LEFT JOIN setup_requests sr
-                    ON sr.id = pa.lead_id
-            """
-
-            if lead_id:
-                sql += """
-                    WHERE pa.lead_id = ?
-                """
-
-                params.append(lead_id)
-
-            sql += """
-                ORDER BY pa.created_at DESC
-                LIMIT ?
-            """
-
-            params.append(limit)
-
-            rows = con.execute(
-                sql,
-                tuple(params),
-            ).fetchall()
-
-            return jsonify(
-                {
-                    "ok": True,
-                    "count": len(rows),
-                    "activities": [
-                        dict(row)
-                        for row in rows
-                    ],
-                }
-            )
-
-        finally:
-            con.close()
-
-    @app.get("/api/owner/pipeline")
-    def owner_pipeline():
-        ok, error = require_owner()
-
-        if not ok:
-            return error
-
-        con = connect(app)
-
-        try:
-            rows = con.execute(
-                """
-                SELECT
-                    lead_id,
-                    stage,
-                    deal_value,
-                    next_action,
-                    updated_at
-                FROM pipeline_deals
-                ORDER BY updated_at DESC
-                """
-            ).fetchall()
-
-            return jsonify(
-                {
-                    "ok": True,
-                    "count": len(rows),
-                    "pipeline_deals": [
-                        dict(row)
-                        for row in rows
-                    ],
-                }
-            )
-        finally:
-            con.close()
-
-    @app.put("/api/owner/pipeline/<lead_id>")
-    def owner_update_pipeline_deal(lead_id: str):
-        ok, error = require_owner()
-
-        if not ok:
-            return error
-
-        payload = request.get_json(
-            silent=True
-        ) or {}
-
-        allowed_stages = {
-            "New",
-            "Contacted",
-            "Demo",
-            "Proposal",
-            "Closing",
-            "Won",
-            "Lost",
-        }
-
-        stage = str(
-            payload.get("stage") or "New"
-        ).strip()
-
-        if stage not in allowed_stages:
-            return jsonify(
-                {
-                    "ok": False,
-                    "error": (
-                        f"Invalid pipeline stage: {stage}"
-                    ),
-                }
-            ), 400
-
-        try:
-            deal_value = int(
-                float(
-                    payload.get(
-                        "deal_value",
-                        0,
-                    )
-                    or 0
-                )
-            )
-        except (TypeError, ValueError):
-            return jsonify(
-                {
-                    "ok": False,
-                    "error": (
-                        "deal_value must be numeric."
-                    ),
-                }
-            ), 400
-
-        deal_value = max(
-            0,
-            deal_value,
-        )
-
-        next_action = str(
-            payload.get("next_action") or ""
-        ).strip()
-
-        con = connect(app)
-
-        try:
-            lead = con.execute(
-                """
-                SELECT id
-                FROM setup_requests
-                WHERE id = ?
-                LIMIT 1
-                """,
-                (lead_id,),
-            ).fetchone()
-
-            if not lead:
-                return jsonify(
-                    {
-                        "ok": False,
-                        "error": "Buyer lead not found.",
-                    }
-                ), 404
-
-            updated_at = now_iso()
-
-            existing = con.execute(
-                """
-                SELECT
-                    lead_id,
-                    stage,
-                    deal_value,
-                    next_action
-                FROM pipeline_deals
-                WHERE lead_id = ?
-                LIMIT 1
-                """,
-                (lead_id,),
-            ).fetchone()
-
-            activity_items = []
-
-            if existing:
-                if str(existing["stage"]) != stage:
-                    activity_items.append(
-                        (
-                            "stage_changed",
-                            str(existing["stage"]),
-                            stage,
-                            (
-                                "Stage moved from "
-                                f"{existing['stage']} to {stage}."
-                            ),
-                        )
-                    )
-
-                if int(existing["deal_value"]) != deal_value:
-                    activity_items.append(
-                        (
-                            "deal_value_changed",
-                            str(existing["deal_value"]),
-                            str(deal_value),
-                            (
-                                "Deal value changed from "
-                                f"${int(existing['deal_value']):,} "
-                                f"to ${deal_value:,}."
-                            ),
-                        )
-                    )
-
-                if str(existing["next_action"]) != next_action:
-                    activity_items.append(
-                        (
-                            "next_action_changed",
-                            str(existing["next_action"]),
-                            next_action,
-                            "Next action updated.",
-                        )
-                    )
-
-            else:
-                activity_items.append(
-                    (
-                        "deal_created",
-                        "",
-                        stage,
-                        (
-                            "Deal entered the pipeline at "
-                            f"{stage} with a ${deal_value:,} value."
-                        ),
-                    )
-                )
-
-            if existing:
-                con.execute(
-                    """
-                    UPDATE pipeline_deals
-                    SET
-                        stage = ?,
-                        deal_value = ?,
-                        next_action = ?,
-                        updated_at = ?
-                    WHERE lead_id = ?
-                    """,
-                    (
-                        stage,
-                        deal_value,
-                        next_action,
-                        updated_at,
-                        lead_id,
-                    ),
-                )
-            else:
-                con.execute(
-                    """
-                    INSERT INTO pipeline_deals (
-                        lead_id,
-                        stage,
-                        deal_value,
-                        next_action,
-                        updated_at
-                    )
-                    VALUES (?, ?, ?, ?, ?)
-                    """,
-                    (
-                        lead_id,
-                        stage,
-                        deal_value,
-                        next_action,
-                        updated_at,
-                    ),
-                )
-
-            con.commit()
-
-            row = con.execute(
-                """
-                SELECT
-                    lead_id,
-                    stage,
-                    deal_value,
-                    next_action,
-                    updated_at
-                FROM pipeline_deals
-                WHERE lead_id = ?
-                LIMIT 1
-                """,
-                (lead_id,),
-            ).fetchone()
-
-            return jsonify(
-                {
-                    "ok": True,
-                    "deal": dict(row),
-                }
-            )
-
-        except Exception as exc:
-            con.rollback()
-
-            return jsonify(
-                {
-                    "ok": False,
-                    "error": (
-                        "Pipeline update failed: "
-                        f"{type(exc).__name__}: {exc}"
-                    ),
-                }
-            ), 500
-
-        finally:
-            con.close()
-
-    @app.get("/api/owner/pipeline-state")
-    def owner_unified_pipeline_state():
-        ok, error = require_owner()
-
-        if not ok:
-            return error
-
-        con = connect(app)
-
-        try:
-            rows = con.execute(
-                """
-                SELECT
-                    lead_id,
-                    stage,
-                    deal_value,
-                    next_action,
-                    updated_at
-                FROM pipeline_deals
-                ORDER BY updated_at DESC
-                """
-            ).fetchall()
-
-            return jsonify(
-                {
-                    "ok": True,
-                    "count": len(rows),
-                    "pipeline_deals": [
-                        dict(row)
-                        for row in rows
-                    ],
-                }
-            )
-
-        finally:
-            con.close()
-
-    @app.put("/api/owner/pipeline-state/<lead_id>")
-    def owner_update_unified_pipeline_state(
-        lead_id: str
-    ):
-        ok, error = require_owner()
-
-        if not ok:
-            return error
-
-        payload = request.get_json(
-            silent=True
-        )
-
-        if payload is None:
-            return jsonify(
-                {
-                    "ok": False,
-                    "error": (
-                        "Request body must contain valid JSON."
-                    ),
-                }
-            ), 400
-
-        if not isinstance(payload, dict):
-            return jsonify(
-                {
-                    "ok": False,
-                    "error": (
-                        "Pipeline payload must be a JSON object."
-                    ),
-                }
-            ), 400
-
-        required_fields = {
-            "stage",
-            "deal_value",
-            "next_action",
-        }
-
-        missing_fields = sorted(
-            required_fields
-            - set(payload.keys())
-        )
-
-        if missing_fields:
-            return jsonify(
-                {
-                    "ok": False,
-                    "error": (
-                        "Missing required pipeline fields: "
-                        + ", ".join(missing_fields)
-                    ),
-                }
-            ), 400
-
-        allowed_stages = {
-            "New",
-            "Contacted",
-            "Demo",
-            "Proposal",
-            "Closing",
-            "Won",
-            "Lost",
-        }
-
-        stage = str(
-            payload["stage"]
-        ).strip()
-
-        if stage not in allowed_stages:
-            return jsonify(
-                {
-                    "ok": False,
-                    "error": (
-                        f"Invalid pipeline stage: {stage}"
-                    ),
-                }
-            ), 400
-
-        try:
-            deal_value = int(
-                float(
-                    payload["deal_value"]
-                )
-            )
-
-        except (TypeError, ValueError):
-            return jsonify(
-                {
-                    "ok": False,
-                    "error": (
-                        "deal_value must be numeric."
-                    ),
-                }
-            ), 400
-
-        deal_value = max(
-            0,
-            deal_value,
-        )
-
-        next_action = str(
-            payload["next_action"]
-            if payload["next_action"] is not None
-            else ""
-        ).strip()
-
-        con = connect(app)
-
-        try:
-            lead = con.execute(
-                """
-                SELECT
-                    id,
-                    business_name
-                FROM setup_requests
-                WHERE id = ?
-                LIMIT 1
-                """,
-                (lead_id,),
-            ).fetchone()
-
-            if not lead:
-                return jsonify(
-                    {
-                        "ok": False,
-                        "error": "Buyer lead not found.",
-                    }
-                ), 404
-
-            existing = con.execute(
-                """
-                SELECT
-                    lead_id,
-                    stage,
-                    deal_value,
-                    next_action
-                FROM pipeline_deals
-                WHERE lead_id = ?
-                LIMIT 1
-                """,
-                (lead_id,),
-            ).fetchone()
-
-            updated_at = now_iso()
-
-            changes = []
-
-            if existing:
-                old_stage = str(
-                    existing["stage"] or ""
-                )
-
-                old_value = int(
-                    existing["deal_value"] or 0
-                )
-
-                old_action = str(
-                    existing["next_action"] or ""
-                )
-
-                if old_stage != stage:
-                    changes.append(
-                        (
-                            "stage_changed",
-                            old_stage,
-                            stage,
-                            (
-                                "Stage moved from "
-                                f"{old_stage} to {stage}."
-                            ),
-                        )
-                    )
-
-                if old_value != deal_value:
-                    changes.append(
-                        (
-                            "deal_value_changed",
-                            str(old_value),
-                            str(deal_value),
-                            (
-                                "Deal value changed from "
-                                f"${old_value:,} "
-                                f"to ${deal_value:,}."
-                            ),
-                        )
-                    )
-
-                if old_action != next_action:
-                    changes.append(
-                        (
-                            "next_action_changed",
-                            old_action,
-                            next_action,
-                            "Next action updated.",
-                        )
-                    )
-
-            else:
-                changes.append(
-                    (
-                        "deal_created",
-                        "",
-                        stage,
-                        (
-                            "Deal entered the pipeline at "
-                            f"{stage} with a "
-                            f"${deal_value:,} value."
-                        ),
-                    )
-                )
-
-            con.execute(
-                """
-                INSERT INTO pipeline_deals (
-                    lead_id,
-                    stage,
-                    deal_value,
-                    next_action,
-                    updated_at
-                )
-                VALUES (?, ?, ?, ?, ?)
-                ON CONFLICT(lead_id)
-                DO UPDATE SET
-                    stage = excluded.stage,
-                    deal_value = excluded.deal_value,
-                    next_action = excluded.next_action,
-                    updated_at = excluded.updated_at
-                """,
-                (
-                    lead_id,
-                    stage,
-                    deal_value,
-                    next_action,
-                    updated_at,
-                ),
-            )
-
-            for (
-                activity_type,
-                old_value,
-                new_value,
-                summary,
-            ) in changes:
-                con.execute(
-                    """
-                    INSERT INTO pipeline_activity (
-                        id,
-                        lead_id,
-                        activity_type,
-                        old_value,
-                        new_value,
-                        summary,
-                        created_at
-                    )
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                    """,
-                    (
-                        new_id("ACT"),
-                        lead_id,
-                        activity_type,
-                        old_value,
-                        new_value,
-                        summary,
-                        updated_at,
-                    ),
-                )
-
-            con.commit()
-
-            deal = con.execute(
-                """
-                SELECT
-                    lead_id,
-                    stage,
-                    deal_value,
-                    next_action,
-                    updated_at
-                FROM pipeline_deals
-                WHERE lead_id = ?
-                LIMIT 1
-                """,
-                (lead_id,),
-            ).fetchone()
-
-            snapshot = con.execute(
-                """
-                SELECT
-                    lead_id,
-                    stage,
-                    deal_value,
-                    next_action,
-                    updated_at
-                FROM pipeline_deals
-                ORDER BY updated_at DESC
-                """
-            ).fetchall()
-
-            return jsonify(
-                {
-                    "ok": True,
-                    "deal": dict(deal),
-                    "activities_written": len(changes),
-                    "pipeline_deals": [
-                        dict(row)
-                        for row in snapshot
-                    ],
-                }
-            )
-
-        except Exception as exc:
-            con.rollback()
-
-            return jsonify(
-                {
-                    "ok": False,
-                    "error": (
-                        "Unified pipeline update failed: "
-                        f"{type(exc).__name__}: {exc}"
-                    ),
-                }
-            ), 500
-
         finally:
             con.close()
 
@@ -2217,7 +1355,6 @@ def create_app() -> Flask:
     app.register_blueprint(analytics_bp)
 
     return app
-
 
 
 

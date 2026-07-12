@@ -5,12 +5,6 @@ import React, { useEffect, useMemo, useState } from "react";
 
 
 
-import RevenueCommandCenter from "./components/RevenueCommandCenter";
-
-import PriorityEngine from "./components/PriorityEngine";
-import BuyerPipelineBoard from "./components/BuyerPipelineBoard";
-import DealActivityTimeline from "./components/DealActivityTimeline";
-
 function copyCloseKitText(label: string, copyText: string) {
   navigator.clipboard
     .writeText(copyText)
@@ -2054,46 +2048,27 @@ const DEMO_PRESETS: Record<DemoIndustry, DemoPreset> = {
   }
 };
 
-
 function BusinessDemoGenerator() {
   const [industry, setIndustry] = useState<DemoIndustry>("barber");
   const [businessName, setBusinessName] = useState("Wolf Cuts");
-  const [brandTone, setBrandTone] = useState("Premium");
-  const [accentColor, setAccentColor] = useState("#7dffbd");
-  const [logoUrl, setLogoUrl] = useState("");
-
   const [generatedName, setGeneratedName] = useState("Wolf Cuts");
-  const [generatedIndustry, setGeneratedIndustry] =
-    useState<DemoIndustry>("barber");
-  const [generatedTone, setGeneratedTone] = useState("Premium");
-  const [generatedColor, setGeneratedColor] = useState("#7dffbd");
-  const [generatedLogo, setGeneratedLogo] = useState("");
-
+  const [generatedIndustry, setGeneratedIndustry] = useState<DemoIndustry>("barber");
   const [copied, setCopied] = useState(false);
-  const [generationPulse, setGenerationPulse] = useState(0);
 
   const preset = DEMO_PRESETS[generatedIndustry];
 
   const generateDemo = () => {
-    const cleanName =
-      businessName.trim() || DEMO_PRESETS[industry].label;
+    const cleanName = businessName.trim() || DEMO_PRESETS[industry].label;
 
     setGeneratedName(cleanName);
     setGeneratedIndustry(industry);
-    setGeneratedTone(brandTone);
-    setGeneratedColor(accentColor);
-    setGeneratedLogo(logoUrl.trim());
     setCopied(false);
-    setGenerationPulse((current) => current + 1);
   };
 
   const demoPitch = `${generatedName} Demo Direction
 
 Industry:
 ${preset.label}
-
-Brand Tone:
-${generatedTone}
 
 Headline:
 ${preset.headline}
@@ -2111,7 +2086,7 @@ Owner Dashboard Focus:
 ${preset.dashboardLabel}
 
 Build Direction:
-A ${generatedTone.toLowerCase()} buyer-ready storefront, lead or checkout flow, owner dashboard, live offers, and launch-ready structure customized for ${generatedName}.`;
+A buyer-ready storefront, lead or checkout flow, owner dashboard, live offers, and launch-ready structure customized for ${generatedName}.`;
 
   const copyDemoPitch = async () => {
     await navigator.clipboard.writeText(demoPitch);
@@ -2122,38 +2097,22 @@ A ${generatedTone.toLowerCase()} buyer-ready storefront, lead or checkout flow, 
     }, 1600);
   };
 
-  const demoStyle = {
-    "--demo-accent": generatedColor,
-    "--demo-accent-soft": `${generatedColor}22`,
-    "--demo-accent-border": `${generatedColor}55`
-  } as React.CSSProperties;
-
   return (
-    <section
-      className="business-demo-generator demo-studio"
-      style={demoStyle}
-    >
+    <section className="business-demo-generator">
       <div className="demo-generator-head">
         <div>
-          <p className="demo-generator-kicker">
-            WOLF OS™ DEMO STUDIO
-          </p>
-
-          <h2>
-            Build a personalized business demo in seconds.
-          </h2>
-
+          <p className="demo-generator-kicker">WOLF OS™ BUSINESS DEMO GENERATOR</p>
+          <h2>Turn a business idea into a buyer-ready demo direction.</h2>
           <p>
-            Enter a business name, choose an industry, set the tone,
-            pick an accent color, and generate a tailored storefront
-            concept with offers, dashboard focus, and package direction.
+            Choose an industry, enter a business name, and generate a tailored
+            storefront concept, offer list, dashboard focus, and recommended package.
           </p>
         </div>
 
         <div className="demo-generator-badge">
           <span>DEMO ENGINE</span>
-          <strong>STUDIO</strong>
-          <small>Personalization active</small>
+          <strong>READY</strong>
+          <small>Six business modes loaded</small>
         </div>
       </div>
 
@@ -2163,9 +2122,7 @@ A ${generatedTone.toLowerCase()} buyer-ready storefront, lead or checkout flow, 
             Business name
             <input
               value={businessName}
-              onChange={(event) =>
-                setBusinessName(event.target.value)
-              }
+              onChange={(event) => setBusinessName(event.target.value)}
               placeholder="Enter business name"
             />
           </label>
@@ -2174,74 +2131,15 @@ A ${generatedTone.toLowerCase()} buyer-ready storefront, lead or checkout flow, 
             Industry
             <select
               value={industry}
-              onChange={(event) =>
-                setIndustry(
-                  event.target.value as DemoIndustry
-                )
-              }
+              onChange={(event) => setIndustry(event.target.value as DemoIndustry)}
             >
               <option value="barber">Barbershop</option>
               <option value="clothing">Clothing Brand</option>
-              <option value="pressure-washing">
-                Pressure Washing
-              </option>
+              <option value="pressure-washing">Pressure Washing</option>
               <option value="food-truck">Food Truck</option>
-              <option value="auto-detailing">
-                Auto Detailing
-              </option>
-              <option value="landscaping">
-                Landscaping
-              </option>
+              <option value="auto-detailing">Auto Detailing</option>
+              <option value="landscaping">Landscaping</option>
             </select>
-          </label>
-
-          <label>
-            Brand tone
-            <select
-              value={brandTone}
-              onChange={(event) =>
-                setBrandTone(event.target.value)
-              }
-            >
-              <option value="Premium">Premium</option>
-              <option value="Bold">Bold</option>
-              <option value="Modern">Modern</option>
-              <option value="Clean">Clean</option>
-              <option value="Luxury">Luxury</option>
-              <option value="Aggressive">Aggressive</option>
-            </select>
-          </label>
-
-          <label>
-            Accent color
-            <div className="demo-color-control">
-              <input
-                type="color"
-                value={accentColor}
-                onChange={(event) =>
-                  setAccentColor(event.target.value)
-                }
-              />
-
-              <input
-                value={accentColor}
-                onChange={(event) =>
-                  setAccentColor(event.target.value)
-                }
-                placeholder="#7dffbd"
-              />
-            </div>
-          </label>
-
-          <label>
-            Logo image URL
-            <input
-              value={logoUrl}
-              onChange={(event) =>
-                setLogoUrl(event.target.value)
-              }
-              placeholder="Optional logo URL"
-            />
           </label>
 
           <button
@@ -2249,7 +2147,7 @@ A ${generatedTone.toLowerCase()} buyer-ready storefront, lead or checkout flow, 
             className="v3-button primary full"
             onClick={generateDemo}
           >
-            Generate Personalized Demo
+            Generate Business Demo
           </button>
 
           <button
@@ -2261,68 +2159,29 @@ A ${generatedTone.toLowerCase()} buyer-ready storefront, lead or checkout flow, 
           </button>
         </div>
 
-        <div
-          className="generated-demo-preview demo-studio-preview"
-          key={generationPulse}
-        >
+        <div className="generated-demo-preview">
           <div className="generated-demo-toolbar">
             <span className="generated-demo-status">
               <i />
               DEMO GENERATED
             </span>
 
-            <span>
-              {preset.label} · {generatedTone}
-            </span>
+            <span>{preset.label}</span>
           </div>
 
           <div className="generated-demo-hero">
-            <div className="demo-brand-row">
-              {generatedLogo ? (
-                <img
-                  src={generatedLogo}
-                  alt={`${generatedName} logo`}
-                  className="generated-demo-logo"
-                />
-              ) : (
-                <div className="generated-demo-logo-fallback">
-                  {generatedName
-                    .slice(0, 2)
-                    .toUpperCase()}
-                </div>
-              )}
-
-              <div>
-                <p>
-                  {preset.label.toUpperCase()} · WOLF OS™ POWERED
-                </p>
-                <h3>{generatedName}</h3>
-              </div>
-            </div>
-
+            <p>{preset.label.toUpperCase()} · WOLF OS™ POWERED</p>
+            <h3>{generatedName}</h3>
             <strong>{preset.headline}</strong>
             <span>{preset.audience}</span>
-
-            <div className="generated-demo-actions">
-              <button type="button">
-                View Offers
-              </button>
-
-              <button type="button">
-                Request Setup
-              </button>
-            </div>
           </div>
 
           <div className="generated-offer-grid">
             {preset.offers.map((offer, index) => (
               <article key={offer}>
-                <small>
-                  OFFER {String(index + 1).padStart(2, "0")}
-                </small>
-
+                <small>OFFER {String(index + 1).padStart(2, "0")}</small>
                 <strong>{offer}</strong>
-                <span>{generatedTone} buyer-ready package</span>
+                <span>Buyer-ready package</span>
               </article>
             ))}
           </div>
@@ -2341,9 +2200,9 @@ A ${generatedTone.toLowerCase()} buyer-ready storefront, lead or checkout flow, 
             </div>
 
             <div>
-              <small>BRAND MODE</small>
-              <strong>{generatedTone.toUpperCase()}</strong>
-              <span>{generatedColor}</span>
+              <small>LAUNCH MODE</small>
+              <strong>BUYER READY</strong>
+              <span>Storefront + owner workflow</span>
             </div>
           </div>
         </div>
@@ -2351,7 +2210,6 @@ A ${generatedTone.toLowerCase()} buyer-ready storefront, lead or checkout flow, 
     </section>
   );
 }
-
 
 function CustomerStorefront({
   storeSlug,
@@ -3207,10 +3065,6 @@ function OwnerConsole({
         setupRequests={setupRequests}
         analytics={analytics}
       />
-      <RevenueCommandCenter />
-      <PriorityEngine setupRequests={setupRequests} />
-      <BuyerPipelineBoard setupRequests={setupRequests} />
-      <DealActivityTimeline />
 
 <div className="metric-grid">
         <Metric label="API" value={health?.ok ? "Online" : "Check"} />

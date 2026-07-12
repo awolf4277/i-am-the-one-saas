@@ -1,0 +1,418 @@
+.priority-engine {
+  position: relative;
+  overflow: hidden;
+  margin-top: 28px;
+  padding: 26px;
+  border: 1px solid rgba(255, 74, 50, 0.34);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 4% 4%, rgba(255, 48, 28, 0.15), transparent 31%),
+    radial-gradient(circle at 92% 8%, rgba(255, 150, 25, 0.08), transparent 25%),
+    linear-gradient(145deg, rgba(14, 7, 7, 0.99), rgba(4, 4, 7, 0.99));
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.52),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.priority-engine * {
+  box-sizing: border-box;
+}
+
+.priority-engine-glow {
+  position: absolute;
+  top: -150px;
+  left: -110px;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  background: rgba(255, 48, 25, 0.14);
+  filter: blur(90px);
+  pointer-events: none;
+}
+
+.priority-engine-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.priority-engine-kicker {
+  margin: 0 0 7px;
+  color: #ff624b;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.priority-engine-header h2,
+.priority-engine-clear h2 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1.6rem, 3vw, 2.45rem);
+  letter-spacing: -0.045em;
+}
+
+.priority-engine-header p,
+.priority-engine-clear p {
+  max-width: 740px;
+  margin: 9px 0 0;
+  color: rgba(239, 241, 247, 0.62);
+  line-height: 1.55;
+}
+
+.priority-engine-scan {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 13px;
+  border: 1px solid rgba(255, 80, 54, 0.38);
+  border-radius: 999px;
+  background: rgba(156, 35, 23, 0.18);
+  color: #ff806c;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.priority-engine-scan span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #ff4d36;
+  box-shadow: 0 0 17px #ff4d36;
+  animation: priority-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes priority-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.86);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.14);
+  }
+}
+
+.priority-target-layout {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.4fr 0.6fr;
+  gap: 15px;
+}
+
+.priority-primary-target,
+.priority-queue-panel {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 19px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.priority-primary-target {
+  padding: 22px;
+  border-color: rgba(255, 76, 50, 0.3);
+  background:
+    linear-gradient(140deg, rgba(255, 54, 33, 0.13), rgba(255, 255, 255, 0.018));
+}
+
+.priority-target-number {
+  margin-bottom: 14px;
+  color: rgba(255, 255, 255, 0.36);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+}
+
+.priority-target-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.priority-level {
+  display: inline-flex;
+  padding: 7px 10px;
+  border-radius: 999px;
+  font-size: 0.67rem;
+  font-weight: 950;
+  letter-spacing: 0.09em;
+}
+
+.priority-critical {
+  border: 1px solid rgba(255, 78, 54, 0.55);
+  background: rgba(200, 35, 24, 0.2);
+  color: #ff7562;
+  box-shadow: 0 0 22px rgba(255, 55, 34, 0.12);
+}
+
+.priority-high {
+  border: 1px solid rgba(255, 172, 52, 0.5);
+  background: rgba(181, 103, 17, 0.17);
+  color: #ffc46d;
+}
+
+.priority-active {
+  border: 1px solid rgba(85, 255, 166, 0.35);
+  background: rgba(42, 149, 89, 0.12);
+  color: #74ffb5;
+}
+
+.priority-watch {
+  border: 1px solid rgba(127, 174, 255, 0.3);
+  background: rgba(60, 105, 183, 0.1);
+  color: #9cc1ff;
+}
+
+.priority-score {
+  color: rgba(239, 243, 249, 0.43);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.07em;
+}
+
+.priority-primary-target h3 {
+  margin: 18px 0 0;
+  color: #fff;
+  font-size: clamp(1.65rem, 3.4vw, 3rem);
+  letter-spacing: -0.05em;
+}
+
+.priority-contact {
+  margin: 6px 0 0;
+  color: rgba(237, 241, 247, 0.53);
+  font-size: 0.82rem;
+}
+
+.priority-money {
+  margin-top: 22px;
+  padding: 18px;
+  border: 1px solid rgba(255, 83, 52, 0.22);
+  border-radius: 15px;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.priority-money span,
+.priority-reason span,
+.priority-next-move span,
+.priority-engine-status span,
+.priority-queue-summary span {
+  display: block;
+  color: rgba(239, 243, 249, 0.47);
+  font-size: 0.67rem;
+  font-weight: 900;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.priority-money strong {
+  display: block;
+  margin-top: 7px;
+  color: #ff6e55;
+  font-size: clamp(2rem, 5vw, 4.4rem);
+  letter-spacing: -0.06em;
+}
+
+.priority-reason,
+.priority-next-move {
+  margin-top: 14px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.026);
+}
+
+.priority-reason p {
+  margin: 8px 0 0;
+  color: rgba(238, 243, 248, 0.73);
+  line-height: 1.5;
+  text-transform: capitalize;
+}
+
+.priority-next-move {
+  border-left: 3px solid #ff5139;
+}
+
+.priority-next-move strong {
+  display: block;
+  margin-top: 8px;
+  color: #fff;
+  font-size: clamp(1.05rem, 2vw, 1.4rem);
+  line-height: 1.4;
+}
+
+.priority-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 17px;
+}
+
+.priority-actions button {
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-size: 0.73rem;
+  font-weight: 950;
+  cursor: pointer;
+  transition:
+    transform 150ms ease,
+    border-color 150ms ease;
+}
+
+.priority-actions button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 112, 83, 0.55);
+}
+
+.priority-actions button:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.priority-actions .priority-execute-button {
+  border-color: #ff5038;
+  background: linear-gradient(135deg, #ff3825, #ff7c45);
+  color: #180300;
+  box-shadow: 0 12px 35px rgba(255, 51, 30, 0.24);
+}
+
+.priority-queue-panel {
+  padding: 18px;
+}
+
+.priority-queue-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.priority-queue-summary strong {
+  color: #fff;
+  font-size: 1.15rem;
+}
+
+.priority-queue-list {
+  display: grid;
+  gap: 9px;
+  margin-top: 15px;
+}
+
+.priority-queue-card {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.022);
+}
+
+.priority-queue-card.active {
+  border-color: rgba(255, 78, 50, 0.4);
+  background: rgba(255, 56, 35, 0.08);
+}
+
+.priority-queue-card > span {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.68rem;
+  font-weight: 900;
+}
+
+.priority-queue-card strong,
+.priority-queue-card small {
+  display: block;
+}
+
+.priority-queue-card strong {
+  color: #fff;
+  font-size: 0.8rem;
+}
+
+.priority-queue-card small {
+  margin-top: 4px;
+  color: rgba(234, 240, 247, 0.47);
+  font-size: 0.68rem;
+}
+
+.priority-queue-card b {
+  color: #ff806c;
+  font-size: 0.61rem;
+}
+
+.priority-engine-status {
+  position: relative;
+  margin-top: 15px;
+  padding: 14px 16px;
+  border-left: 3px solid #ff4d35;
+  border-radius: 9px;
+  background: rgba(255, 52, 31, 0.055);
+}
+
+.priority-engine-status p {
+  margin: 6px 0 0;
+  color: rgba(236, 242, 248, 0.69);
+  line-height: 1.5;
+}
+
+.priority-engine-clear {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.priority-clear-badge {
+  flex-shrink: 0;
+  padding: 11px 15px;
+  border: 1px solid rgba(78, 255, 166, 0.31);
+  border-radius: 999px;
+  background: rgba(35, 144, 86, 0.12);
+  color: #70ffb1;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+@media (max-width: 1000px) {
+  .priority-target-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .priority-engine {
+    padding: 18px;
+  }
+
+  .priority-engine-header,
+  .priority-engine-clear,
+  .priority-target-topline {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .priority-actions,
+  .priority-actions button {
+    width: 100%;
+  }
+
+  .priority-queue-card {
+    grid-template-columns: 25px 1fr;
+  }
+
+  .priority-queue-card b {
+    grid-column: 2;
+  }
+}

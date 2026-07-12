@@ -5,12 +5,6 @@ import React, { useEffect, useMemo, useState } from "react";
 
 
 
-import RevenueCommandCenter from "./components/RevenueCommandCenter";
-
-import PriorityEngine from "./components/PriorityEngine";
-import BuyerPipelineBoard from "./components/BuyerPipelineBoard";
-import DealActivityTimeline from "./components/DealActivityTimeline";
-
 function copyCloseKitText(label: string, copyText: string) {
   navigator.clipboard
     .writeText(copyText)
@@ -3207,10 +3201,6 @@ function OwnerConsole({
         setupRequests={setupRequests}
         analytics={analytics}
       />
-      <RevenueCommandCenter />
-      <PriorityEngine setupRequests={setupRequests} />
-      <BuyerPipelineBoard setupRequests={setupRequests} />
-      <DealActivityTimeline />
 
 <div className="metric-grid">
         <Metric label="API" value={health?.ok ? "Online" : "Check"} />

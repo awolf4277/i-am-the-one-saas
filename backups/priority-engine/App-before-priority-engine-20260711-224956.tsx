@@ -7,7 +7,6 @@ import React, { useEffect, useMemo, useState } from "react";
 
 import RevenueCommandCenter from "./components/RevenueCommandCenter";
 
-import PriorityEngine from "./components/PriorityEngine";
 import BuyerPipelineBoard from "./components/BuyerPipelineBoard";
 import DealActivityTimeline from "./components/DealActivityTimeline";
 
@@ -3208,7 +3207,6 @@ function OwnerConsole({
         analytics={analytics}
       />
       <RevenueCommandCenter />
-      <PriorityEngine setupRequests={setupRequests} />
       <BuyerPipelineBoard setupRequests={setupRequests} />
       <DealActivityTimeline />
 

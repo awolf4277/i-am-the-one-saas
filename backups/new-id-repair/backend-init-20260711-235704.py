@@ -1,7 +1,5 @@
-﻿# Copyright Â© 2026 Andrew Wolverton. All Rights Reserved.
+# Copyright © 2026 Andrew Wolverton. All Rights Reserved.
 from __future__ import annotations
-
-from uuid import uuid4
 
 import os
 import secrets
@@ -49,13 +47,9 @@ def owner_api_token() -> str:
 
 
 OWNER = os.getenv("APP_OWNER", "Andrew Wolverton")
-BRAND = os.getenv("APP_BRAND", "I AM THE ONEâ„¢")
-SYSTEM = os.getenv("APP_SYSTEM", "WOLF OSâ„¢")
-APP_NAME = os.getenv("APP_NAME", "I AM THE ONEâ„¢ SaaS v3 API")
-
-
-def new_id(prefix: str) -> str:
-    return f"{prefix}-{uuid4().hex[:12].upper()}"
+BRAND = os.getenv("APP_BRAND", "I AM THE ONE™")
+SYSTEM = os.getenv("APP_SYSTEM", "WOLF OS™")
+APP_NAME = os.getenv("APP_NAME", "I AM THE ONE™ SaaS v3 API")
 
 
 def now_iso() -> str:
@@ -326,7 +320,7 @@ def ensure_schema(app: Flask) -> None:
                 "WOLF-001",
                 "Wolf Signature Hoodie",
                 "Apparel",
-                "Premium black signature hoodie for I AM THE ONEâ„¢ buyers.",
+                "Premium black signature hoodie for I AM THE ONE™ buyers.",
                 9900,
                 12,
                 "/products/wolf-signature-hoodie.svg",
@@ -335,7 +329,7 @@ def ensure_schema(app: Flask) -> None:
                 "wolf-core",
                 "store_demo",
                 "WOLF-CORE",
-                "WOLF OSâ„¢ Core",
+                "WOLF OS™ Core",
                 "Software",
                 "Foundational operator system package for modern storefront control.",
                 9900,
@@ -346,7 +340,7 @@ def ensure_schema(app: Flask) -> None:
                 "iato-launch",
                 "store_demo",
                 "IATO-LAUNCH",
-                "I AM THE ONEâ„¢ Launch Kit",
+                "I AM THE ONE™ Launch Kit",
                 "Launch",
                 "Starter package for branded storefront deployment.",
                 29900,
@@ -404,7 +398,7 @@ def ensure_schema(app: Flask) -> None:
                 "WOLF-PRO",
                 "Pro Storefront + Owner Dashboard",
                 "SaaS Package",
-                "Premium storefront plus WOLF OSâ„¢ owner console for orders, products, inventory, and buyer leads.",
+                "Premium storefront plus WOLF OS™ owner console for orders, products, inventory, and buyer leads.",
                 150000,
                 5,
                 "https://placehold.co/900x700/111827/FFFFFF?text=Pro+Dashboard",
@@ -663,7 +657,7 @@ def create_app() -> Flask:
                 "brand": BRAND,
                 "system": SYSTEM,
                 "owner": OWNER,
-                "message": "I AM THE ONEâ„¢ SaaS API is live.",
+                "message": "I AM THE ONE™ SaaS API is live.",
                 "endpoints": [
                     "/api/health",
                     "/api/stores",
@@ -1113,7 +1107,7 @@ def create_app() -> Flask:
             return f"${(int(value or 0) / 100):,.2f}"
 
         lines = [
-            "I AM THE ONEâ„¢ / WOLF OSâ„¢ DIGITAL DELIVERY",
+            "I AM THE ONE™ / WOLF OS™ DIGITAL DELIVERY",
             "",
             f"Order ID: {order['id']}",
             f"Buyer: {order['buyer_name'] or 'Customer'}",
@@ -1135,7 +1129,7 @@ def create_app() -> Flask:
             "Your order was created successfully.",
             "For manual payment mode, the owner confirms payment and delivers the final product/package.",
             "",
-            "Copyright Â© 2026 Andrew Wolverton. All Rights Reserved.",
+            "Copyright © 2026 Andrew Wolverton. All Rights Reserved.",
         ]
 
         body = "\n".join(lines)
@@ -1730,49 +1724,7 @@ def create_app() -> Flask:
 
         payload = request.get_json(
             silent=True
-        )
-
-        if payload is None:
-            return jsonify(
-                {
-                    "ok": False,
-                    "error": (
-                        "Request body must contain valid JSON."
-                    ),
-                }
-            ), 400
-
-        if not isinstance(payload, dict):
-            return jsonify(
-                {
-                    "ok": False,
-                    "error": (
-                        "Pipeline payload must be a JSON object."
-                    ),
-                }
-            ), 400
-
-        required_fields = {
-            "stage",
-            "deal_value",
-            "next_action",
-        }
-
-        missing_fields = sorted(
-            required_fields
-            - set(payload.keys())
-        )
-
-        if missing_fields:
-            return jsonify(
-                {
-                    "ok": False,
-                    "error": (
-                        "Missing required pipeline fields: "
-                        + ", ".join(missing_fields)
-                    ),
-                }
-            ), 400
+        ) or {}
 
         allowed_stages = {
             "New",
@@ -1785,7 +1737,7 @@ def create_app() -> Flask:
         }
 
         stage = str(
-            payload["stage"]
+            payload.get("stage") or "New"
         ).strip()
 
         if stage not in allowed_stages:
@@ -1801,7 +1753,11 @@ def create_app() -> Flask:
         try:
             deal_value = int(
                 float(
-                    payload["deal_value"]
+                    payload.get(
+                        "deal_value",
+                        0,
+                    )
+                    or 0
                 )
             )
 
@@ -1821,9 +1777,7 @@ def create_app() -> Flask:
         )
 
         next_action = str(
-            payload["next_action"]
-            if payload["next_action"] is not None
-            else ""
+            payload.get("next_action") or ""
         ).strip()
 
         con = connect(app)
@@ -2217,7 +2171,6 @@ def create_app() -> Flask:
     app.register_blueprint(analytics_bp)
 
     return app
-
 
 
 

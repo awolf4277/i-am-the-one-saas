@@ -1730,49 +1730,7 @@ def create_app() -> Flask:
 
         payload = request.get_json(
             silent=True
-        )
-
-        if payload is None:
-            return jsonify(
-                {
-                    "ok": False,
-                    "error": (
-                        "Request body must contain valid JSON."
-                    ),
-                }
-            ), 400
-
-        if not isinstance(payload, dict):
-            return jsonify(
-                {
-                    "ok": False,
-                    "error": (
-                        "Pipeline payload must be a JSON object."
-                    ),
-                }
-            ), 400
-
-        required_fields = {
-            "stage",
-            "deal_value",
-            "next_action",
-        }
-
-        missing_fields = sorted(
-            required_fields
-            - set(payload.keys())
-        )
-
-        if missing_fields:
-            return jsonify(
-                {
-                    "ok": False,
-                    "error": (
-                        "Missing required pipeline fields: "
-                        + ", ".join(missing_fields)
-                    ),
-                }
-            ), 400
+        ) or {}
 
         allowed_stages = {
             "New",
@@ -1785,7 +1743,7 @@ def create_app() -> Flask:
         }
 
         stage = str(
-            payload["stage"]
+            payload.get("stage") or "New"
         ).strip()
 
         if stage not in allowed_stages:
@@ -1801,7 +1759,11 @@ def create_app() -> Flask:
         try:
             deal_value = int(
                 float(
-                    payload["deal_value"]
+                    payload.get(
+                        "deal_value",
+                        0,
+                    )
+                    or 0
                 )
             )
 
@@ -1821,9 +1783,7 @@ def create_app() -> Flask:
         )
 
         next_action = str(
-            payload["next_action"]
-            if payload["next_action"] is not None
-            else ""
+            payload.get("next_action") or ""
         ).strip()
 
         con = connect(app)
