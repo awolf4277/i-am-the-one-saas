@@ -10,12 +10,6 @@ import {
 
 import "./RevenueCommandCenter.css";
 
-type RevenueOrder = {
-  id?: string;
-  payment_status?: string;
-  total_cents?: number;
-};
-
 type Offer = {
   name: string;
   price: number;
@@ -83,11 +77,7 @@ function copyFallback(
   );
 }
 
-export default function RevenueCommandCenter({
-  orders,
-}: {
-  orders: RevenueOrder[];
-}) {
+export default function RevenueCommandCenter() {
   const {
     pipeline,
     pipelineStatus,
@@ -127,7 +117,7 @@ export default function RevenueCommandCenter({
 
   const [status, setStatus] =
     useState(
-      "Revenue Engine connected to unified SQLite pipeline state and live order payment status."
+      "Revenue Engine connected to the unified SQLite pipeline."
     );
 
   const [
@@ -170,52 +160,15 @@ export default function RevenueCommandCenter({
   const closedDeals =
     wonDeals.length;
 
-  const orderValue =
-    orders.reduce(
-      (total, order) =>
-        total +
-        (
-          Number(
-            order.total_cents
-          ) || 0
-        ) / 100,
-      0
-    );
-
-  const paidOrders =
-    orders.filter(
-      (order) =>
-        String(
-          order.payment_status || ""
-        )
-          .trim()
-          .toLowerCase() === "paid"
-    );
-
-  const collectedRevenue =
-    paidOrders.reduce(
-      (total, order) =>
-        total +
-        (
-          Number(
-            order.total_cents
-          ) || 0
-        ) / 100,
-      0
-    );
-
-  const outstandingRevenue =
-    Math.max(
-      0,
-      orderValue -
-        collectedRevenue
-    );
+  const securedRevenue =
+    wonRevenue +
+    simulationRevenue;
 
   const remainingRevenue =
     Math.max(
       0,
       monthlyGoal -
-        collectedRevenue
+        securedRevenue
     );
 
   const dealsNeeded =
@@ -223,6 +176,19 @@ export default function RevenueCommandCenter({
       ? Math.ceil(
           remainingRevenue /
             averageDeal
+        )
+      : 0;
+
+  const progress =
+    monthlyGoal > 0
+      ? Math.min(
+          100,
+          Math.round(
+            (
+              securedRevenue /
+              monthlyGoal
+            ) * 100
+          )
         )
       : 0;
 
@@ -243,12 +209,10 @@ export default function RevenueCommandCenter({
           "WOLF OS™ REVENUE ATTACK PLAN",
           "",
           `Monthly revenue target: ${money(monthlyGoal)}`,
-          `Won pipeline value: ${money(wonRevenue)}`,
-          `Order value: ${money(orderValue)}`,
-          `Collected revenue: ${money(collectedRevenue)}`,
-          `Outstanding revenue: ${money(outstandingRevenue)}`,
-          `Modeled revenue, not collected: ${money(simulationRevenue)}`,
-          `Cash goal remaining: ${money(remainingRevenue)}`,
+          `Won revenue: ${money(wonRevenue)}`,
+          `Modeled revenue: ${money(simulationRevenue)}`,
+          `Revenue secured: ${money(securedRevenue)}`,
+          `Revenue remaining: ${money(remainingRevenue)}`,
           `Average deal target: ${money(averageDeal)}`,
           `Deals still needed: ${dealsNeeded}`,
           `Live SQLite pipeline: ${money(pipelineValue)}`,
@@ -264,10 +228,8 @@ export default function RevenueCommandCenter({
       [
         monthlyGoal,
         wonRevenue,
-        orderValue,
-        collectedRevenue,
-        outstandingRevenue,
         simulationRevenue,
+        securedRevenue,
         remainingRevenue,
         averageDeal,
         dealsNeeded,
@@ -397,26 +359,53 @@ export default function RevenueCommandCenter({
           </h2>
 
           <p>
-            Live revenue truth calculated
-            from SQLite pipeline state and
-            real order payment status.
+            Live revenue intelligence
+            calculated from the same SQLite
+            pipeline used by Deal Desk and
+            Priority Engine.
           </p>
         </div>
 
         <div className="revenue-command-status">
           <span className="revenue-status-light" />
-          REVENUE TRUTH LIVE
+          SQLITE REVENUE SYNC
         </div>
       </header>
 
       <div className="revenue-command-grid">
         <article className="revenue-gauge-card revenue-gauge-primary">
           <span>
-            Won Pipeline Value
+            Monthly Goal
           </span>
 
           <strong>
-            {money(wonRevenue)}
+            {money(monthlyGoal)}
+          </strong>
+
+          <div className="revenue-progress-track">
+            <div
+              className="revenue-progress-fill"
+              style={{
+                width:
+                  `${progress}%`,
+              }}
+            />
+          </div>
+
+          <small>
+            {progress}% secured
+          </small>
+        </article>
+
+        <article className="revenue-gauge-card">
+          <span>
+            Revenue Secured
+          </span>
+
+          <strong>
+            {money(
+              securedRevenue
+            )}
           </strong>
 
           <small>
@@ -424,22 +413,9 @@ export default function RevenueCommandCenter({
             {closedDeals === 1
               ? ""
               : "s"}{" "}
-            in the unified SQLite pipeline
-          </small>
-        </article>
-
-        <article className="revenue-gauge-card">
-          <span>
-            Order Value
-          </span>
-
-          <strong>
-            {money(orderValue)}
-          </strong>
-
-          <small>
-            {orders.length} recorded order
-            {orders.length === 1
+            + {simulationCount} modeled
+            simulation
+            {simulationCount === 1
               ? ""
               : "s"}
           </small>
@@ -447,34 +423,33 @@ export default function RevenueCommandCenter({
 
         <article className="revenue-gauge-card">
           <span>
-            Collected Revenue
+            Revenue Remaining
           </span>
 
           <strong>
-            {money(collectedRevenue)}
+            {money(
+              remainingRevenue
+            )}
           </strong>
 
           <small>
-            {paidOrders.length} paid order
-            {paidOrders.length === 1
-              ? ""
-              : "s"}{" "}
-            · modeled revenue remains separate
+            {dealsNeeded} average
+            deals required
           </small>
         </article>
 
         <article className="revenue-gauge-card">
           <span>
-            Outstanding Revenue
+            Pipeline Coverage
           </span>
 
           <strong>
-            {money(outstandingRevenue)}
+            {pipelineCoverage}%
           </strong>
 
           <small>
-            Uncollected order value ·
-            pipeline coverage {pipelineCoverage}%
+            {money(pipelineValue)} live
+            SQLite pipeline
           </small>
         </article>
       </div>
@@ -734,7 +709,7 @@ export default function RevenueCommandCenter({
 
       <footer className="revenue-command-footer">
         <span>
-          Won pipeline value:{" "}
+          Won revenue:{" "}
           <strong>
             {money(wonRevenue)}
           </strong>

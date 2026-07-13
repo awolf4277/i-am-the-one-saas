@@ -3207,7 +3207,7 @@ function OwnerConsole({
         setupRequests={setupRequests}
         analytics={analytics}
       />
-      <RevenueCommandCenter orders={orders} />
+      <RevenueCommandCenter />
       <PriorityEngine setupRequests={setupRequests} />
       <BuyerPipelineBoard setupRequests={setupRequests} />
       <DealActivityTimeline />
