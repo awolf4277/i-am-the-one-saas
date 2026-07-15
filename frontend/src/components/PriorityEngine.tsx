@@ -377,6 +377,10 @@ export default function PriorityEngine({
   const [executing, setExecuting] =
     useState(false);
 
+  // WOLF OS REVENUE ACTION CENTER
+  const [actionTarget, setActionTarget] =
+    useState<RankedTarget | null>(null);
+
   const [feedbackState, setFeedbackState] =
     useState<FeedbackState>("idle");
 
@@ -424,6 +428,32 @@ export default function PriorityEngine({
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (!actionTarget) {
+      return;
+    }
+
+    const onKeyDown = (
+      event: KeyboardEvent
+    ) => {
+      if (event.key === "Escape") {
+        setActionTarget(null);
+      }
+    };
+
+    document.addEventListener(
+      "keydown",
+      onKeyDown
+    );
+
+    return () => {
+      document.removeEventListener(
+        "keydown",
+        onKeyDown
+      );
+    };
+  }, [actionTarget]);
 
   const leads = useMemo<Lead[]>(() => {
     return setupRequests.map(
@@ -553,6 +583,16 @@ export default function PriorityEngine({
               )
             );
 
+          const waitingForBuyer =
+            deal.nextAction.startsWith(
+              "WAITING · "
+            );
+
+          const waitingPenalty =
+            waitingForBuyer
+              ? 120
+              : 0;
+
           const score =
             stageScore(
               deal.stage
@@ -560,7 +600,8 @@ export default function PriorityEngine({
             timelineScore(
               lead.timeline
             ) +
-            valueScore;
+            valueScore -
+            waitingPenalty;
 
           return {
             lead,
@@ -568,13 +609,22 @@ export default function PriorityEngine({
             score,
             priority:
               priorityLabel(score),
-            reason: reasonFor(
-              lead,
-              deal
-            ),
-            nextMove: nextMoveFor(
-              deal.stage
-            ),
+            reason:
+              waitingForBuyer
+                ? "owner action completed · waiting on buyer response"
+                : reasonFor(
+                    lead,
+                    deal
+                  ),
+            nextMove:
+              waitingForBuyer
+                ? deal.nextAction.replace(
+                    "WAITING · ",
+                    ""
+                  )
+                : nextMoveFor(
+                    deal.stage
+                  ),
           };
         })
         .filter(
@@ -681,6 +731,32 @@ export default function PriorityEngine({
     );
   };
 
+  const openActionCenter = (
+    target: RankedTarget
+  ) => {
+    setActionTarget(target);
+
+    showFeedback(
+      target.deal.stage === "Closing"
+        ? "closing"
+        : "locking",
+      `ACTION CENTER · ${target.lead.business.toUpperCase()}`,
+      1800
+    );
+
+    setStatus(
+      `${target.lead.business} loaded into the Revenue Action Center.`
+    );
+  };
+
+  const closeActionCenter = () => {
+    if (executing) {
+      return;
+    }
+
+    setActionTarget(null);
+  };
+
   const executeNextMove =
     async (
       target: RankedTarget
@@ -688,52 +764,6 @@ export default function PriorityEngine({
       if (executing) {
         return;
       }
-
-      if (
-        target.deal.stage ===
-        "Closing"
-      ) {
-        showFeedback(
-          "closing",
-          "CLOSING MODE · CLOSE MESSAGE ARMED",
-          2800
-        );
-
-        await copyTargetMessage(
-          target
-        );
-
-        setStatus(
-          `${target.lead.business} is at CLOSING. Close message copied. Ask for the deposit before marking the deal Won.`
-        );
-
-        return;
-      }
-
-      const currentIndex =
-        stages.indexOf(
-          target.deal.stage
-        );
-
-      const nextStage =
-        stages[
-          Math.min(
-            currentIndex + 1,
-            stages.indexOf(
-              "Closing"
-            )
-          )
-        ];
-
-      const nextDeal: PipelineState =
-        {
-          ...target.deal,
-          stage: nextStage,
-          nextAction:
-            nextMoveFor(
-              nextStage
-            ),
-        };
 
       const ownerToken =
         window.localStorage.getItem(
@@ -748,15 +778,51 @@ export default function PriorityEngine({
         return;
       }
 
+      const isClosing =
+        target.deal.stage ===
+        "Closing";
+
+      const currentIndex =
+        stages.indexOf(
+          target.deal.stage
+        );
+
+      const nextStage =
+        isClosing
+          ? target.deal.stage
+          : stages[
+              Math.min(
+                currentIndex + 1,
+                stages.indexOf(
+                  "Closing"
+                )
+              )
+            ];
+
+      const completionTime =
+        new Date().toLocaleString();
+
+      const nextDeal: PipelineState =
+        {
+          ...target.deal,
+          stage: nextStage,
+          nextAction:
+            isClosing
+              ? `WAITING · Deposit request sent ${completionTime}. Confirm payment, then mark the deal Won in Deal Desk.`
+              : nextMoveFor(
+                  nextStage
+                ),
+        };
+
       setExecuting(true);
 
       showFeedback(
         "locking",
-        `TARGET LOCK · ${target.lead.business.toUpperCase()}`
+        `LOGGING ACTION · ${target.lead.business.toUpperCase()}`
       );
 
       setStatus(
-        `Executing next move for ${target.lead.business}...`
+        `Saving completed action for ${target.lead.business}...`
       );
 
       try {
@@ -766,14 +832,20 @@ export default function PriorityEngine({
           ownerToken
         );
 
+        setActionTarget(null);
+
         showFeedback(
           "executed",
-          `MOVE EXECUTED · ${target.deal.stage.toUpperCase()} → ${nextStage.toUpperCase()}`,
-          2800
+          isClosing
+            ? "REQUEST SENT · BUYER RESPONSE PENDING"
+            : `MOVE COMPLETE · ${target.deal.stage.toUpperCase()} → ${nextStage.toUpperCase()}`,
+          3000
         );
 
         setStatus(
-          `${target.lead.business} advanced from ${target.deal.stage} to ${nextStage}. Priority Engine recalculated the attack queue.`
+          isClosing
+            ? `${target.lead.business} deposit request was logged in SQLite. WOLF OS moved to the next actionable buyer while payment is pending.`
+            : `${target.lead.business} action completed. Deal advanced from ${target.deal.stage} to ${nextStage}, and the attack queue was recalculated.`
         );
       } catch (error) {
         showFeedback(
@@ -926,7 +998,7 @@ export default function PriorityEngine({
 
           <div className="priority-next-move">
             <span>
-              EXECUTE NEXT MOVE
+              RECOMMENDED MOVE
             </span>
 
             <strong>
@@ -942,7 +1014,7 @@ export default function PriorityEngine({
               className="priority-execute-button"
               disabled={executing}
               onClick={() =>
-                void executeNextMove(
+                openActionCenter(
                   primaryTarget
                 )
               }
@@ -951,7 +1023,7 @@ export default function PriorityEngine({
                 ? feedbackState === "locking"
                   ? "TARGET LOCK..."
                   : "EXECUTING..."
-                : "EXECUTE NEXT MOVE"}
+                : "OPEN ACTION CENTER"}
             </button>
 
             <button
@@ -1065,6 +1137,159 @@ export default function PriorityEngine({
           {pipelineStatus}
         </p>
       </footer>
+
+      {actionTarget && (
+        <div
+          className="revenue-action-backdrop"
+          role="presentation"
+          onMouseDown={
+            closeActionCenter
+          }
+        >
+          <div
+            className="revenue-action-center"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="revenue-action-title"
+            onMouseDown={(event) =>
+              event.stopPropagation()
+            }
+          >
+            <div className="revenue-action-scanline" />
+
+            <header className="revenue-action-header">
+              <div>
+                <p className="priority-engine-kicker">
+                  WOLF OS™ REVENUE ACTION CENTER
+                </p>
+
+                <h3 id="revenue-action-title">
+                  {actionTarget.lead.business}
+                </h3>
+
+                <p>
+                  Execute the recommended move,
+                  contact the buyer, and log the
+                  completed action into SQLite.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                className="revenue-action-close"
+                onClick={
+                  closeActionCenter
+                }
+                disabled={executing}
+                aria-label="Close Revenue Action Center"
+              >
+                ×
+              </button>
+            </header>
+
+            <div className="revenue-action-metrics">
+              <div>
+                <span>CURRENT STAGE</span>
+                <strong>
+                  {actionTarget.deal.stage}
+                </strong>
+              </div>
+
+              <div>
+                <span>MONEY AT STAKE</span>
+                <strong>
+                  {money(
+                    actionTarget.deal.dealValue
+                  )}
+                </strong>
+              </div>
+
+              <div>
+                <span>BUYER TIMELINE</span>
+                <strong>
+                  {actionTarget.lead.timeline}
+                </strong>
+              </div>
+            </div>
+
+            <div className="revenue-action-directive">
+              <span>WOLF OS DIRECTIVE</span>
+
+              <strong>
+                {actionTarget.nextMove}
+              </strong>
+
+              <p>
+                {actionTarget.reason}
+              </p>
+            </div>
+
+            <label className="revenue-action-message">
+              <span>
+                READY-TO-SEND BUYER MESSAGE
+              </span>
+
+              <textarea
+                readOnly
+                value={
+                  buildCloseMessage(
+                    actionTarget
+                  )
+                }
+              />
+            </label>
+
+            <div className="revenue-action-controls">
+              <button
+                type="button"
+                onClick={() =>
+                  void copyTargetMessage(
+                    actionTarget
+                  )
+                }
+              >
+                COPY MESSAGE
+              </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  openTargetEmail(
+                    actionTarget
+                  )
+                }
+              >
+                OPEN EMAIL
+              </button>
+
+              <button
+                type="button"
+                className="revenue-action-complete"
+                disabled={executing}
+                onClick={() =>
+                  void executeNextMove(
+                    actionTarget
+                  )
+                }
+              >
+                {executing
+                  ? "LOGGING ACTION..."
+                  : actionTarget.deal.stage ===
+                      "Closing"
+                    ? "MARK REQUEST SENT"
+                    : "MARK ACTION COMPLETE"}
+              </button>
+            </div>
+
+            <p className="revenue-action-footnote">
+              Completion is persisted through the
+              unified SQLite pipeline and immediately
+              refreshes the Priority Engine, Deal Desk,
+              Revenue Engine, and activity timeline.
+            </p>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

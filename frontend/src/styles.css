@@ -4309,3 +4309,86 @@ html.blacklight-mode .premium-cta-box {
   }
 }
 
+
+
+/* WOLF OS COLLECTION COMMAND */
+
+.owner-payment-command {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.45rem;
+}
+
+.owner-payment-status {
+  display: inline-flex;
+  align-items: center;
+  min-width: 4.7rem;
+  justify-content: center;
+  padding: 0.28rem 0.55rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.owner-payment-status.paid {
+  border-color: rgba(70, 255, 164, 0.5);
+  background: rgba(70, 255, 164, 0.1);
+  box-shadow:
+    0 0 18px rgba(70, 255, 164, 0.12);
+}
+
+.owner-payment-status.unpaid {
+  border-color: rgba(255, 181, 71, 0.45);
+  background: rgba(255, 181, 71, 0.08);
+}
+
+.owner-payment-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.owner-payment-button {
+  appearance: none;
+  border-radius: 0.55rem;
+  padding: 0.45rem 0.62rem;
+  font: inherit;
+  font-size: 0.64rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    border-color 160ms ease;
+}
+
+.owner-payment-button:hover {
+  transform: translateY(-1px);
+}
+
+.owner-payment-button.collect {
+  border: 1px solid rgba(70, 255, 164, 0.55);
+  background: rgba(70, 255, 164, 0.12);
+  box-shadow:
+    0 0 18px rgba(70, 255, 164, 0.1);
+}
+
+.owner-payment-button.collect:hover {
+  box-shadow:
+    0 0 24px rgba(70, 255, 164, 0.2);
+}
+
+.owner-payment-button.reopen {
+  border: 1px solid rgba(255, 181, 71, 0.48);
+  background: rgba(255, 181, 71, 0.1);
+}
+
+.owner-payment-button.reopen:hover {
+  box-shadow:
+    0 0 22px rgba(255, 181, 71, 0.16);
+}

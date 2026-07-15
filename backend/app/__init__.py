@@ -2086,6 +2086,146 @@ def create_app() -> Flask:
         finally:
             con.close()
 
+    @app.put("/api/owner/orders/<order_id>/payment-status")
+    def owner_update_order_payment_status(
+        order_id: str
+    ):
+        ok, error = require_owner()
+
+        if not ok:
+            return error
+
+        payload = request.get_json(
+            silent=True
+        )
+
+        if payload is None:
+            return jsonify(
+                {
+                    "ok": False,
+                    "error": (
+                        "Request body must contain "
+                        "valid JSON."
+                    ),
+                }
+            ), 400
+
+        if not isinstance(payload, dict):
+            return jsonify(
+                {
+                    "ok": False,
+                    "error": (
+                        "Payment status payload must "
+                        "be a JSON object."
+                    ),
+                }
+            ), 400
+
+        if "payment_status" not in payload:
+            return jsonify(
+                {
+                    "ok": False,
+                    "error": (
+                        "payment_status is required."
+                    ),
+                }
+            ), 400
+
+        payment_status = str(
+            payload["payment_status"]
+            or ""
+        ).strip().lower()
+
+        allowed_statuses = {
+            "paid",
+            "unpaid",
+        }
+
+        if payment_status not in allowed_statuses:
+            return jsonify(
+                {
+                    "ok": False,
+                    "error": (
+                        "payment_status must be "
+                        "paid or unpaid."
+                    ),
+                }
+            ), 400
+
+        con = connect(app)
+
+        try:
+            order = con.execute(
+                """
+                SELECT *
+                FROM orders
+                WHERE id = ?
+                LIMIT 1
+                """,
+                (order_id,),
+            ).fetchone()
+
+            if not order:
+                return jsonify(
+                    {
+                        "ok": False,
+                        "error": "Order not found.",
+                    }
+                ), 404
+
+            previous_status = str(
+                order["payment_status"]
+                or "unpaid"
+            ).strip().lower()
+
+            if previous_status != payment_status:
+                con.execute(
+                    """
+                    UPDATE orders
+                    SET payment_status = ?
+                    WHERE id = ?
+                    """,
+                    (
+                        payment_status,
+                        order_id,
+                    ),
+                )
+
+                con.commit()
+
+            updated_order = con.execute(
+                """
+                SELECT *
+                FROM orders
+                WHERE id = ?
+                LIMIT 1
+                """,
+                (order_id,),
+            ).fetchone()
+
+            return jsonify(
+                {
+                    "ok": True,
+                    "changed": (
+                        previous_status
+                        != payment_status
+                    ),
+                    "previous_payment_status": (
+                        previous_status
+                    ),
+                    "payment_status": (
+                        payment_status
+                    ),
+                    "order": dict(
+                        updated_order
+                    ),
+                }
+            )
+
+        finally:
+            con.close()
+
+
     @app.route("/api/owner/products", methods=["GET", "POST"])
     def owner_products():
         ok, error = require_owner()

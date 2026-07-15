@@ -634,3 +634,237 @@
     transform: translateX(4px);
   }
 }
+
+
+/* WOLF OS REVENUE ACTION CENTER STYLES */
+.revenue-action-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    radial-gradient(circle at 50% 15%, rgba(80, 160, 255, 0.18), transparent 42%),
+    rgba(2, 7, 14, 0.88);
+  backdrop-filter: blur(10px);
+}
+
+.revenue-action-center {
+  position: relative;
+  width: min(840px, 100%);
+  max-height: min(880px, calc(100vh - 48px));
+  overflow: auto;
+  border: 1px solid rgba(124, 204, 255, 0.34);
+  border-radius: 24px;
+  padding: 26px;
+  background:
+    linear-gradient(145deg, rgba(13, 24, 38, 0.98), rgba(4, 10, 18, 0.99));
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.035) inset,
+    0 28px 90px rgba(0, 0, 0, 0.72),
+    0 0 54px rgba(43, 157, 255, 0.14);
+}
+
+.revenue-action-scanline {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(122, 218, 255, 0.95), transparent);
+  box-shadow: 0 0 22px rgba(92, 196, 255, 0.8);
+  animation: revenueActionSweep 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.revenue-action-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 22px;
+}
+
+.revenue-action-header h3 {
+  margin: 4px 0 8px;
+  font-size: clamp(1.65rem, 4vw, 2.45rem);
+  letter-spacing: -0.04em;
+}
+
+.revenue-action-header p {
+  margin: 0;
+  max-width: 650px;
+  color: rgba(225, 237, 247, 0.7);
+  line-height: 1.6;
+}
+
+.revenue-action-close {
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.055);
+  color: #ffffff;
+  font-size: 1.65rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.revenue-action-close:hover {
+  border-color: rgba(129, 218, 255, 0.72);
+  background: rgba(89, 180, 255, 0.13);
+}
+
+.revenue-action-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.revenue-action-metrics > div,
+.revenue-action-directive,
+.revenue-action-message {
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.revenue-action-metrics > div {
+  padding: 15px;
+}
+
+.revenue-action-metrics span,
+.revenue-action-directive > span,
+.revenue-action-message > span {
+  display: block;
+  margin-bottom: 7px;
+  color: rgba(147, 214, 255, 0.72);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.revenue-action-metrics strong {
+  display: block;
+  overflow-wrap: anywhere;
+  font-size: 1rem;
+}
+
+.revenue-action-directive {
+  padding: 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 0 34px rgba(62, 161, 255, 0.07) inset;
+}
+
+.revenue-action-directive strong {
+  display: block;
+  font-size: 1.15rem;
+  line-height: 1.45;
+}
+
+.revenue-action-directive p {
+  margin: 9px 0 0;
+  color: rgba(225, 237, 247, 0.64);
+}
+
+.revenue-action-message {
+  display: block;
+  padding: 16px;
+}
+
+.revenue-action-message textarea {
+  width: 100%;
+  min-height: 260px;
+  resize: vertical;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.24);
+  color: rgba(245, 250, 255, 0.92);
+  font: inherit;
+  line-height: 1.55;
+}
+
+.revenue-action-message textarea:focus {
+  outline: 1px solid rgba(119, 213, 255, 0.7);
+  box-shadow: 0 0 0 4px rgba(64, 168, 255, 0.08);
+}
+
+.revenue-action-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.35fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.revenue-action-controls button {
+  min-height: 48px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.055);
+  color: #ffffff;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.revenue-action-controls button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: rgba(126, 215, 255, 0.65);
+  background: rgba(78, 171, 255, 0.12);
+}
+
+.revenue-action-controls .revenue-action-complete {
+  border-color: rgba(99, 231, 164, 0.4);
+  background:
+    linear-gradient(135deg, rgba(32, 177, 111, 0.9), rgba(18, 114, 78, 0.94));
+  box-shadow: 0 10px 30px rgba(22, 151, 95, 0.2);
+}
+
+.revenue-action-controls button:disabled {
+  opacity: 0.58;
+  cursor: wait;
+}
+
+.revenue-action-footnote {
+  margin: 14px 2px 0;
+  color: rgba(217, 231, 242, 0.55);
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+@keyframes revenueActionSweep {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translateX(-28%);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateX(28%);
+  }
+}
+
+@media (max-width: 720px) {
+  .revenue-action-backdrop {
+    align-items: end;
+    padding: 10px;
+  }
+
+  .revenue-action-center {
+    max-height: calc(100vh - 20px);
+    border-radius: 20px 20px 14px 14px;
+    padding: 20px 16px;
+  }
+
+  .revenue-action-metrics,
+  .revenue-action-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .revenue-action-message textarea {
+    min-height: 230px;
+  }
+}

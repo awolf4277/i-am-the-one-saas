@@ -1093,6 +1093,65 @@ function App() {
     setNotice("Owner console locked.");
   }
 
+  async function updateOrderPaymentStatus(
+    orderId: string,
+    paymentStatus: "paid" | "unpaid"
+  ) {
+    if (!ownerToken) {
+      setError(
+        "Owner token required."
+      );
+      return;
+    }
+
+    try {
+      setError("");
+
+      const payload =
+        await apiJson<any>(
+          `/api/owner/orders/${
+            encodeURIComponent(
+              orderId
+            )
+          }/payment-status`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+            body: JSON.stringify({
+              payment_status:
+                paymentStatus,
+            }),
+          },
+          ownerToken
+        );
+
+      if (!payload?.ok) {
+        throw new Error(
+          payload?.error ||
+            "Payment status update failed."
+        );
+      }
+
+      setNotice(
+        paymentStatus === "paid"
+          ? `PAYMENT CAPTURED · ${orderId}`
+          : `PAYMENT REOPENED · ${orderId}`
+      );
+
+      await loadOwnerData(
+        ownerToken
+      );
+    } catch (err: any) {
+      setError(
+        err?.message ||
+          "Payment status update failed."
+      );
+    }
+  }
+
   async function createOwnerProduct(form: ProductForm) {
     if (!ownerToken) {
       setError("Owner token required.");
@@ -1212,6 +1271,7 @@ function App() {
             onLogout={logoutOwner}
             onCreateProduct={createOwnerProduct}
             onUpdateStock={updateProductStock}
+            onUpdateOrderPaymentStatus={updateOrderPaymentStatus}
           />
         ) : (
           <OwnerGate
@@ -3094,7 +3154,8 @@ function OwnerConsole({
   onRefresh,
   onLogout,
   onCreateProduct,
-  onUpdateStock
+  onUpdateStock,
+  onUpdateOrderPaymentStatus,
 }: {
   health: ApiHealth | null;
   stores: Store[];
@@ -3107,6 +3168,10 @@ function OwnerConsole({
   onLogout: () => void;
   onCreateProduct: (form: ProductForm) => Promise<void>;
   onUpdateStock: (product: Product, nextStock: number) => Promise<void>;
+  onUpdateOrderPaymentStatus: (
+    orderId: string,
+    paymentStatus: "paid" | "unpaid"
+  ) => Promise<void>;
 }) {
   const [form, setForm] = useState<ProductForm>({
     store_slug: "demo",
@@ -3521,7 +3586,61 @@ Thanks for requesting setup help for ${
                   <strong>{order.id}</strong>
                   <span>{order.buyer_name || "Unknown buyer"}</span>
                   <span>{money(order.total_cents)}</span>
-                  <span>{order.payment_status || order.status || "pending"}</span>
+                  <div className="owner-payment-command">
+                    <span
+                      className={`owner-payment-status ${
+                        String(
+                          order.payment_status ||
+                            "unpaid"
+                        )
+                          .trim()
+                          .toLowerCase() === "paid"
+                          ? "paid"
+                          : "unpaid"
+                      }`}
+                    >
+                      {order.payment_status ||
+                        order.status ||
+                        "pending"}
+                    </span>
+
+                    {order.id ? (
+                      <div className="owner-payment-actions">
+                        {String(
+                          order.payment_status ||
+                            "unpaid"
+                        )
+                          .trim()
+                          .toLowerCase() === "paid" ? (
+                          <button
+                            type="button"
+                            className="owner-payment-button reopen"
+                            onClick={() =>
+                              onUpdateOrderPaymentStatus(
+                                order.id as string,
+                                "unpaid"
+                              )
+                            }
+                          >
+                            MARK UNPAID
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            className="owner-payment-button collect"
+                            onClick={() =>
+                              onUpdateOrderPaymentStatus(
+                                order.id as string,
+                                "paid"
+                              )
+                            }
+                          >
+                            MARK PAID
+                          </button>
+                        )}
+                      </div>
+                    ) : null}
+                  </div>
 
                   {order.id && order.buyer_email ? (
                     <a
@@ -3689,6 +3808,8 @@ function Metric({ label, value }: { label: string; value: React.ReactNode }) {
 }
 
 export default App;
+
+
 
 
 
