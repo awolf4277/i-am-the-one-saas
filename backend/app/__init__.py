@@ -888,6 +888,116 @@ def create_app() -> Flask:
             con.close()
 
 
+
+    @app.route(
+        "/api/stores/<slug>/products/<product_id>",
+        methods=["PUT"],
+    )
+    def owner_update_store_product(slug: str, product_id: str):
+        ok, error = require_owner()
+        if not ok:
+            return error
+
+        payload = request.get_json(silent=True) or {}
+
+        if "stock" not in payload:
+            return jsonify(
+                {
+                    "ok": False,
+                    "error": "Stock is required.",
+                }
+            ), 400
+
+        try:
+            stock = int(payload.get("stock"))
+        except (TypeError, ValueError):
+            return jsonify(
+                {
+                    "ok": False,
+                    "error": "Stock must be a whole number.",
+                }
+            ), 400
+
+        if stock < 0:
+            return jsonify(
+                {
+                    "ok": False,
+                    "error": "Stock cannot be negative.",
+                }
+            ), 400
+
+        con = connect(app)
+
+        try:
+            existing = con.execute(
+                """
+                SELECT p.id
+                FROM products AS p
+                INNER JOIN stores AS s
+                    ON s.id = p.store_id
+                WHERE p.id = ?
+                  AND s.slug = ?
+                LIMIT 1
+                """,
+                (product_id, slug),
+            ).fetchone()
+
+            if not existing:
+                return jsonify(
+                    {
+                        "ok": False,
+                        "error": f"Product not found: {product_id}",
+                    }
+                ), 404
+
+            updated_at = now_iso()
+
+            con.execute(
+                """
+                UPDATE products
+                SET stock = ?,
+                    updated_at = ?
+                WHERE id = ?
+                """,
+                (stock, updated_at, product_id),
+            )
+
+            con.commit()
+
+            row = con.execute(
+                """
+                SELECT
+                    p.id,
+                    p.store_id,
+                    s.slug AS store_slug,
+                    p.sku,
+                    p.name,
+                    p.category,
+                    p.description,
+                    p.price_cents,
+                    p.stock,
+                    p.image_url,
+                    p.updated_at
+                FROM products AS p
+                INNER JOIN stores AS s
+                    ON s.id = p.store_id
+                WHERE p.id = ?
+                LIMIT 1
+                """,
+                (product_id,),
+            ).fetchone()
+
+            return jsonify(
+                {
+                    "ok": True,
+                    "message": "Stock updated.",
+                    "product": product_dict(row),
+                }
+            )
+        finally:
+            con.close()
+
+
     @app.post("/api/stores/<slug>/checkout")
     def checkout(slug: str):
         payload = request.get_json(silent=True) or {}
