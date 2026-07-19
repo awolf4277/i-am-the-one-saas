@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import os
-import sqlite3
+from app.db_compat import DatabaseConnection, connect_database
 from datetime import datetime, timezone
 from typing import Any
 
@@ -19,10 +19,8 @@ def today_prefix() -> str:
     return datetime.now(timezone.utc).date().isoformat()
 
 
-def connect() -> sqlite3.Connection:
-    con = sqlite3.connect(current_app.config["DB_PATH"])
-    con.row_factory = sqlite3.Row
-    return con
+def connect() -> DatabaseConnection:
+    return connect_database(current_app)
 
 
 def init_analytics_db() -> None:
@@ -60,7 +58,7 @@ def owner_authorized() -> bool:
     return bool(expected and token and token == expected)
 
 
-def count_event(con: sqlite3.Connection, event_name: str) -> int:
+def count_event(con: DatabaseConnection, event_name: str) -> int:
     row = con.execute(
         "SELECT COUNT(*) AS total FROM analytics_events WHERE event_name = ?",
         (event_name,),
@@ -69,7 +67,7 @@ def count_event(con: sqlite3.Connection, event_name: str) -> int:
     return int(row["total"] or 0)
 
 
-def count_event_today(con: sqlite3.Connection, event_name: str) -> int:
+def count_event_today(con: DatabaseConnection, event_name: str) -> int:
     row = con.execute(
         """
         SELECT COUNT(*) AS total

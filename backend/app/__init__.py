@@ -1,11 +1,11 @@
-﻿# Copyright Â© 2026 Andrew Wolverton. All Rights Reserved.
+# Copyright Â© 2026 Andrew Wolverton. All Rights Reserved.
 from __future__ import annotations
 
 from uuid import uuid4
 
 import os
 import secrets
-import sqlite3
+from .db_compat import DatabaseConnection, connect_database, database_engine
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -87,18 +87,16 @@ def db_path_for(app: Flask) -> str:
     return str(path)
 
 
-def connect(app: Flask) -> sqlite3.Connection:
-    con = sqlite3.connect(app.config["DB_PATH"])
-    con.row_factory = sqlite3.Row
-    return con
+def connect(app: Flask) -> DatabaseConnection:
+    return connect_database(app)
 
 
-def table_columns(con: sqlite3.Connection, table: str) -> set[str]:
+def table_columns(con: DatabaseConnection, table: str) -> set[str]:
     rows = con.execute(f"PRAGMA table_info({table})").fetchall()
     return {str(row["name"]) for row in rows}
 
 
-def add_column(con: sqlite3.Connection, table: str, name: str, ddl: str) -> None:
+def add_column(con: DatabaseConnection, table: str, name: str, ddl: str) -> None:
     cols = table_columns(con, table)
     if name not in cols:
         con.execute(f"ALTER TABLE {table} ADD COLUMN {name} {ddl}")
@@ -636,7 +634,7 @@ def require_owner() -> tuple[bool, Any]:
     return False, (jsonify({"ok": False, "error": "Unauthorized owner request."}), 401)
 
 
-def product_dict(row: sqlite3.Row) -> dict[str, Any]:
+def product_dict(row: Any) -> dict[str, Any]:
     data = dict(row)
     data["price_cents"] = int(data.get("price_cents") or 0)
     data["stock"] = int(data.get("stock") or 0)
@@ -649,6 +647,8 @@ def create_app() -> Flask:
     app = Flask(__name__)
     app.config["JSON_SORT_KEYS"] = False
     app.config["DB_PATH"] = db_path_for(app)
+    app.config["DATABASE_URL"] = os.getenv("DATABASE_URL", "").strip()
+    app.config["DATABASE_ENGINE"] = database_engine(app)
 
     CORS(app, resources={r"/api/*": {"origins": cors_origins()}}, supports_credentials=False)
 
@@ -697,7 +697,12 @@ def create_app() -> Flask:
                 "brand": BRAND,
                 "system": SYSTEM,
                 "owner": OWNER,
-                "db_path": app.config["DB_PATH"],
+                "database_engine": app.config["DATABASE_ENGINE"],
+                "db_path": (
+                    "postgresql"
+                    if app.config["DATABASE_ENGINE"] == "postgresql"
+                    else app.config["DB_PATH"]
+                ),
                 "counts": counts,
                 "ts": now_iso(),
             }
@@ -1050,12 +1055,12 @@ def create_app() -> Flask:
 
                 if sku:
                     product = con.execute(
-                        "SELECT * FROM products WHERE store_id = ? AND sku = ? LIMIT 1",
+                        "SELECT * FROM products WHERE store_id = ? AND sku = ? LIMIT 1 FOR UPDATE",
                         (store["id"], sku),
                     ).fetchone()
                 else:
                     product = con.execute(
-                        "SELECT * FROM products WHERE store_id = ? AND id = ? LIMIT 1",
+                        "SELECT * FROM products WHERE store_id = ? AND id = ? LIMIT 1 FOR UPDATE",
                         (store["id"], product_id),
                     ).fetchone()
 
