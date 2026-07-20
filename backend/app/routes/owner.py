@@ -1,4 +1,4 @@
-﻿# Copyright Â© 2026 Andrew Wolverton. All Rights Reserved.
+﻿# Copyright © 2026 Andrew Wolverton. All Rights Reserved.
 from __future__ import annotations
 
 import hmac
