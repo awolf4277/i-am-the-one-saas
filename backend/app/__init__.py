@@ -391,8 +391,8 @@ def ensure_schema(app: Flask) -> None:
                 "WOLF-STARTER",
                 "Starter Storefront",
                 "SaaS Package",
-                "A clean buyer-ready storefront with products, cart, checkout flow, and launch-ready branding.",
-                49900,
+                "Buyer-ready storefront with responsive design, products, cart, checkout, inventory controls, and deployment assistance. Full project pricing starts at $1,500.",
+                150000,
                 9,
                 "https://placehold.co/900x700/111827/FFFFFF?text=Starter+Storefront",
             ),
@@ -400,10 +400,10 @@ def ensure_schema(app: Flask) -> None:
                 "prod_pro_dashboard",
                 "store_demo",
                 "WOLF-PRO",
-                "Pro Storefront + Owner Dashboard",
+                "Pro Storefront + WOLF OS™ Dashboard",
                 "SaaS Package",
-                "Premium storefront plus WOLF OSâ„¢ owner console for orders, products, inventory, and buyer leads.",
-                150000,
+                "Everything in Starter plus the WOLF OS™ owner command center, orders, inventory, buyer leads, business intelligence, and revenue actions. Full project pricing starts at $4,500.",
+                450000,
                 5,
                 "https://placehold.co/900x700/111827/FFFFFF?text=Pro+Dashboard",
             ),
@@ -411,10 +411,10 @@ def ensure_schema(app: Flask) -> None:
                 "prod_custom_saas",
                 "store_demo",
                 "WOLF-CUSTOM",
-                "Custom SaaS Buildout Deposit",
+                "Custom SaaS Buildout - 50% Deposit",
                 "SaaS Package",
-                "Deposit for a custom SaaS buildout with storefront, admin tools, lead capture, and launch support.",
-                300000,
+                "50% deposit for a custom SaaS platform starting at $9,000, including tailored workflows, dashboards, database features, automation, deployment, and launch support.",
+                450000,
                 3,
                 "https://placehold.co/900x700/111827/FFFFFF?text=Custom+SaaS",
             ),
@@ -441,6 +441,43 @@ def ensure_schema(app: Flask) -> None:
                 "https://placehold.co/900x700/111827/FFFFFF?text=Brand+Audit",
             ),
         ]
+
+        # WOLF OS package pricing sync v20260719
+        package_pricing_rows = (
+            (
+                "WOLF-STARTER",
+                "Starter Storefront",
+                "Buyer-ready storefront with responsive design, products, cart, checkout, inventory controls, and deployment assistance. Full project pricing starts at $1,500.",
+                150000,
+            ),
+            (
+                "WOLF-PRO",
+                "Pro Storefront + WOLF OS™ Dashboard",
+                "Everything in Starter plus the WOLF OS™ owner command center, orders, inventory, buyer leads, business intelligence, and revenue actions. Full project pricing starts at $4,500.",
+                450000,
+            ),
+            (
+                "WOLF-CUSTOM",
+                "Custom SaaS Buildout - 50% Deposit",
+                "50% deposit for a custom SaaS platform starting at $9,000, including tailored workflows, dashboards, database features, automation, deployment, and launch support.",
+                450000,
+            ),
+        )
+        for package_sku, package_name, package_description, package_price in package_pricing_rows:
+            con.execute(
+                """
+                UPDATE products
+                SET name = ?, description = ?, price_cents = ?, updated_at = ?
+                WHERE sku = ?
+                """,
+                (
+                    package_name,
+                    package_description,
+                    package_price,
+                    now_iso(),
+                    package_sku,
+                ),
+            )
 
         for item in sales_ready_products:
             existing = con.execute(

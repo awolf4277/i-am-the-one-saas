@@ -299,8 +299,8 @@ function displayLeadBudget(request: SetupRequest) {
   const business = (request.business_name || "").toLowerCase();
   const budget = request.budget_range || "";
 
-  if (business.includes("blue ridge") && budget.includes("500")) return "$1,500+ Pro";
-  if (business.includes("summit clean") && budget.includes("starter")) return "$499+ Starter";
+  if (business.includes("blue ridge") && budget.includes("500")) return "$4,500+ Pro";
+  if (business.includes("summit clean") && budget.includes("starter")) return "$1,500+ Starter";
   if (business.includes("crown cut") && (budget === "-" || budget.includes("499"))) return "$299-$499";
 
   return budget || "Budget TBD";
@@ -309,7 +309,7 @@ function displayLeadBudget(request: SetupRequest) {
 function isHotLead(request: SetupRequest) {
   const combined = `${displayLeadBudget(request)} ${request.timeline || ""}`.toLowerCase();
 
-  return combined.includes("1500") || combined.includes("this week");
+  return combined.includes("4500") || combined.includes("this week");
 }
 
 function buildClientBrief(request: SetupRequest) {
@@ -325,18 +325,18 @@ function buildClientBrief(request: SetupRequest) {
 
   const lowerBudget = budget.toLowerCase();
   const recommendedPackage =
-    lowerBudget.includes("1500") || lowerBudget.includes("pro")
+    lowerBudget.includes("4500") || lowerBudget.includes("pro")
       ? "Pro Storefront + Dashboard"
-      : lowerBudget.includes("3000") || lowerBudget.includes("custom")
+      : lowerBudget.includes("9000") || lowerBudget.includes("custom")
         ? "Custom SaaS Buildout"
         : "Starter Storefront";
 
   const nextStep =
     recommendedPackage === "Starter Storefront"
-      ? "Confirm scope, collect $250 starter deposit, then customize the first live build."
+      ? "Confirm scope, collect the $750 Starter deposit, then customize the first live build."
       : recommendedPackage === "Pro Storefront + Dashboard"
-        ? "Confirm dashboard needs, collect Pro deposit, then prepare storefront + owner console buildout."
-        : "Schedule a custom scope call, confirm workflow requirements, and collect 40%-50% deposit.";
+        ? "Confirm dashboard needs, collect the $2,250 Pro deposit, then prepare the storefront and owner console buildout."
+        : "Schedule a custom scope call, confirm workflow requirements, and collect the $4,500 Custom deposit (50%).";
 
   return `CLIENT BRIEF
 
@@ -1487,9 +1487,9 @@ function SaasLanding({
         </p>
 
         <div className="metric-list">
-          <Metric label="Starter Storefront" value="$499+" />
-          <Metric label="Pro Storefront + Dashboard" value="$1,500+" />
-          <Metric label="Custom SaaS Buildout" value="$3,000+" />
+          <Metric label="Starter Storefront" value="$1,500+" />
+          <Metric label="Pro Storefront + Dashboard" value="$4,500+" />
+          <Metric label="Custom SaaS Buildout" value="$9,000+" />
         </div>
 
         <div className="shine-box">
@@ -2034,7 +2034,7 @@ const DEMO_PRESETS: Record<DemoIndustry, DemoPreset> = {
     headline: "Turn appointments and grooming packages into a premium local buying experience.",
     audience: "Local customers looking for haircuts, beard services, and recurring grooming.",
     packageName: "Pro Storefront + Booking Dashboard",
-    packagePrice: "$1,500+",
+    packagePrice: "$4,500+",
     dashboardLabel: "Appointments",
     offers: [
       "Signature Haircut — $35",
@@ -2048,7 +2048,7 @@ const DEMO_PRESETS: Record<DemoIndustry, DemoPreset> = {
     headline: "Launch a bold storefront for products, drops, bundles, and branded merchandise.",
     audience: "Style-focused customers who want premium apparel and limited releases.",
     packageName: "Pro Storefront + Inventory Dashboard",
-    packagePrice: "$1,500+",
+    packagePrice: "$4,500+",
     dashboardLabel: "Inventory",
     offers: [
       "Premium Hoodie — $89",
@@ -2062,7 +2062,7 @@ const DEMO_PRESETS: Record<DemoIndustry, DemoPreset> = {
     headline: "Capture local service leads and sell exterior-cleaning packages online.",
     audience: "Homeowners and property managers who need reliable exterior cleaning.",
     packageName: "Starter Service Storefront",
-    packagePrice: "$499+",
+    packagePrice: "$1,500+",
     dashboardLabel: "Service Leads",
     offers: [
       "Driveway Cleaning — $149",
@@ -2076,7 +2076,7 @@ const DEMO_PRESETS: Record<DemoIndustry, DemoPreset> = {
     headline: "Showcase menu items, catering packages, locations, and event requests.",
     audience: "Local customers, event organizers, offices, and catering buyers.",
     packageName: "Pro Menu + Catering Dashboard",
-    packagePrice: "$1,500+",
+    packagePrice: "$4,500+",
     dashboardLabel: "Catering Requests",
     offers: [
       "Signature Meal — $15",
@@ -2090,7 +2090,7 @@ const DEMO_PRESETS: Record<DemoIndustry, DemoPreset> = {
     headline: "Sell detailing packages and turn vehicle-care interest into booked work.",
     audience: "Vehicle owners who want professional interior and exterior detailing.",
     packageName: "Pro Service Storefront + Dashboard",
-    packagePrice: "$1,500+",
+    packagePrice: "$4,500+",
     dashboardLabel: "Service Orders",
     offers: [
       "Interior Detail — $175",
@@ -2104,7 +2104,7 @@ const DEMO_PRESETS: Record<DemoIndustry, DemoPreset> = {
     headline: "Present outdoor-service packages and capture quote-ready local buyers.",
     audience: "Homeowners and businesses looking for lawn, landscape, and seasonal services.",
     packageName: "Starter Service Storefront",
-    packagePrice: "$499+",
+    packagePrice: "$1,500+",
     dashboardLabel: "Quote Leads",
     offers: [
       "Lawn Care Plan — $149",
@@ -2854,7 +2854,7 @@ function PaymentOptions() {
     });
 
     const depositNote =
-      "I want the Starter Storefront and need the Clover/deposit payment link. I understand Starter is $499+ with a $250 deposit to start.";
+      "I want the Starter Storefront and need the Clover/deposit payment link. I understand Starter is $1,500+ with a $250 deposit to start.";
 
     if (message) {
       const currentValue = message.value.trim();
@@ -3091,9 +3091,9 @@ function SetupRequestForm() {
             onChange={(event) => updateField("budget_range", event.target.value)}
           >
             <option value="">Select range</option>
-            <option value="$499+ Starter">$499+ Starter</option>
-            <option value="$1,500+ Pro">$1,500+ Pro</option>
-            <option value="$3,000+ Custom">$3,000+ Custom</option>
+            <option value="$1,500+ Starter">$1,500+ Starter</option>
+            <option value="$4,500+ Pro">$4,500+ Pro</option>
+            <option value="$9,000+ Custom">$9,000+ Custom</option>
             <option value="Not sure yet">Not sure yet</option>
           </select>
         </label>
@@ -3400,9 +3400,9 @@ This is built to help you move faster without starting from zero.`
 
 System: I AM THE ONE™ / WOLF OS™ SaaS
 Package Options:
-- Starter Storefront: $499+
-- Pro Storefront + Owner Dashboard: $1,500+
-- Custom SaaS Buildout: $3,000+
+- Starter Storefront: $1,500+
+- Pro Storefront + Owner Dashboard: $4,500+
+- Custom SaaS Buildout: $9,000+
 
 Core Build Includes:
 - Live storefront
@@ -3467,9 +3467,9 @@ System:
 I AM THE ONE™ storefront + WOLF OS™ owner dashboard.
 
 Offer:
-Starter Storefront: $499+
-Pro Storefront + Owner Dashboard: $1,500+
-Custom SaaS Buildout: $3,000+
+Starter Storefront: $1,500+
+Pro Storefront + Owner Dashboard: $4,500+
+Custom SaaS Buildout: $9,000+
 
 Includes:
 - Live storefront
