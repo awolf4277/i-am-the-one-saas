@@ -65,6 +65,7 @@ if (typeof window !== "undefined" && window.localStorage.getItem("wolfBlacklight
 const CLOVER_STARTER_DEPOSIT_LINK = String(import.meta.env.VITE_CLOVER_STARTER_DEPOSIT_LINK || "");
 const CLOVER_STARTER_FULL_LINK = String(import.meta.env.VITE_CLOVER_STARTER_FULL_LINK || "");
 const CLOVER_PRO_DEPOSIT_LINK = String(import.meta.env.VITE_CLOVER_PRO_DEPOSIT_LINK || "");
+const CLOVER_CUSTOM_DEPOSIT_LINK = String(import.meta.env.VITE_CLOVER_CUSTOM_DEPOSIT_LINK || "");
 
 
 
@@ -560,6 +561,127 @@ function SiteCockpitRibbon({
   );
 }
 
+// WOLF_LIVE_GAUGE_ENGINE_V1
+type LiveCockpitGaugeTone =
+  | "launch"
+  | "flow"
+  | "inventory"
+  | "orders";
+
+type LiveCockpitGaugeProps = {
+  label: string;
+  value: number;
+  unit: string;
+  status: string;
+  detail: string;
+  tone: LiveCockpitGaugeTone;
+};
+
+function clampGaugeValue(value: number) {
+  return Math.max(0, Math.min(100, value));
+}
+
+function useFluctuatingGauge(
+  target: number,
+  volatility: number,
+  intervalMs: number
+) {
+  const safeTarget = clampGaugeValue(target);
+  const [value, setValue] = useState(safeTarget);
+
+  useEffect(() => {
+    setValue(safeTarget);
+
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (reduceMotion) {
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      const jitter =
+        (Math.random() - 0.5) * volatility * 2;
+
+      const fluctuatingTarget = clampGaugeValue(
+        safeTarget + jitter
+      );
+
+      setValue((current) => {
+        const eased =
+          current +
+          (fluctuatingTarget - current) * 0.64;
+
+        return Math.round(eased * 10) / 10;
+      });
+    }, intervalMs);
+
+    return () => window.clearInterval(timer);
+  }, [safeTarget, volatility, intervalMs]);
+
+  return value;
+}
+
+function LiveCockpitGauge({
+  label,
+  value,
+  unit,
+  status,
+  detail,
+  tone
+}: LiveCockpitGaugeProps) {
+  const safeValue = clampGaugeValue(value);
+  const needleAngle =
+    -132 + (safeValue / 100) * 264;
+
+  const gaugeStyle = {
+    "--live-gauge-progress": `${safeValue * 2.64}deg`,
+    "--live-gauge-angle": `${needleAngle}deg`
+  } as React.CSSProperties;
+
+  return (
+    <article
+      className={`live-cockpit-gauge live-cockpit-gauge-${tone}`}
+    >
+      <div
+        className="live-cockpit-gauge-face"
+        style={gaugeStyle}
+        role="img"
+        aria-label={`${label}: ${Math.round(safeValue)}${unit}`}
+      >
+        <div
+          className="live-cockpit-gauge-ticks"
+          aria-hidden="true"
+        />
+
+        <div
+          className="live-cockpit-gauge-needle"
+          aria-hidden="true"
+        >
+          <span />
+        </div>
+
+        <div
+          className="live-cockpit-gauge-hub"
+          aria-hidden="true"
+        />
+
+        <div className="live-cockpit-gauge-readout">
+          <strong>{Math.round(safeValue)}</strong>
+          <span>{unit}</span>
+        </div>
+      </div>
+
+      <div className="live-cockpit-gauge-copy">
+        <small>{label}</small>
+        <strong>{status}</strong>
+        <span>{detail}</span>
+      </div>
+    </article>
+  );
+}
+
 function WolfCockpitPanel({
   health,
   productCount,
@@ -573,58 +695,187 @@ function WolfCockpitPanel({
   orderCount: number;
   featuredProduct?: Product;
 }) {
-  const launchPercent = health?.ok ? 91 : 46;
-  const buyerFlowPercent = Math.min(96, 68 + productCount * 3);
-  const inventoryPercent = Math.min(96, 58 + productCount * 4);
-  const orderPercent = Math.min(98, 48 + orderCount * 8);
+  const online = Boolean(health?.ok);
+
+  const launchTarget = online
+    ? Math.min(
+        98,
+        79 +
+          Math.min(storeCount, 3) * 5 +
+          Math.min(orderCount, 5) * 2
+      )
+    : 8;
+
+  const buyerFlowTarget = online
+    ? Math.min(
+        97,
+        61 +
+          Math.min(productCount, 10) * 3 +
+          Math.min(orderCount, 4)
+      )
+    : 6;
+
+  const inventoryTarget = online
+    ? Math.min(
+        97,
+        53 + Math.min(productCount, 10) * 4
+      )
+    : 5;
+
+  const orderTarget = online
+    ? Math.min(
+        98,
+        39 + Math.min(orderCount, 7) * 8
+      )
+    : 4;
+
+  const launchGauge = useFluctuatingGauge(
+    launchTarget,
+    online ? 2.2 : 0.4,
+    760
+  );
+
+  const buyerFlowGauge = useFluctuatingGauge(
+    buyerFlowTarget,
+    online ? 1.8 : 0.35,
+    910
+  );
+
+  const inventoryGauge = useFluctuatingGauge(
+    inventoryTarget,
+    online ? 1.3 : 0.3,
+    1040
+  );
+
+  const orderGauge = useFluctuatingGauge(
+    orderTarget,
+    online ? 2.8 : 0.5,
+    830
+  );
 
   return (
-    <section className="wolf-cockpit-panel">
+    <section className="wolf-cockpit-panel live-cockpit-panel">
       <div className="cockpit-header">
         <div>
-          <p className="cockpit-kicker">WOLF OS™ COCKPIT</p>
-          <h2>Supercar-style control center for the live SaaS demo.</h2>
+          <p className="cockpit-kicker">
+            WOLF OS™ LIVE COCKPIT
+          </p>
+
+          <h2>
+            Real data targets with continuously moving gauges.
+          </h2>
+
           <p>
-            Storefront, checkout, products, orders, buyer leads, and the owner
-            dashboard now feel like one premium command machine.
+            API health, stores, products, and orders determine
+            each gauge target. Subtle engine-style movement keeps
+            the cockpit alive without inventing business data.
           </p>
         </div>
 
         <div className="cockpit-status-stack">
-          <span>{health?.ok ? "ENGINE: ONLINE" : "ENGINE: CHECK"}</span>
-          <span>MODE: DEMO READY</span>
-          <span>API: {health?.ok ? "LIVE" : "VERIFYING"}</span>
+          <span>
+            ENGINE: {online ? "ONLINE" : "CHECK"}
+          </span>
+
+          <span>
+            GAUGES: {online ? "LIVE MOTION" : "IDLE"}
+          </span>
+
+          <span>
+            MODE: DATA DRIVEN
+          </span>
         </div>
       </div>
 
-      <div className="cockpit-gauge-grid">
-        <CockpitGauge
-          label="Launch RPM"
-          value={health?.ok ? "8.7K" : "IDLE"}
-          sub="Storefront and owner dashboard status."
-          percent={launchPercent}
+      <div className="live-cockpit-gauge-grid">
+        <LiveCockpitGauge
+          label="LAUNCH RPM"
+          value={launchGauge}
+          unit="%"
+          status={online ? "ENGINE LIVE" : "ENGINE CHECK"}
+          detail={`${storeCount} live ${
+            storeCount === 1 ? "store" : "stores"
+          } · API ${online ? "online" : "offline"}`}
+          tone="launch"
         />
 
-        <CockpitGauge
-          label="Buyer Flow"
-          value={`${buyerFlowPercent}%`}
-          sub="Landing → store → checkout → dashboard."
-          percent={buyerFlowPercent}
+        <LiveCockpitGauge
+          label="BUYER FLOW"
+          value={buyerFlowGauge}
+          unit="%"
+          status={
+            productCount > 0
+              ? "BUYING PATH READY"
+              : "LOAD PRODUCTS"
+          }
+          detail={`${productCount} live ${
+            productCount === 1 ? "product" : "products"
+          } powering the storefront`}
+          tone="flow"
         />
 
-        <CockpitGauge
-          label="Inventory"
-          value={productCount}
-          sub={`${storeCount} store system with live product data.`}
-          percent={inventoryPercent}
+        <LiveCockpitGauge
+          label="INVENTORY LOAD"
+          value={inventoryGauge}
+          unit="%"
+          status={
+            productCount > 0
+              ? "CATALOG ACTIVE"
+              : "CATALOG EMPTY"
+          }
+          detail={`${productCount} inventory ${
+            productCount === 1 ? "record" : "records"
+          } connected`}
+          tone="inventory"
         />
 
-        <CockpitGauge
-          label="Orders"
-          value={orderCount}
-          sub={`Featured: ${featuredProduct?.name || "Wolf Signature Hoodie"} · ${money(featuredProduct?.price_cents || 9900)}`}
-          percent={orderPercent}
+        <LiveCockpitGauge
+          label="ORDER PULSE"
+          value={orderGauge}
+          unit="%"
+          status={
+            orderCount > 0
+              ? "REVENUE SIGNAL"
+              : "AWAITING ORDER"
+          }
+          detail={`${orderCount} real ${
+            orderCount === 1 ? "order" : "orders"
+          } recorded`}
+          tone="orders"
         />
+      </div>
+
+      <div className="live-cockpit-signal-strip">
+        <div>
+          <small>FEATURED SIGNAL</small>
+          <strong>
+            {featuredProduct?.name ||
+              "Wolf Signature Hoodie"}
+          </strong>
+        </div>
+
+        <div>
+          <small>LIVE PRICE</small>
+          <strong>
+            {money(featuredProduct?.price_cents || 9900)}
+          </strong>
+        </div>
+
+        <div>
+          <small>SYSTEM STATE</small>
+          <strong>
+            {online ? "READY TO SELL" : "API CHECK"}
+          </strong>
+        </div>
+
+        <div className="live-cockpit-motion-indicator">
+          <span aria-hidden="true" />
+          <small>
+            {online
+              ? "GAUGE TELEMETRY ACTIVE"
+              : "GAUGES IN SAFE IDLE"}
+          </small>
+        </div>
       </div>
     </section>
   );
@@ -1501,9 +1752,9 @@ function SaasLanding({
               selectSetupPackage({
                 name: "Starter Storefront",
                 budget: "$1,500+ Starter",
-                deposit: "$250",
+                deposit: "$750",
                 message:
-                  "I selected the Starter Storefront ($1,500+). I understand the starting deposit is $250."
+                  "I selected the Starter Storefront ($1,500+). I understand the starting deposit is $750."
               })
             }
           >
@@ -1517,9 +1768,9 @@ function SaasLanding({
               selectSetupPackage({
                 name: "Pro Storefront + Dashboard",
                 budget: "$4,500+ Pro",
-                deposit: "$1,000",
+                deposit: "$2,250",
                 message:
-                  "I selected the Pro Storefront + Dashboard ($4,500+). I understand the starting deposit is $1,000."
+                  "I selected the Pro Storefront + Dashboard ($4,500+). I understand the starting deposit is $2,250."
               })
             }
           >
@@ -1533,9 +1784,9 @@ function SaasLanding({
               selectSetupPackage({
                 name: "Custom SaaS Buildout",
                 budget: "$9,000+ Custom",
-                deposit: "30%",
+                deposit: "$4,500",
                 message:
-                  "I selected the Custom SaaS Buildout ($9,000+). I understand custom projects begin with a 30% deposit after scope confirmation."
+                  "I selected the Custom SaaS Buildout ($9,000+). I understand custom projects begin with a $4,500 deposit (50%) after scope confirmation."
               })
             }
           >
@@ -1545,9 +1796,9 @@ function SaasLanding({
 
         <div className="shine-box">
           <strong>Starting deposits</strong>
-          <span>Starter Storefront: $250 to begin</span>
-          <span>Pro Storefront + Dashboard: $1,000 to begin</span>
-          <span>Custom SaaS Buildout: 30% after scope confirmation</span>
+          <span>Starter Storefront: $750 to begin</span>
+          <span>Pro Storefront + Dashboard: $2,250 to begin</span>
+          <span>Custom SaaS Buildout: $4,500 (50%) after scope confirmation</span>
         </div>
 
         <div className="shine-box">
@@ -2901,61 +3152,41 @@ function BuyerConversionPolish() {
 
 
 function PaymentOptions() {
-  const requestDepositLink = () => {
-    const form = document.getElementById("request-setup-form");
-    const message = form?.querySelector("textarea") as HTMLTextAreaElement | null;
-    const status = document.getElementById("deposit-link-status");
+  const requestPaymentLink = (
+    selection: SetupPackageSelection
+  ) => {
+    selectSetupPackage(selection);
 
-    form?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-
-    const depositNote =
-      "I want the Starter Storefront and need the Clover/deposit payment link. I understand Starter is $1,500+ with a $250 deposit to start.";
-
-    if (message) {
-      const currentValue = message.value.trim();
-      const nextValue = currentValue.includes("Starter Storefront")
-        ? currentValue
-        : currentValue
-          ? `${currentValue}\n\n${depositNote}`
-          : depositNote;
-
-      const valueSetter = Object.getOwnPropertyDescriptor(message, "value")?.set;
-      const prototype = Object.getPrototypeOf(message);
-      const prototypeValueSetter = Object.getOwnPropertyDescriptor(prototype, "value")?.set;
-
-      if (prototypeValueSetter && valueSetter !== prototypeValueSetter) {
-        prototypeValueSetter.call(message, nextValue);
-      } else if (valueSetter) {
-        valueSetter.call(message, nextValue);
-      } else {
-        message.value = nextValue;
-      }
-
-      message.dispatchEvent(new Event("input", { bubbles: true }));
-      message.dispatchEvent(new Event("change", { bubbles: true }));
-
-      setTimeout(() => message.focus(), 350);
-    }
+    const status = document.getElementById(
+      "deposit-link-status"
+    );
 
     if (status) {
       status.textContent =
-        "$250 Starter deposit request added. Finish your contact details and send the setup request.";
+        `${selection.name} selected. ` +
+        `${selection.deposit} deposit-link request added. ` +
+        "Complete your contact details and send the request.";
+
       status.removeAttribute("hidden");
     }
   };
 
-  const hasAnyCloverLink =
-    CLOVER_STARTER_DEPOSIT_LINK || CLOVER_STARTER_FULL_LINK || CLOVER_PRO_DEPOSIT_LINK;
+  const hasAnyCloverLink = Boolean(
+    CLOVER_STARTER_DEPOSIT_LINK ||
+      CLOVER_STARTER_FULL_LINK ||
+      CLOVER_PRO_DEPOSIT_LINK ||
+      CLOVER_CUSTOM_DEPOSIT_LINK
+  );
 
   return (
     <div className="shine-box payment-options-box">
-      <strong>Payment Options</strong>
+      <strong>Secure Payment Options</strong>
+
       <span>
-        Clover-ready checkout path. Start with a setup request, then pay a deposit
-        or package invoice through a secure Clover payment link.
+        Select a package first. When its secure Clover link
+        is configured, the buyer can pay the deposit directly.
+        Otherwise, the request is added to the setup form for
+        Andrew to review.
       </span>
 
       <div className="landing-actions payment-actions">
@@ -2966,11 +3197,23 @@ function PaymentOptions() {
             target="_blank"
             rel="noreferrer"
           >
-            Pay Starter Deposit
+            Pay Starter Deposit · $750
           </a>
         ) : (
-          <button type="button" className="v3-button primary" onClick={requestDepositLink}>
-            Request $250 Starter Deposit Link
+          <button
+            type="button"
+            className="v3-button primary"
+            onClick={() =>
+              requestPaymentLink({
+                name: "Starter Storefront",
+                budget: "$1,500+ Starter",
+                deposit: "$750",
+                message:
+                  "I selected the Starter Storefront ($1,500+) and need the secure $750 deposit payment link."
+              })
+            }
+          >
+            Request Starter Deposit Link · $750
           </button>
         )}
 
@@ -2981,37 +3224,89 @@ function PaymentOptions() {
             target="_blank"
             rel="noreferrer"
           >
-            Pay Starter $499
+            Pay Starter in Full · $1,500
           </a>
         ) : null}
 
         {CLOVER_PRO_DEPOSIT_LINK ? (
           <a
-            className="v3-button secondary"
+            className="v3-button primary"
             href={CLOVER_PRO_DEPOSIT_LINK}
             target="_blank"
             rel="noreferrer"
           >
-            Pay Pro Deposit
+            Pay Pro Deposit · $2,250
           </a>
-        ) : null}
+        ) : (
+          <button
+            type="button"
+            className="v3-button secondary"
+            onClick={() =>
+              requestPaymentLink({
+                name: "Pro Storefront + Dashboard",
+                budget: "$4,500+ Pro",
+                deposit: "$2,250",
+                message:
+                  "I selected the Pro Storefront + Dashboard ($4,500+) and need the secure $2,250 deposit payment link."
+              })
+            }
+          >
+            Request Pro Deposit Link · $2,250
+          </button>
+        )}
+
+        {CLOVER_CUSTOM_DEPOSIT_LINK ? (
+          <a
+            className="v3-button primary"
+            href={CLOVER_CUSTOM_DEPOSIT_LINK}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Pay Custom Deposit · $4,500
+          </a>
+        ) : (
+          <button
+            type="button"
+            className="v3-button secondary"
+            onClick={() =>
+              requestPaymentLink({
+                name: "Custom SaaS Buildout",
+                budget: "$9,000+ Custom",
+                deposit: "$4,500",
+                message:
+                  "I selected the Custom SaaS Buildout ($9,000+) and need the secure $4,500 deposit payment link after scope confirmation."
+              })
+            }
+          >
+            Request Custom Deposit Link · $4,500
+          </button>
+        )}
       </div>
 
-      <span id="deposit-link-status" className="close-kit-status" hidden>
-        $250 Starter deposit request added. Finish your contact details and send the setup request.
+      <span
+        id="deposit-link-status"
+        className="close-kit-status"
+        hidden
+      >
+        Payment-link request added. Complete the setup form
+        and send your request.
       </span>
 
       {!hasAnyCloverLink ? (
         <span>
-          No Clover link is public yet. Click the button to add a $250 Starter deposit request to the setup form, then Andrew can send the correct payment link.
+          No public Clover links are configured yet. Buyers can
+          still select a package and request the correct secure
+          payment link through the setup form.
         </span>
-      ) : null}
+      ) : (
+        <span>
+          Secure Clover links are available for the configured
+          package options.
+        </span>
+      )}
     </div>
   );
 }
-
-
-
 
 
 type SetupPackageSelection = {
