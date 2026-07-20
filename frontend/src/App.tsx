@@ -101,7 +101,8 @@ type AnalyticsEventName =
   | "store_visit"
   | "owner_visit"
   | "setup_request_submit"
-  | "demo_pitch_copy";
+  | "demo_pitch_copy"
+  | "setup_package_select";
 
 type Store = {
   id?: string;
@@ -1490,6 +1491,63 @@ function SaasLanding({
           <Metric label="Starter Storefront" value="$1,500+" />
           <Metric label="Pro Storefront + Dashboard" value="$4,500+" />
           <Metric label="Custom SaaS Buildout" value="$9,000+" />
+        </div>
+
+        <div className="landing-actions">
+          <button
+            type="button"
+            className="v3-button secondary"
+            onClick={() =>
+              selectSetupPackage({
+                name: "Starter Storefront",
+                budget: "$1,500+ Starter",
+                deposit: "$250",
+                message:
+                  "I selected the Starter Storefront ($1,500+). I understand the starting deposit is $250."
+              })
+            }
+          >
+            Choose Starter · $1,500+
+          </button>
+
+          <button
+            type="button"
+            className="v3-button primary"
+            onClick={() =>
+              selectSetupPackage({
+                name: "Pro Storefront + Dashboard",
+                budget: "$4,500+ Pro",
+                deposit: "$1,000",
+                message:
+                  "I selected the Pro Storefront + Dashboard ($4,500+). I understand the starting deposit is $1,000."
+              })
+            }
+          >
+            Choose Pro · $4,500+
+          </button>
+
+          <button
+            type="button"
+            className="v3-button secondary"
+            onClick={() =>
+              selectSetupPackage({
+                name: "Custom SaaS Buildout",
+                budget: "$9,000+ Custom",
+                deposit: "30%",
+                message:
+                  "I selected the Custom SaaS Buildout ($9,000+). I understand custom projects begin with a 30% deposit after scope confirmation."
+              })
+            }
+          >
+            Discuss Custom · $9,000+
+          </button>
+        </div>
+
+        <div className="shine-box">
+          <strong>Starting deposits</strong>
+          <span>Starter Storefront: $250 to begin</span>
+          <span>Pro Storefront + Dashboard: $1,000 to begin</span>
+          <span>Custom SaaS Buildout: 30% after scope confirmation</span>
         </div>
 
         <div className="shine-box">
@@ -2956,6 +3014,34 @@ function PaymentOptions() {
 
 
 
+type SetupPackageSelection = {
+  name: string;
+  budget: "$1,500+ Starter" | "$4,500+ Pro" | "$9,000+ Custom";
+  deposit: string;
+  message: string;
+};
+
+const SETUP_PACKAGE_EVENT = "wolfos:select-setup-package";
+
+function selectSetupPackage(selection: SetupPackageSelection) {
+  window.dispatchEvent(
+    new CustomEvent<SetupPackageSelection>(SETUP_PACKAGE_EVENT, {
+      detail: selection
+    })
+  );
+
+  document.getElementById("request-setup-form")?.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+
+  void trackAnalyticsEvent(
+    "setup_package_select",
+    `${selection.name}|${selection.budget}`
+  );
+}
+
+
 function SetupRequestForm() {
   const [form, setForm] = useState({
     name: "",
@@ -2972,6 +3058,52 @@ function SetupRequestForm() {
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState("");
   const [formError, setFormError] = useState("");
+
+  useEffect(() => {
+    function handlePackageSelection(event: Event) {
+      const selection = (
+        event as CustomEvent<SetupPackageSelection>
+      ).detail;
+
+      if (!selection) {
+        return;
+      }
+
+      setForm((current) => {
+        const currentMessage = current.message.trim();
+        const alreadyIncluded =
+          currentMessage.includes(selection.name) ||
+          currentMessage.includes(selection.budget);
+
+        return {
+          ...current,
+          budget_range: selection.budget,
+          message: alreadyIncluded
+            ? current.message
+            : currentMessage
+              ? `${currentMessage}\n\n${selection.message}`
+              : selection.message
+        };
+      });
+
+      setFormError("");
+      setSent(
+        `${selection.name} selected. Starting deposit: ${selection.deposit}. Complete your contact details and send the request.`
+      );
+    }
+
+    window.addEventListener(
+      SETUP_PACKAGE_EVENT,
+      handlePackageSelection
+    );
+
+    return () => {
+      window.removeEventListener(
+        SETUP_PACKAGE_EVENT,
+        handlePackageSelection
+      );
+    };
+  }, []);
 
   function updateField(field: keyof typeof form, value: string) {
     setForm((current) => ({ ...current, [field]: value }));
