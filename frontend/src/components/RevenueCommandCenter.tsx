@@ -25,21 +25,21 @@ type Offer = {
 const offers: Offer[] = [
   {
     name: "Starter Storefront",
-    price: 499,
+    price: 1500,
     description:
       "Buyer-ready storefront, products, offers, and lead capture.",
   },
   {
     name:
       "Pro Storefront + Dashboard",
-    price: 1500,
+    price: 4500,
     description:
       "Storefront, owner dashboard, orders, inventory, leads, and analytics.",
   },
   {
     name:
       "Custom SaaS Buildout",
-    price: 5000,
+    price: 9000,
     description:
       "Custom workflows, automation, integrations, deployment, and support.",
   },

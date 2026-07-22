@@ -62,10 +62,6 @@ if (typeof window !== "undefined" && window.localStorage.getItem("wolfBlacklight
   document.documentElement.classList.add("blacklight-mode");
 }
 
-const CLOVER_STARTER_DEPOSIT_LINK = String(import.meta.env.VITE_CLOVER_STARTER_DEPOSIT_LINK || "");
-const CLOVER_STARTER_FULL_LINK = String(import.meta.env.VITE_CLOVER_STARTER_FULL_LINK || "");
-const CLOVER_PRO_DEPOSIT_LINK = String(import.meta.env.VITE_CLOVER_PRO_DEPOSIT_LINK || "");
-const CLOVER_CUSTOM_DEPOSIT_LINK = String(import.meta.env.VITE_CLOVER_CUSTOM_DEPOSIT_LINK || "");
 
 
 
@@ -3112,7 +3108,7 @@ function BuyerConversionPolish() {
             <span>Business name and contact info</span>
             <span>Logo, colors, photos, and brand style if available</span>
             <span>Services, products, prices, or package offers</span>
-            <span>Preferred payment/deposit method, including Clover link if available</span>
+            <span>Preferred payment or deposit method, including check, cash, or bank transfer</span>
             <span>Website, social links, and launch deadline</span>
             <span>Deposit status before custom work begins</span>
           </div>
@@ -3120,7 +3116,7 @@ function BuyerConversionPolish() {
           <div className="shine-box">
             <strong>Buyer FAQ</strong>
             <span><strong>Do I need products?</strong> No. Services, packages, bookings, quote requests, and digital offers work too.</span>
-            <span><strong>Can this use Clover?</strong> Yes. Start with secure Clover payment links, then upgrade to deeper checkout later.</span>
+            <span><strong>How are payments handled?</strong> Andrew confirms the accepted payment method directly after package and scope review.</span>
             <span><strong>Is this custom?</strong> The foundation is already built. Your version gets customized around your brand and business flow.</span>
             <span><strong>Do I own my business content?</strong> Yes. Your brand, offers, copy, and customer-facing content are yours.</span>
           </div>
@@ -3151,8 +3147,9 @@ function BuyerConversionPolish() {
 
 
 
+// WOLF_OWNER_DIRECTED_PAYMENTS_V1
 function PaymentOptions() {
-  const requestPaymentLink = (
+  const requestPaymentInstructions = (
     selection: SetupPackageSelection
   ) => {
     selectSetupPackage(selection);
@@ -3164,123 +3161,82 @@ function PaymentOptions() {
     if (status) {
       status.textContent =
         `${selection.name} selected. ` +
-        `${selection.deposit} deposit-link request added. ` +
-        "Complete your contact details and send the request.";
+        `${selection.deposit} deposit required. ` +
+        "Complete the setup form to receive payment instructions directly from Andrew.";
 
       status.removeAttribute("hidden");
     }
   };
 
-  const hasAnyCloverLink = Boolean(
-    CLOVER_STARTER_DEPOSIT_LINK ||
-      CLOVER_STARTER_FULL_LINK ||
-      CLOVER_PRO_DEPOSIT_LINK ||
-      CLOVER_CUSTOM_DEPOSIT_LINK
-  );
-
   return (
     <div className="shine-box payment-options-box">
-      <strong>Secure Payment Options</strong>
+      <strong>Owner-Directed Payment Options</strong>
 
       <span>
-        Select a package first. When its secure Clover link
-        is configured, the buyer can pay the deposit directly.
-        Otherwise, the request is added to the setup form for
-        Andrew to review.
+        Payment instructions are provided directly by Andrew
+        after package selection and scope confirmation.
       </span>
 
+      <span>
+        Accepted methods may include check, cash, or bank
+        transfer. The final method is confirmed privately for
+        each approved project.
+      </span>
+
+      <div className="metric-list">
+        <Metric label="Check" value="Available" />
+        <Metric label="Cash" value="Available" />
+        <Metric label="Bank Transfer" value="Available" />
+      </div>
+
       <div className="landing-actions payment-actions">
-        {CLOVER_STARTER_DEPOSIT_LINK ? (
-          <a
-            className="v3-button primary"
-            href={CLOVER_STARTER_DEPOSIT_LINK}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Pay Starter Deposit · $750
-          </a>
-        ) : (
-          <button
-            type="button"
-            className="v3-button primary"
-            onClick={() =>
-              requestPaymentLink({
-                name: "Starter Storefront",
-                budget: "$1,500+ Starter",
-                deposit: "$750",
-                message:
-                  "I selected the Starter Storefront ($1,500+) and need the secure $750 deposit payment link."
-              })
-            }
-          >
-            Request Starter Deposit Link · $750
-          </button>
-        )}
+        <button
+          type="button"
+          className="v3-button primary"
+          onClick={() =>
+            requestPaymentInstructions({
+              name: "Starter Storefront",
+              budget: "$1,500+ Starter",
+              deposit: "$750",
+              message:
+                "I selected the Starter Storefront ($1,500+) and need payment instructions. I understand the required starting deposit is $750."
+            })
+          }
+        >
+          Request Starter Instructions · $750
+        </button>
 
-        {CLOVER_STARTER_FULL_LINK ? (
-          <a
-            className="v3-button secondary"
-            href={CLOVER_STARTER_FULL_LINK}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Pay Starter in Full · $1,500
-          </a>
-        ) : null}
+        <button
+          type="button"
+          className="v3-button secondary"
+          onClick={() =>
+            requestPaymentInstructions({
+              name: "Pro Storefront + Dashboard",
+              budget: "$4,500+ Pro",
+              deposit: "$2,250",
+              message:
+                "I selected the Pro Storefront + Dashboard ($4,500+) and need payment instructions. I understand the required starting deposit is $2,250."
+            })
+          }
+        >
+          Request Pro Instructions · $2,250
+        </button>
 
-        {CLOVER_PRO_DEPOSIT_LINK ? (
-          <a
-            className="v3-button primary"
-            href={CLOVER_PRO_DEPOSIT_LINK}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Pay Pro Deposit · $2,250
-          </a>
-        ) : (
-          <button
-            type="button"
-            className="v3-button secondary"
-            onClick={() =>
-              requestPaymentLink({
-                name: "Pro Storefront + Dashboard",
-                budget: "$4,500+ Pro",
-                deposit: "$2,250",
-                message:
-                  "I selected the Pro Storefront + Dashboard ($4,500+) and need the secure $2,250 deposit payment link."
-              })
-            }
-          >
-            Request Pro Deposit Link · $2,250
-          </button>
-        )}
-
-        {CLOVER_CUSTOM_DEPOSIT_LINK ? (
-          <a
-            className="v3-button primary"
-            href={CLOVER_CUSTOM_DEPOSIT_LINK}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Pay Custom Deposit · $4,500
-          </a>
-        ) : (
-          <button
-            type="button"
-            className="v3-button secondary"
-            onClick={() =>
-              requestPaymentLink({
-                name: "Custom SaaS Buildout",
-                budget: "$9,000+ Custom",
-                deposit: "$4,500",
-                message:
-                  "I selected the Custom SaaS Buildout ($9,000+) and need the secure $4,500 deposit payment link after scope confirmation."
-              })
-            }
-          >
-            Request Custom Deposit Link · $4,500
-          </button>
-        )}
+        <button
+          type="button"
+          className="v3-button secondary"
+          onClick={() =>
+            requestPaymentInstructions({
+              name: "Custom SaaS Buildout",
+              budget: "$9,000+ Custom",
+              deposit: "$4,500",
+              message:
+                "I selected the Custom SaaS Buildout ($9,000+) and need payment instructions after scope confirmation. I understand the required deposit is $4,500."
+            })
+          }
+        >
+          Request Custom Instructions · $4,500
+        </button>
       </div>
 
       <span
@@ -3288,22 +3244,14 @@ function PaymentOptions() {
         className="close-kit-status"
         hidden
       >
-        Payment-link request added. Complete the setup form
-        and send your request.
+        Payment-instruction request added. Complete the setup
+        form and send your request.
       </span>
 
-      {!hasAnyCloverLink ? (
-        <span>
-          No public Clover links are configured yet. Buyers can
-          still select a package and request the correct secure
-          payment link through the setup form.
-        </span>
-      ) : (
-        <span>
-          Secure Clover links are available for the configured
-          package options.
-        </span>
-      )}
+      <span>
+        Custom work begins only after the agreed deposit has
+        been received and confirmed.
+      </span>
     </div>
   );
 }
