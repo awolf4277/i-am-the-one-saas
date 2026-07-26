@@ -1,0 +1,187 @@
+========================================================================
+WOLF OS POSTGRES MIGRATOR STATIC CONTRACT
+========================================================================
+Source: X:\i-am-the-one-saas\scripts\migrate_sqlite_to_postgres.py
+Source lines: 581
+
+IMPORTANT: This report was produced with AST parsing only.
+The migration module was not imported or executed.
+
+ENVIRONMENT VARIABLES
+------------------------------------------------------------------------
+DATABASE_URL
+
+COMMAND-LINE ARGUMENTS
+------------------------------------------------------------------------
+Line 57: --source
+Line 63: --database-url
+Line 71: --migrate
+Line 76: --replace-target
+Line 84: --batch-size
+
+DEFINED FUNCTIONS
+------------------------------------------------------------------------
+Line 49: utc_stamp
+Line 53: parse_args
+Line 93: database_url
+Line 107: safe_target_label
+Line 115: quote_sqlite_identifier
+Line 119: sqlite_connection
+Line 127: source_schema
+Line 162: ordered_tables
+Line 169: sqlite_count
+Line 176: sqlite_columns
+Line 183: postgres_tables
+Line 196: postgres_columns
+Line 213: postgres_count
+Line 224: translate_sqlite_ddl
+Line 247: backup_sqlite
+Line 268: inspect
+Line 299: target_has_rows
+Line 311: drop_source_named_tables
+Line 325: create_schema
+Line 339: row_values
+Line 346: copy_table
+Line 387: reset_serial_sequence
+Line 421: migrate
+Line 510: main
+
+MAIN ENTRY POINT
+------------------------------------------------------------------------
+Line 570: __name__ == '__main__'
+
+DATABASE-RELATED IMPORTS
+------------------------------------------------------------------------
+psycopg
+psycopg.rows
+sqlite3
+
+POTENTIAL CONNECTION/EXECUTION CALLS
+------------------------------------------------------------------------
+Line 120: sqlite3.connect
+Line 122: con.execute
+Line 123: con.execute
+Line 133: con.execute
+Line 170: con.execute
+Line 177: con.execute
+Line 184: con.execute
+Line 200: con.execute
+Line 220: con.execute
+Line 252: sqlite_connection
+Line 254: sqlite3.connect
+Line 293: source_con.execute
+Line 322: con.execute
+Line 333: con.execute
+Line 336: con.execute
+Line 371: source_con.execute
+Line 375: cursor.fetchmany
+Line 380: target_con.cursor
+Line 381: target_cursor.executemany
+Line 395: con.execute
+Line 407: con.execute
+Line 410: con.execute
+Line 415: con.execute
+Line 431: source_con.execute
+Line 522: sqlite_connection
+Line 537: psycopg.connect
+
+RELEVANT SOURCE LINES
+------------------------------------------------------------------------
+0002: """Safely inspect or migrate WOLF OS data from SQLite to PostgreSQL.
+0010: import argparse
+0016: import sqlite3
+0022:     import psycopg
+0023:     from psycopg import sql
+0024:     from psycopg.rows import dict_row
+0027:         "psycopg is not installed. Run backend\\.venv\\Scripts\\python.exe "
+0034:     DEFAULT_REPO / "backend" / "data" / "i_am_the_one_saas.sqlite3"
+0046: SKIP_TABLES = {"sqlite_sequence"}
+0053: def parse_args() -> argparse.Namespace:
+0054:     parser = argparse.ArgumentParser(
+0055:         description="Inspect or migrate WOLF OS SQLite data to PostgreSQL."
+0057:     parser.add_argument(
+0061:         help=f"SQLite source file (default: {DEFAULT_SOURCE})",
+0063:     parser.add_argument(
+0067:             "PostgreSQL URL. Prefer setting DATABASE_URL in the current "
+0071:     parser.add_argument(
+0076:     parser.add_argument(
+0084:     parser.add_argument(
+0093: def database_url(args: argparse.Namespace) -> str:
+0094:     value = str(args.database_url or os.getenv("DATABASE_URL", "")).strip()
+0095:     if value.startswith("postgres://"):
+0096:         value = "postgresql://" + value[len("postgres://") :]
+0099:             "DATABASE_URL is missing. Set it only in the current PowerShell "
+0102:     if not value.startswith(("postgresql://", "postgresql+")):
+0103:         raise RuntimeError("DATABASE_URL is not a PostgreSQL URL.")
+0115: def quote_sqlite_identifier(name: str) -> str:
+0119: def sqlite_connection(path: Path) -> sqlite3.Connection:
+0120:     con = sqlite3.connect(str(path), timeout=30)
+0121:     con.row_factory = sqlite3.Row
+0128:     con: sqlite3.Connection,
+0136:         FROM sqlite_master
+0149:         if name.startswith("sqlite_") or name in SKIP_TABLES:
+0169: def sqlite_count(con: sqlite3.Connection, table: str) -> int:
+0171:         f"SELECT COUNT(*) AS count FROM {quote_sqlite_identifier(table)}"
+0176: def sqlite_columns(con: sqlite3.Connection, table: str) -> list[str]:
+0178:         f"PRAGMA table_info({quote_sqlite_identifier(table)})"
+0183: def postgres_tables(con: psycopg.Connection[Any]) -> set[str]:
+0196: def postgres_columns(
+0197:     con: psycopg.Connection[Any],
+0213: def postgres_count(
+0214:     con: psycopg.Connection[Any],
+0224: def translate_sqlite_ddl(ddl: str) -> str:
+0247: def backup_sqlite(source: Path, repo: Path) -> Path:
+0248:     backup_dir = repo / "backups" / "postgres-migration"
+0250:     destination = backup_dir / f"sqlite-before-postgres-{utc_stamp()}.sqlite3"
+0252:     source_con = sqlite_connection(source)
+0254:         destination_con = sqlite3.connect(str(destination))
+0263:         raise RuntimeError("SQLite backup was not created correctly.")
+0269:     source_con: sqlite3.Connection,
+0270:     target_con: psycopg.Connection[Any],
+0274:     target_names = postgres_tables(target_con)
+0276:     print("\n=== SQLITE SOURCE ===")
+0278:         print(f"{table:24} {sqlite_count(source_con, table):8} rows")
+0280:     print(f"\n=== POSTGRES TARGET: {target_label} ===")
+0288:                     f"{postgres_count(target_con, table):8} rows"
+0294:     print(f"\nSQLITE INTEGRITY: {integrity}")
+0296:         raise RuntimeError(f"SQLite integrity check failed: {integrity}")
+0300:     con: psycopg.Connection[Any],
+0303:     existing = postgres_tables(con)
+0307:             counts[table] = postgres_count(con, table)
+0312:     con: psycopg.Connection[Any],
+0315:     existing = postgres_tables(con)
+0326:     con: psycopg.Connection[Any],
+0332:         ddl = translate_sqlite_ddl(table_ddl[table])
+0336:         con.execute(translate_sqlite_ddl(ddl))
+0340:     row: sqlite3.Row,
+0347:     source_con: sqlite3.Connection,
+0348:     target_con: psycopg.Connection[Any],
+0352:     source_cols = sqlite_columns(source_con, table)
+0353:     target_cols = set(postgres_columns(target_con, table))
+0361:         + ", ".join(quote_sqlite_identifier(column) for column in columns)
+0362:         + f" FROM {quote_sqlite_identifier(table)}"
+0388:     con: psycopg.Connection[Any],
+0391:     columns = postgres_columns(con, table)
+0423:     source_con: sqlite3.Connection,
+0424:     target_con: psycopg.Connection[Any],
+0433:         raise RuntimeError(f"SQLite integrity check failed: {integrity}")
+0453:     backup = backup_sqlite(source, repo)
+0454:     print(f"\nSQLITE BACKUP: {backup}")
+0483:             source_count = sqlite_count(source_con, table)
+0484:             target_count = postgres_count(target_con, table)
+0487:                 f"{table:24} SQLite={source_count:<8} "
+0488:                 f"Postgres={target_count:<8} {status}"
+0492:                     f"{table}: SQLite={source_count}, "
+0493:                     f"Postgres={target_count}"
+0501:         target_con.commit()
+0503:         target_con.rollback()
+0507:     print("Render API has NOT been switched to PostgreSQL.")
+0510: def main() -> int:
+0517:         raise FileNotFoundError(f"SQLite source not found: {source}")
+0519:     url = database_url(args)
+0522:     source_con = sqlite_connection(source)
+0523:     target_con: psycopg.Connection[Any] | None = None
+0530:             raise RuntimeError("No application tables found in SQLite.")
+0532:         print("WOLF OS SQLITE -> POSTGRESQL")
+0537:         target_con = psycopg.connect(
+0570: if __name__ == "__main__":

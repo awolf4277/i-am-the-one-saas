@@ -1,0 +1,1119 @@
+===== ORDER BUTTON AREA =====
+          ) : (
+            <p className="muted">No setup requests yet.</p>
+          )}
+        </div>
+
+        <div className="owner-panel wide">
+          <div className="panel-heading">
+            <div>
+              <p className="v3-kicker">Real Orders</p>
+              <h2>Orders</h2>
+            </div>
+
+            <span className="v3-pill online">LIVE</span>
+          </div>
+
+          {orders.length ? (
+            <div className="owner-table">
+              {orders.map((order) => (
+                <div className="owner-table-row" key={order.id}>
+                  <strong>{order.id}</strong>
+                  <span>{order.buyer_name || "Unknown buyer"}</span>
+                  <span>{money(order.total_cents)}</span>
+                  <div className="owner-payment-command">
+                    <span
+                      className={`owner-payment-status ${
+                        String(
+                          order.payment_status ||
+                            "unpaid"
+                        )
+                          .trim()
+                          .toLowerCase() === "paid"
+                          ? "paid"
+                          : "unpaid"
+                      }`}
+                    >
+                      {order.payment_status ||
+                        order.status ||
+                        "pending"}
+                    </span>
+
+                    {order.id ? (
+                      <div className="owner-payment-actions">
+                        {String(
+                          order.payment_status ||
+                            "unpaid"
+                        )
+                          .trim()
+                          .toLowerCase() === "paid" ? (
+                          <button
+                            type="button"
+                            className="owner-payment-button reopen"
+                            onClick={() =>
+                              updateOrderPaymentStatus(
+                                order.id as string,
+                                "unpaid"
+                              )
+                            }
+                          >
+                            MARK UNPAID
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            className="owner-payment-button collect"
+                            onClick={() =>
+                              updateOrderPaymentStatus(
+                                order.id as string,
+                                "paid"
+                              )
+                            }
+                          >
+                            MARK PAID
+                          </button>
+                        )}
+                      </div>
+                    ) : null}
+                  </div>
+
+                  {order.id && order.buyer_email ? (
+                    <a
+                      className="owner-mini-link"
+                      href={apiUrl(
+                        `/api/orders/${order.id}/download?email=${encodeURIComponent(
+                          order.buyer_email
+                        )}`
+                      )}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Delivery
+                    </a>
+                  ) : (
+                    <span>No email</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="ghost-card">No orders yet. Create one from /store/demo.</div>
+          )}
+
+===== FRONTEND PAYMENT FUNCTIONS =====
+
+  frontend\src\components\RevenueCommandCenter.
+tsx:11:import "./RevenueCommandCenter.css";
+  frontend\src\components\RevenueCommandCenter.
+tsx:12:
+  frontend\src\components\RevenueCommandCenter.
+tsx:13:type RevenueOrder = {
+  frontend\src\components\RevenueCommandCenter.
+tsx:14:  id?: string;
+> frontend\src\components\RevenueCommandCenter.
+tsx:15:  payment_status?: string;
+  frontend\src\components\RevenueCommandCenter.
+tsx:16:  total_cents?: number;
+  frontend\src\components\RevenueCommandCenter.
+tsx:17:};
+  frontend\src\components\RevenueCommandCenter.
+tsx:18:
+  frontend\src\components\RevenueCommandCenter.
+tsx:19:type Offer = {
+  frontend\src\components\RevenueCommandCenter.
+tsx:20:  name: string;
+  frontend\src\components\RevenueCommandCenter.
+tsx:21:  price: number;
+  frontend\src\components\RevenueCommandCenter.
+tsx:22:  description: string;
+  frontend\src\components\RevenueCommandCenter.
+tsx:23:};
+  frontend\src\components\RevenueCommandCenter.
+tsx:24:
+  frontend\src\components\RevenueCommandCenter.
+tsx:25:const offers: Offer[] = [
+  frontend\src\components\RevenueCommandCenter.
+tsx:26:  {
+  frontend\src\components\RevenueCommandCenter.
+tsx:27:    name: "Starter Storefront",
+  frontend\src\components\RevenueCommandCenter.
+tsx:185:  const paidOrders =
+  frontend\src\components\RevenueCommandCenter.
+tsx:186:    orders.filter(
+  frontend\src\components\RevenueCommandCenter.
+tsx:187:      (order) =>
+  frontend\src\components\RevenueCommandCenter.
+tsx:188:        String(
+> frontend\src\components\RevenueCommandCenter.
+tsx:189:          order.payment_status || ""
+  frontend\src\components\RevenueCommandCenter.
+tsx:190:        )
+  frontend\src\components\RevenueCommandCenter.
+tsx:191:          .trim()
+  frontend\src\components\RevenueCommandCenter.
+tsx:192:          .toLowerCase() === "paid"
+  frontend\src\components\RevenueCommandCenter.
+tsx:193:    );
+  frontend\src\components\RevenueCommandCenter.
+tsx:194:
+  frontend\src\components\RevenueCommandCenter.
+tsx:195:  const collectedRevenue =
+  frontend\src\components\RevenueCommandCenter.
+tsx:196:    paidOrders.reduce(
+  frontend\src\components\RevenueCommandCenter.
+tsx:197:      (total, order) =>
+  frontend\src\components\RevenueCommandCenter.
+tsx:198:        total +
+  frontend\src\components\RevenueCommandCenter.
+tsx:199:        (
+  frontend\src\components\RevenueCommandCenter.
+tsx:200:          Number(
+  frontend\src\components\RevenueCommandCenter.
+tsx:201:            order.total_cents
+  frontend\src\App.tsx:139:  buyer_email?: 
+string;
+  frontend\src\App.tsx:140:  buyer_phone?: 
+string;
+  frontend\src\App.tsx:141:  notes?: string;
+  frontend\src\App.tsx:142:  status?: string;
+> frontend\src\App.tsx:143:  payment_status?: 
+string;
+  frontend\src\App.tsx:144:  subtotal_cents?: 
+number;
+  frontend\src\App.tsx:145:  tax_cents?: 
+number;
+  frontend\src\App.tsx:146:  shipping_cents?: 
+number;
+  frontend\src\App.tsx:147:  total_cents?: 
+number;
+  frontend\src\App.tsx:148:  currency?: string;
+  frontend\src\App.tsx:149:  created_at?: 
+string;
+  frontend\src\App.tsx:150:  item_count?: 
+number;
+  frontend\src\App.tsx:151:};
+  frontend\src\App.tsx:152:
+  frontend\src\App.tsx:153:type SetupRequest = 
+{
+  frontend\src\App.tsx:154:  id?: string;
+  frontend\src\App.tsx:155:  name?: string;
+  frontend\src\App.tsx:1092:    
+setOwnerProducts([]);
+  frontend\src\App.tsx:1093:    
+setNotice("Owner console locked.");
+  frontend\src\App.tsx:1094:  }
+  frontend\src\App.tsx:1095:
+> frontend\src\App.tsx:1096:  async function 
+updateOrderPaymentStatus(
+  frontend\src\App.tsx:1097:    orderId: 
+string,
+> frontend\src\App.tsx:1098:    paymentStatus: 
+"paid" | "unpaid"
+  frontend\src\App.tsx:1099:  ) {
+  frontend\src\App.tsx:1100:    if 
+(!ownerToken) {
+  frontend\src\App.tsx:1101:      setError(
+  frontend\src\App.tsx:1102:        "Owner 
+token required."
+  frontend\src\App.tsx:1103:      );
+  frontend\src\App.tsx:1104:      return;
+  frontend\src\App.tsx:1105:    }
+  frontend\src\App.tsx:1106:
+  frontend\src\App.tsx:1107:    try {
+  frontend\src\App.tsx:1108:      setError("");
+  frontend\src\App.tsx:1109:
+  frontend\src\App.tsx:1110:      const 
+payload =
+  frontend\src\App.tsx:1120:              
+"Content-Type":
+  frontend\src\App.tsx:1121:                
+"application/json",
+  frontend\src\App.tsx:1122:            },
+  frontend\src\App.tsx:1123:            body: 
+JSON.stringify({
+> frontend\src\App.tsx:1124:              
+payment_status:
+> frontend\src\App.tsx:1125:                
+paymentStatus,
+  frontend\src\App.tsx:1126:            }),
+  frontend\src\App.tsx:1127:          },
+  frontend\src\App.tsx:1128:          
+ownerToken
+  frontend\src\App.tsx:1129:        );
+  frontend\src\App.tsx:1130:
+  frontend\src\App.tsx:1131:      if 
+(!payload?.ok) {
+  frontend\src\App.tsx:1132:        throw new 
+Error(
+  frontend\src\App.tsx:1133:          
+payload?.error ||
+  frontend\src\App.tsx:1134:            
+"Payment status update failed."
+  frontend\src\App.tsx:1135:        );
+  frontend\src\App.tsx:1136:      }
+  frontend\src\App.tsx:1137:
+  frontend\src\App.tsx:1138:      setNotice(
+> frontend\src\App.tsx:1139:        
+paymentStatus === "paid"
+  frontend\src\App.tsx:1140:          ? 
+`PAYMENT CAPTURED · ${orderId}`
+  frontend\src\App.tsx:1141:          : 
+`PAYMENT REOPENED · ${orderId}`
+  frontend\src\App.tsx:1142:      );
+  frontend\src\App.tsx:1143:
+  frontend\src\App.tsx:1144:      await 
+loadOwnerData(
+  frontend\src\App.tsx:1145:        ownerToken
+  frontend\src\App.tsx:1146:      );
+  frontend\src\App.tsx:1147:    } catch (err: 
+any) {
+  frontend\src\App.tsx:1148:      setError(
+  frontend\src\App.tsx:1149:        
+err?.message ||
+  frontend\src\App.tsx:1150:          "Payment 
+status update failed."
+  frontend\src\App.tsx:1151:      );
+  frontend\src\App.tsx:2642:              
+<span>Total</span>
+  frontend\src\App.tsx:2643:              
+<strong>{money(lastOrder.total_cents)}</strong>
+  frontend\src\App.tsx:2644:
+  frontend\src\App.tsx:2645:              
+<span>Payment</span>
+> frontend\src\App.tsx:2646:              
+<strong>{lastOrder.payment_status || "manual / 
+unpaid"}</strong>
+  frontend\src\App.tsx:2647:            </div>
+  frontend\src\App.tsx:2648:
+  frontend\src\App.tsx:2649:            <div 
+className="payment-instructions">
+  frontend\src\App.tsx:2650:              
+<strong>Manual payment mode</strong>
+  frontend\src\App.tsx:2651:              
+<span>
+  frontend\src\App.tsx:2652:                
+Send payment instructions to the buyer, then 
+mark the order paid from
+  frontend\src\App.tsx:2653:                
+the owner workflow later.
+  frontend\src\App.tsx:2654:              
+</span>
+  frontend\src\App.tsx:2655:            </div>
+  frontend\src\App.tsx:2656:
+  frontend\src\App.tsx:2657:            <button
+  frontend\src\App.tsx:2658:              
+className="v3-button secondary full"
+  frontend\src\App.tsx:3583:                  
+<div className="owner-payment-command">
+  frontend\src\App.tsx:3584:                   
+ <span
+  frontend\src\App.tsx:3585:                   
+   className={`owner-payment-status ${
+  frontend\src\App.tsx:3586:                   
+     String(
+> frontend\src\App.tsx:3587:                   
+       order.payment_status ||
+  frontend\src\App.tsx:3588:                   
+         "unpaid"
+  frontend\src\App.tsx:3589:                   
+     )
+  frontend\src\App.tsx:3590:                   
+       .trim()
+  frontend\src\App.tsx:3591:                   
+       .toLowerCase() === "paid"
+  frontend\src\App.tsx:3592:                   
+       ? "paid"
+  frontend\src\App.tsx:3593:                   
+       : "unpaid"
+  frontend\src\App.tsx:3594:                   
+   }`}
+  frontend\src\App.tsx:3595:                   
+ >
+> frontend\src\App.tsx:3596:                   
+   {order.payment_status ||
+  frontend\src\App.tsx:3597:                   
+     order.status ||
+  frontend\src\App.tsx:3598:                   
+     "pending"}
+  frontend\src\App.tsx:3599:                   
+ </span>
+  frontend\src\App.tsx:3600:
+  frontend\src\App.tsx:3601:                   
+ {order.id ? (
+  frontend\src\App.tsx:3602:                   
+   <div className="owner-payment-actions">
+  frontend\src\App.tsx:3603:                   
+     {String(
+> frontend\src\App.tsx:3604:                   
+       order.payment_status ||
+  frontend\src\App.tsx:3605:                   
+         "unpaid"
+  frontend\src\App.tsx:3606:                   
+     )
+  frontend\src\App.tsx:3607:                   
+       .trim()
+  frontend\src\App.tsx:3608:                   
+       .toLowerCase() === "paid" ? (
+  frontend\src\App.tsx:3609:                   
+       <button
+  frontend\src\App.tsx:3610:                   
+         type="button"
+  frontend\src\App.tsx:3611:                   
+         className="owner-payment-button 
+reopen"
+  frontend\src\App.tsx:3612:                   
+         onClick={() =>
+> frontend\src\App.tsx:3613:                   
+           updateOrderPaymentStatus(
+  frontend\src\App.tsx:3614:                   
+             order.id as string,
+  frontend\src\App.tsx:3615:                   
+             "unpaid"
+  frontend\src\App.tsx:3616:                   
+           )
+  frontend\src\App.tsx:3617:                   
+         }
+  frontend\src\App.tsx:3618:                   
+       >
+> frontend\src\App.tsx:3619:                   
+         MARK UNPAID
+  frontend\src\App.tsx:3620:                   
+       </button>
+  frontend\src\App.tsx:3621:                   
+     ) : (
+  frontend\src\App.tsx:3622:                   
+       <button
+  frontend\src\App.tsx:3623:                   
+         type="button"
+  frontend\src\App.tsx:3624:                   
+         className="owner-payment-button 
+collect"
+  frontend\src\App.tsx:3625:                   
+         onClick={() =>
+> frontend\src\App.tsx:3626:                   
+           updateOrderPaymentStatus(
+  frontend\src\App.tsx:3627:                   
+             order.id as string,
+  frontend\src\App.tsx:3628:                   
+             "paid"
+  frontend\src\App.tsx:3629:                   
+           )
+  frontend\src\App.tsx:3630:                   
+         }
+  frontend\src\App.tsx:3631:                   
+       >
+> frontend\src\App.tsx:3632:                   
+         MARK PAID
+  frontend\src\App.tsx:3633:                   
+       </button>
+  frontend\src\App.tsx:3634:                   
+     )}
+  frontend\src\App.tsx:3635:                   
+   </div>
+  frontend\src\App.tsx:3636:                   
+ ) : null}
+  frontend\src\App.tsx:3637:                  
+</div>
+  frontend\src\App.tsx:3638:
+  frontend\src\App.tsx:3639:                  
+{order.id && order.buyer_email ? (
+  frontend\src\App.tsx:3640:                   
+ <a
+  frontend\src\App.tsx:3641:                   
+   className="owner-mini-link"
+  frontend\src\App.tsx:3642:                   
+   href={apiUrl(
+  frontend\src\App.tsx:3643:                   
+     `/api/orders/${order.id}/download?email=${
+encodeURIComponent(
+  frontend\src\App.tsx:3644:                   
+       order.buyer_email
+
+
+
+
+===== BACKEND PAYMENT ROUTES =====
+
+  backend\app\routes\checkout.py:133:
+  backend\app\routes\checkout.py:134:        
+con.execute(
+  backend\app\routes\checkout.py:135:          
+  """
+  backend\app\routes\checkout.py:136:          
+  INSERT INTO orders
+> backend\app\routes\checkout.py:137:          
+  (id, store_slug, buyer_name, buyer_email, 
+buyer_phone, notes, status, payment_status,
+  backend\app\routes\checkout.py:138:          
+   subtotal_cents, tax_cents, shipping_cents, 
+total_cents, currency, created_at)
+  backend\app\routes\checkout.py:139:          
+  VALUES (?, ?, ?, ?, ?, ?, 'new', 'unpaid', 
+?, ?, ?, ?, ?, ?)
+  backend\app\routes\checkout.py:140:          
+  """,
+  backend\app\routes\checkout.py:141:          
+  (
+  backend\app\routes\checkout.py:142:          
+      order_id,
+  backend\app\routes\checkout.py:143:          
+      slug,
+  backend\app\routes\checkout.py:144:          
+      buyer_name,
+  backend\app\routes\checkout.py:145:          
+      buyer_email,
+  backend\app\routes\checkout.py:146:          
+      buyer_phone,
+  backend\app\routes\checkout.py:147:          
+      notes,
+  backend\app\routes\checkout.py:148:          
+      subtotal,
+  backend\app\routes\checkout.py:149:          
+      tax_cents,
+  backend\app\db.py:82:                
+buyer_email TEXT NOT NULL,
+  backend\app\db.py:83:                
+buyer_phone TEXT NOT NULL DEFAULT '',
+  backend\app\db.py:84:                notes 
+TEXT NOT NULL DEFAULT '',
+  backend\app\db.py:85:                status 
+TEXT NOT NULL DEFAULT 'new',
+> backend\app\db.py:86:                
+payment_status TEXT NOT NULL DEFAULT 'unpaid',
+  backend\app\db.py:87:                
+subtotal_cents INTEGER NOT NULL DEFAULT 0,
+  backend\app\db.py:88:                
+tax_cents INTEGER NOT NULL DEFAULT 0,
+  backend\app\db.py:89:                
+shipping_cents INTEGER NOT NULL DEFAULT 0,
+  backend\app\db.py:90:                
+total_cents INTEGER NOT NULL DEFAULT 0,
+  backend\app\db.py:91:                
+currency TEXT NOT NULL DEFAULT 'USD',
+  backend\app\db.py:92:                
+created_at TEXT NOT NULL,
+  backend\app\db.py:93:                FOREIGN 
+KEY(store_slug) REFERENCES stores(slug) ON 
+DELETE CASCADE
+  backend\app\db.py:94:            );
+  backend\app\db.py:95:
+  backend\app\db.py:96:            CREATE 
+TABLE IF NOT EXISTS order_items (
+  backend\app\db.py:97:                id TEXT 
+PRIMARY KEY,
+  backend\app\db.py:98:                
+order_id TEXT NOT NULL,
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:150:                
+discount_cents INTEGER,
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:151:                
+total_cents INTEGER,
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:152:                
+currency TEXT,
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:153:                
+payment_mode TEXT,
+> backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:154:                
+payment_status TEXT,
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:155:                
+status TEXT,
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:156:                
+created_at TEXT
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:157:            )
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:158:            """
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:159:        )
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:160:
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:161:        con.execute(
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:162:            """
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:163:            CREATE 
+TABLE IF NOT EXISTS order_items (
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:164:                id 
+INTEGER PRIMARY KEY AUTOINCREMENT,
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:165:                
+order_id TEXT,
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:166:                
+product_id TEXT,
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:235:            
+"discount_cents": "INTEGER DEFAULT 0",
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:236:            
+"total_cents": "INTEGER DEFAULT 0",
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:237:            
+"currency": "TEXT DEFAULT 'USD'",
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:238:            
+"payment_mode": "TEXT DEFAULT 'manual'",
+> backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:239:            
+"payment_status": "TEXT DEFAULT 'unpaid'",
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:240:            
+"status": "TEXT DEFAULT 'created'",
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:241:            
+"created_at": "TEXT",
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:242:        }.items():
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:243:            
+add_column(con, "orders", name, ddl)
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:244:
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:245:        for name, 
+ddl in {
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:246:            
+"order_id": "TEXT",
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:247:            
+"product_id": "TEXT",
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:248:            "sku": 
+"TEXT",
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:249:            "name": 
+"TEXT",
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:250:            "qty": 
+"INTEGER DEFAULT 1",
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:251:            
+"unit_amount_cents": "INTEGER DEFAULT 0",
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:527:                    
+"""
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:528:                    
+INSERT INTO orders (
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:529:                    
+    id, store_id, store_slug, buyer_name, 
+buyer_email, buyer_phone, notes,
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:530:                    
+    subtotal_cents, tax_cents, shipping_cents, 
+discount_cents, total_cents,
+> backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:531:                    
+    currency, payment_mode, payment_status, 
+status, created_at
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:532:                    
+)
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:533:                    
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 
+?, ?, ?, ?)
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:534:                    
+""",
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:535:                    
+(
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:536:                    
+    order_id,
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:537:                    
+    "store_demo",
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:538:                    
+    "demo",
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:539:                    
+    buyer_name,
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:540:                    
+    buyer_email,
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:541:                    
+    buyer_phone,
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:542:                    
+    notes,
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:543:                    
+    total_cents,
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:915:                """
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:916:                
+INSERT INTO orders (
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:917:                    
+id, store_id, store_slug, buyer_name, 
+buyer_email, buyer_phone, notes,
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:918:                    
+subtotal_cents, tax_cents, shipping_cents, 
+discount_cents, total_cents,
+> backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:919:                    
+currency, payment_mode, payment_status, 
+status, created_at
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:920:                )
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:921:                
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 
+?, ?, ?, ?)
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:922:                """,
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:923:                (
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:924:                    
+order_id,
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:925:                    
+store["id"],
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:926:                    
+store["slug"],
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:927:                    
+buyer_name,
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:928:                    
+buyer_email,
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:929:                    
+buyer_phone,
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:930:                    
+notes,
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:931:                    
+subtotal_cents,
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:1044:            "",
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:1045:            
+f"Order ID: {order['id']}",
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:1046:            
+f"Buyer: {order['buyer_name'] or 'Customer'}",
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:1047:            
+f"Email: {order['buyer_email'] or ''}",
+> backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:1048:            
+f"Payment Status: {order['payment_status'] or 
+'manual / unpaid'}",
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:1049:            
+f"Order Total: {cents(order['total_cents'])}",
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:1050:            "",
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:1051:            
+"Items:",
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:1052:        ]
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:1053:
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:1054:        for item 
+in items:
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:1055:            
+lines.append(
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:1056:                
+f"- {item['name']} ({item['sku']}) 
+x{item['qty']} = 
+{cents(item['line_total_cents'])}"
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:1057:            )
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:1058:
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:1059:        lines += [
+  backend\app\__init__.before-pipeline-persiste
+nce-20260711-212736.py:1060:            "",
+  backend\app\__init__.py:156:                
+discount_cents INTEGER,
+  backend\app\__init__.py:157:                
+total_cents INTEGER,
+  backend\app\__init__.py:158:                
+currency TEXT,
+  backend\app\__init__.py:159:                
+payment_mode TEXT,
+> backend\app\__init__.py:160:                
+payment_status TEXT,
+  backend\app\__init__.py:161:                
+status TEXT,
+  backend\app\__init__.py:162:                
+created_at TEXT
+  backend\app\__init__.py:163:            )
+  backend\app\__init__.py:164:            """
+  backend\app\__init__.py:165:        )
+  backend\app\__init__.py:166:
+  backend\app\__init__.py:167:        
+con.execute(
+  backend\app\__init__.py:168:            """
+  backend\app\__init__.py:169:            
+CREATE TABLE IF NOT EXISTS order_items (
+  backend\app\__init__.py:170:                
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+  backend\app\__init__.py:171:                
+order_id TEXT,
+  backend\app\__init__.py:172:                
+product_id TEXT,
+  backend\app\__init__.py:278:            
+"discount_cents": "INTEGER DEFAULT 0",
+  backend\app\__init__.py:279:            
+"total_cents": "INTEGER DEFAULT 0",
+  backend\app\__init__.py:280:            
+"currency": "TEXT DEFAULT 'USD'",
+  backend\app\__init__.py:281:            
+"payment_mode": "TEXT DEFAULT 'manual'",
+> backend\app\__init__.py:282:            
+"payment_status": "TEXT DEFAULT 'unpaid'",
+  backend\app\__init__.py:283:            
+"status": "TEXT DEFAULT 'created'",
+  backend\app\__init__.py:284:            
+"created_at": "TEXT",
+  backend\app\__init__.py:285:        
+}.items():
+  backend\app\__init__.py:286:            
+add_column(con, "orders", name, ddl)
+  backend\app\__init__.py:287:
+  backend\app\__init__.py:288:        for 
+name, ddl in {
+  backend\app\__init__.py:289:            
+"order_id": "TEXT",
+  backend\app\__init__.py:290:            
+"product_id": "TEXT",
+  backend\app\__init__.py:291:            
+"sku": "TEXT",
+  backend\app\__init__.py:292:            
+"name": "TEXT",
+  backend\app\__init__.py:293:            
+"qty": "INTEGER DEFAULT 1",
+  backend\app\__init__.py:294:            
+"unit_amount_cents": "INTEGER DEFAULT 0",
+  backend\app\__init__.py:570:                 
+   """
+  backend\app\__init__.py:571:                 
+   INSERT INTO orders (
+  backend\app\__init__.py:572:                 
+       id, store_id, store_slug, buyer_name, 
+buyer_email, buyer_phone, notes,
+  backend\app\__init__.py:573:                 
+       subtotal_cents, tax_cents, 
+shipping_cents, discount_cents, total_cents,
+> backend\app\__init__.py:574:                 
+       currency, payment_mode, payment_status, 
+status, created_at
+  backend\app\__init__.py:575:                 
+   )
+  backend\app\__init__.py:576:                 
+   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 
+?, ?, ?, ?, ?)
+  backend\app\__init__.py:577:                 
+   """,
+  backend\app\__init__.py:578:                 
+   (
+  backend\app\__init__.py:579:                 
+       order_id,
+  backend\app\__init__.py:580:                 
+       "store_demo",
+  backend\app\__init__.py:581:                 
+       "demo",
+  backend\app\__init__.py:582:                 
+       buyer_name,
+  backend\app\__init__.py:583:                 
+       buyer_email,
+  backend\app\__init__.py:584:                 
+       buyer_phone,
+  backend\app\__init__.py:585:                 
+       notes,
+  backend\app\__init__.py:586:                 
+       total_cents,
+  backend\app\__init__.py:988:                
+"""
+  backend\app\__init__.py:989:                
+INSERT INTO orders (
+  backend\app\__init__.py:990:                 
+   id, store_id, store_slug, buyer_name, 
+buyer_email, buyer_phone, notes,
+  backend\app\__init__.py:991:                 
+   subtotal_cents, tax_cents, shipping_cents, 
+discount_cents, total_cents,
+> backend\app\__init__.py:992:                 
+   currency, payment_mode, payment_status, 
+status, created_at
+  backend\app\__init__.py:993:                )
+  backend\app\__init__.py:994:                
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 
+?, ?, ?, ?)
+  backend\app\__init__.py:995:                
+""",
+  backend\app\__init__.py:996:                (
+  backend\app\__init__.py:997:                 
+   order_id,
+  backend\app\__init__.py:998:                 
+   store["id"],
+  backend\app\__init__.py:999:                 
+   store["slug"],
+  backend\app\__init__.py:1000:                
+    buyer_name,
+  backend\app\__init__.py:1001:                
+    buyer_email,
+  backend\app\__init__.py:1002:                
+    buyer_phone,
+  backend\app\__init__.py:1003:                
+    notes,
+  backend\app\__init__.py:1004:                
+    subtotal_cents,
+  backend\app\__init__.py:1117:            "",
+  backend\app\__init__.py:1118:            
+f"Order ID: {order['id']}",
+  backend\app\__init__.py:1119:            
+f"Buyer: {order['buyer_name'] or 'Customer'}",
+  backend\app\__init__.py:1120:            
+f"Email: {order['buyer_email'] or ''}",
+> backend\app\__init__.py:1121:            
+f"Payment Status: {order['payment_status'] or 
+'manual / unpaid'}",
+  backend\app\__init__.py:1122:            
+f"Order Total: {cents(order['total_cents'])}",
+  backend\app\__init__.py:1123:            "",
+  backend\app\__init__.py:1124:            
+"Items:",
+  backend\app\__init__.py:1125:        ]
+  backend\app\__init__.py:1126:
+  backend\app\__init__.py:1127:        for 
+item in items:
+  backend\app\__init__.py:1128:            
+lines.append(
+  backend\app\__init__.py:1129:                
+f"- {item['name']} ({item['sku']}) 
+x{item['qty']} = 
+{cents(item['line_total_cents'])}"
+  backend\app\__init__.py:1130:            )
+  backend\app\__init__.py:1131:
+  backend\app\__init__.py:1132:        lines 
++= [
+  backend\app\__init__.py:1133:            "",
+  backend\app\__init__.py:2086:        finally:
+  backend\app\__init__.py:2087:            
+con.close()
+  backend\app\__init__.py:2088:
+  backend\app\__init__.py:2089:    @app.put("/a
+pi/owner/orders/<order_id>/payment-status")
+> backend\app\__init__.py:2090:    def 
+owner_update_order_payment_status(
+  backend\app\__init__.py:2091:        
+order_id: str
+  backend\app\__init__.py:2092:    ):
+  backend\app\__init__.py:2093:        ok, 
+error = require_owner()
+  backend\app\__init__.py:2094:
+  backend\app\__init__.py:2095:        if not 
+ok:
+  backend\app\__init__.py:2096:            
+return error
+  backend\app\__init__.py:2097:
+  backend\app\__init__.py:2098:        payload 
+= request.get_json(
+  backend\app\__init__.py:2099:            
+silent=True
+  backend\app\__init__.py:2100:        )
+  backend\app\__init__.py:2101:
+  backend\app\__init__.py:2102:        if 
+payload is None:
+  backend\app\__init__.py:2120:                
+    ),
+  backend\app\__init__.py:2121:                
+}
+  backend\app\__init__.py:2122:            ), 
+400
+  backend\app\__init__.py:2123:
+> backend\app\__init__.py:2124:        if 
+"payment_status" not in payload:
+  backend\app\__init__.py:2125:            
+return jsonify(
+  backend\app\__init__.py:2126:                
+{
+  backend\app\__init__.py:2127:                
+    "ok": False,
+  backend\app\__init__.py:2128:                
+    "error": (
+> backend\app\__init__.py:2129:                
+        "payment_status is required."
+  backend\app\__init__.py:2130:                
+    ),
+  backend\app\__init__.py:2131:                
+}
+  backend\app\__init__.py:2132:            ), 
+400
+  backend\app\__init__.py:2133:
+> backend\app\__init__.py:2134:        
+payment_status = str(
+> backend\app\__init__.py:2135:            
+payload["payment_status"]
+  backend\app\__init__.py:2136:            or 
+""
+  backend\app\__init__.py:2137:        
+).strip().lower()
+  backend\app\__init__.py:2138:
+  backend\app\__init__.py:2139:        
+allowed_statuses = {
+  backend\app\__init__.py:2140:            
+"paid",
+  backend\app\__init__.py:2141:            
+"unpaid",
+  backend\app\__init__.py:2142:        }
+  backend\app\__init__.py:2143:
+> backend\app\__init__.py:2144:        if 
+payment_status not in allowed_statuses:
+  backend\app\__init__.py:2145:            
+return jsonify(
+  backend\app\__init__.py:2146:                
+{
+  backend\app\__init__.py:2147:                
+    "ok": False,
+  backend\app\__init__.py:2148:                
+    "error": (
+> backend\app\__init__.py:2149:                
+        "payment_status must be "
+  backend\app\__init__.py:2150:                
+        "paid or unpaid."
+  backend\app\__init__.py:2151:                
+    ),
+  backend\app\__init__.py:2152:                
+}
+  backend\app\__init__.py:2153:            ), 
+400
+  backend\app\__init__.py:2154:
+  backend\app\__init__.py:2155:        con = 
+connect(app)
+  backend\app\__init__.py:2156:
+  backend\app\__init__.py:2157:        try:
+  backend\app\__init__.py:2158:            
+order = con.execute(
+  backend\app\__init__.py:2159:                
+"""
+  backend\app\__init__.py:2160:                
+SELECT *
+  backend\app\__init__.py:2161:                
+FROM orders
+  backend\app\__init__.py:2173:                
+    }
+  backend\app\__init__.py:2174:                
+), 404
+  backend\app\__init__.py:2175:
+  backend\app\__init__.py:2176:            
+previous_status = str(
+> backend\app\__init__.py:2177:                
+order["payment_status"]
+  backend\app\__init__.py:2178:                
+or "unpaid"
+  backend\app\__init__.py:2179:            
+).strip().lower()
+  backend\app\__init__.py:2180:
+> backend\app\__init__.py:2181:            if 
+previous_status != payment_status:
+  backend\app\__init__.py:2182:                
+con.execute(
+  backend\app\__init__.py:2183:                
+    """
+  backend\app\__init__.py:2184:                
+    UPDATE orders
+> backend\app\__init__.py:2185:                
+    SET payment_status = ?
+  backend\app\__init__.py:2186:                
+    WHERE id = ?
+  backend\app\__init__.py:2187:                
+    """,
+  backend\app\__init__.py:2188:                
+    (
+> backend\app\__init__.py:2189:                
+        payment_status,
+  backend\app\__init__.py:2190:                
+        order_id,
+  backend\app\__init__.py:2191:                
+    ),
+  backend\app\__init__.py:2192:                
+)
+  backend\app\__init__.py:2193:
+  backend\app\__init__.py:2194:                
+con.commit()
+  backend\app\__init__.py:2195:
+  backend\app\__init__.py:2196:            
+updated_order = con.execute(
+  backend\app\__init__.py:2197:                
+"""
+  backend\app\__init__.py:2198:                
+SELECT *
+  backend\app\__init__.py:2199:                
+FROM orders
+  backend\app\__init__.py:2200:                
+WHERE id = ?
+  backend\app\__init__.py:2201:                
+LIMIT 1
+  backend\app\__init__.py:2207:                
+{
+  backend\app\__init__.py:2208:                
+    "ok": True,
+  backend\app\__init__.py:2209:                
+    "changed": (
+  backend\app\__init__.py:2210:                
+        previous_status
+> backend\app\__init__.py:2211:                
+        != payment_status
+  backend\app\__init__.py:2212:                
+    ),
+> backend\app\__init__.py:2213:                
+    "previous_payment_status": (
+  backend\app\__init__.py:2214:                
+        previous_status
+  backend\app\__init__.py:2215:                
+    ),
+> backend\app\__init__.py:2216:                
+    "payment_status": (
+> backend\app\__init__.py:2217:                
+        payment_status
+  backend\app\__init__.py:2218:                
+    ),
+  backend\app\__init__.py:2219:                
+    "order": dict(
+  backend\app\__init__.py:2220:                
+        updated_order
+  backend\app\__init__.py:2221:                
+    ),
+  backend\app\__init__.py:2222:                
+}
+  backend\app\__init__.py:2223:            )
+  backend\app\__init__.py:2224:
+  backend\app\__init__.py:2225:        finally:
+  backend\app\__init__.py:2226:            
+con.close()
+  backend\app\__init__.py:2227:
+  backend\app\__init__.py:2228:
+  backend\app\__init__.py:2229:    
+@app.route("/api/owner/products", 
+methods=["GET", "POST"])
+
+
+

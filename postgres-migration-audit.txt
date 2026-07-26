@@ -1,0 +1,1302 @@
+backend\.venv\Lib\site-packages\click\_compat.py:16 [question placeholders] _ansi_re = re.compile(r"\033\[[;?0-9]*[a-zA-Z]")
+backend\.venv\Lib\site-packages\click\_termui_impl.py:39 [question placeholders] BEFORE_BAR = "\r\033[?25l"
+backend\.venv\Lib\site-packages\click\_termui_impl.py:40 [question placeholders] AFTER_BAR = "\033[?25h\n"
+backend\.venv\Lib\site-packages\click\core.py:3004 [question placeholders] " Did you mean to declare an argument instead? Did"
+backend\.venv\Lib\site-packages\click\core.py:3005 [question placeholders] f" you mean to pass '--{name}'?"
+backend\.venv\Lib\site-packages\click\decorators.py:399 [question placeholders] kwargs.setdefault("prompt", "Do you want to continue?")
+backend\.venv\Lib\site-packages\click\exceptions.py:235 [question placeholders] "Did you mean {possibility}?",
+backend\.venv\Lib\site-packages\click\parser.py:406 [question placeholders] # Any characters left in arg?  Pretend they're the
+backend\.venv\Lib\site-packages\click\types.py:401 [datetime functions] class DateTime(ParamType):
+backend\.venv\Lib\site-packages\colorama\ansitowin32.py:78 [question placeholders] ANSI_CSI_RE = re.compile('\001?\033\\[((?:\\d|;)*)([a-zA-Z])\002?')   # Control Sequence Introducer
+backend\.venv\Lib\site-packages\colorama\ansitowin32.py:79 [question placeholders] ANSI_OSC_RE = re.compile('\001?\033\\]([^\a]*)(\a)\002?')             # Operating System Command
+backend\.venv\Lib\site-packages\colorama\ansitowin32.py:105 [question placeholders] # should we strip ANSI sequences from our output?
+backend\.venv\Lib\site-packages\colorama\ansitowin32.py:110 [question placeholders] # should we should convert ANSI sequences into win32 calls?
+backend\.venv\Lib\site-packages\colorama\ansitowin32.py:118 [question placeholders] # are we wrapping stderr?
+backend\.venv\Lib\site-packages\dotenv\ipython.py:20 [question placeholders] @argument('dotenv_path', nargs='?', type=str, default='.env',
+backend\.venv\Lib\site-packages\dotenv\parser.py:14 [question placeholders] _export = make_regex(r"(?:export[^\S\r\n]+)?")
+backend\.venv\Lib\site-packages\dotenv\parser.py:18 [question placeholders] _single_quoted_value = make_regex(r"'((?:\\'|[^'])*)'")
+backend\.venv\Lib\site-packages\dotenv\parser.py:19 [question placeholders] _double_quoted_value = make_regex(r'"((?:\\"|[^"])*)"')
+backend\.venv\Lib\site-packages\dotenv\parser.py:21 [question placeholders] _comment = make_regex(r"(?:[^\S\r\n]*#[^\r\n]*)?")
+backend\.venv\Lib\site-packages\dotenv\parser.py:22 [question placeholders] _end_of_line = make_regex(r"[^\S\r\n]*(?:\r\n|\n|\r|$)")
+backend\.venv\Lib\site-packages\dotenv\parser.py:23 [question placeholders] _rest_of_line = make_regex(r"[^\r\n]*(?:\r|\n|\r\n)?")
+backend\.venv\Lib\site-packages\dotenv\variables.py:8 [question placeholders] (?P<name>[^\}:]*)
+backend\.venv\Lib\site-packages\dotenv\variables.py:9 [question placeholders] (?::-
+backend\.venv\Lib\site-packages\dotenv\variables.py:10 [question placeholders] (?P<default>[^\}]*)
+backend\.venv\Lib\site-packages\dotenv\variables.py:11 [question placeholders] )?
+backend\.venv\Lib\site-packages\flask\app.py:56 [pragma] if t.TYPE_CHECKING:  # pragma: no cover
+backend\.venv\Lib\site-packages\flask\app.py:116 [question placeholders] Why is that?  The application will work even with `__name__`, thanks
+backend\.venv\Lib\site-packages\flask\app.py:652 [question placeholders] rv = c.get('/?vodka=42')
+backend\.venv\Lib\site-packages\flask\app.py:1018 [question placeholders] like ``?a=b&c=d``.
+backend\.venv\Lib\site-packages\flask\app.py:1087 [question placeholders] _anchor = _url_quote(_anchor, safe="%!#$&'()*+,/:;=?@")
+backend\.venv\Lib\site-packages\flask\blueprints.py:14 [pragma] if t.TYPE_CHECKING:  # pragma: no cover
+backend\.venv\Lib\site-packages\flask\cli.py:332 [question placeholders] re.split(r":(?![\\/])", self.app_import_path, maxsplit=1) + [None]
+backend\.venv\Lib\site-packages\flask\ctx.py:17 [pragma] if t.TYPE_CHECKING:  # pragma: no cover
+backend\.venv\Lib\site-packages\flask\debughelpers.py:65 [question placeholders] if f"{request.base_url}/" == exc.new_url.partition("?")[0]:
+backend\.venv\Lib\site-packages\flask\debughelpers.py:175 [question placeholders] info.append("  Maybe you did not place a template in the right folder?")
+backend\.venv\Lib\site-packages\flask\globals.py:8 [pragma] if t.TYPE_CHECKING:  # pragma: no cover
+backend\.venv\Lib\site-packages\flask\helpers.py:23 [pragma] if t.TYPE_CHECKING:  # pragma: no cover
+backend\.venv\Lib\site-packages\flask\helpers.py:205 [question placeholders] ``?a=b&c=d``.
+backend\.venv\Lib\site-packages\flask\json\__init__.py:9 [pragma] if t.TYPE_CHECKING:  # pragma: no cover
+backend\.venv\Lib\site-packages\flask\json\provider.py:13 [pragma] if t.TYPE_CHECKING:  # pragma: no cover
+backend\.venv\Lib\site-packages\flask\logging.py:11 [pragma] if t.TYPE_CHECKING:  # pragma: no cover
+backend\.venv\Lib\site-packages\flask\sansio\app.py:36 [pragma] if t.TYPE_CHECKING:  # pragma: no cover
+backend\.venv\Lib\site-packages\flask\sansio\app.py:96 [question placeholders] Why is that?  The application will work even with `__name__`, thanks
+backend\.venv\Lib\site-packages\flask\sansio\blueprints.py:14 [pragma] if t.TYPE_CHECKING:  # pragma: no cover
+backend\.venv\Lib\site-packages\flask\sansio\scaffold.py:21 [pragma] if t.TYPE_CHECKING:  # pragma: no cover
+backend\.venv\Lib\site-packages\flask\sessions.py:15 [pragma] if t.TYPE_CHECKING:  # pragma: no cover
+backend\.venv\Lib\site-packages\flask\templating.py:18 [pragma] if t.TYPE_CHECKING:  # pragma: no cover
+backend\.venv\Lib\site-packages\flask\testing.py:19 [pragma] if t.TYPE_CHECKING:  # pragma: no cover
+backend\.venv\Lib\site-packages\flask\testing.py:82 [question placeholders] sep = b"?" if isinstance(url.query, bytes) else "?"
+backend\.venv\Lib\site-packages\flask\typing.py:5 [pragma] if t.TYPE_CHECKING:  # pragma: no cover
+backend\.venv\Lib\site-packages\flask\wrappers.py:14 [pragma] if t.TYPE_CHECKING:  # pragma: no cover
+backend\.venv\Lib\site-packages\flask_cors\core.py:258 [question placeholders] common_regex_chars = ['*', '\\', ']', '?', '$', '^', '[', ']', '(', ')']
+backend\.venv\Lib\site-packages\gunicorn\arbiter.py:456 [question placeholders] # do we need to change listener ?
+backend\.venv\Lib\site-packages\gunicorn\arbiter.py:552 [question placeholders] msg += " Perhaps out of memory?"
+backend\.venv\Lib\site-packages\gunicorn\config.py:107 [question placeholders] # are we using a threaded worker?
+backend\.venv\Lib\site-packages\gunicorn\config.py:118 [question placeholders] # are we using a threaded worker?
+backend\.venv\Lib\site-packages\gunicorn\config.py:227 [question placeholders] k, v = re.split(r'(?<!\\)=', s, 1)
+backend\.venv\Lib\site-packages\gunicorn\glogging.py:368 [datetime functions] return time.strftime('[%d/%b/%Y:%H:%M:%S %z]')
+backend\.venv\Lib\site-packages\gunicorn\sock.py:42 [pragma] and hasattr(socket, 'SO_REUSEPORT')):  # pragma: no cover
+backend\.venv\Lib\site-packages\gunicorn\util.py:227 [question placeholders] if re.match(r'unix:(//)?', netloc):
+backend\.venv\Lib\site-packages\gunicorn\util.py:228 [question placeholders] return re.split(r'unix:(//)?', netloc)[-1]
+backend\.venv\Lib\site-packages\gunicorn\util.py:373 [question placeholders] msg = "Failed to find application, did you mean '%s:%s'?"
+backend\.venv\Lib\site-packages\gunicorn\workers\gthread.py:207 [question placeholders] # can we accept more connections?
+backend\.venv\Lib\site-packages\jinja2\compiler.py:126 [question placeholders] """Does the node have a safe representation?"""
+backend\.venv\Lib\site-packages\jinja2\compiler.py:849 [question placeholders] # do we have an extends tag at all?  If not, we can save some
+backend\.venv\Lib\site-packages\jinja2\environment.py:211 [question placeholders] should the optimizer be enabled?  Default is ``True``.
+backend\.venv\Lib\site-packages\jinja2\environment.py:524 [question placeholders] msg = f"{msg} ({e}; did you forget to quote the callable name?)"
+backend\.venv\Lib\site-packages\jinja2\ext.py:514 [question placeholders] "trans blocks can't be nested; did you mean `endtrans`?"
+backend\.venv\Lib\site-packages\jinja2\ext.py:541 [question placeholders] # no variables referenced?  no need to escape for old style
+backend\.venv\Lib\site-packages\jinja2\filters.py:610 [question placeholders] # no automatic escaping?  joining is a lot easier then
+backend\.venv\Lib\site-packages\jinja2\filters.py:766 [question placeholders] ``mailto:address@example.com?cc=copy@example.com``).
+backend\.venv\Lib\site-packages\jinja2\lexer.py:30 [question placeholders] r"('([^'\\]*(?:\\.[^'\\]*)*)'" r'|"([^"\\]*(?:\\.[^"\\]*)*)")', re.S
+backend\.venv\Lib\site-packages\jinja2\lexer.py:35 [question placeholders] 0b(_?[0-1])+ # binary
+backend\.venv\Lib\site-packages\jinja2\lexer.py:37 [question placeholders] 0o(_?[0-7])+ # octal
+backend\.venv\Lib\site-packages\jinja2\lexer.py:39 [question placeholders] 0x(_?[\da-f])+ # hex
+backend\.venv\Lib\site-packages\jinja2\lexer.py:41 [question placeholders] [1-9](_?\d)* # decimal
+backend\.venv\Lib\site-packages\jinja2\lexer.py:43 [question placeholders] 0(_?0)* # decimal zero
+backend\.venv\Lib\site-packages\jinja2\lexer.py:50 [question placeholders] (?<!\.)  # doesn't start with a .
+backend\.venv\Lib\site-packages\jinja2\lexer.py:53 [question placeholders] (\.(\d+_)*\d+)?  # optional fractional part
+backend\.venv\Lib\site-packages\jinja2\lexer.py:54 [question placeholders] e[+\-]?(\d+_)*\d+  # exponent part
+backend\.venv\Lib\site-packages\jinja2\lexer.py:247 [question placeholders] r"(?:^|(?<=\S))[^\S\r\n]*" + e(environment.line_comment_prefix),
+backend\.venv\Lib\site-packages\jinja2\lexer.py:347 [question placeholders] """Are we at the end of the stream?"""
+backend\.venv\Lib\site-packages\jinja2\lexer.py:510 [question placeholders] block_suffix_re = "\\n?" if environment.trim_blocks else ""
+backend\.venv\Lib\site-packages\jinja2\lexer.py:518 [question placeholders] rf"(?P<raw_begin>{block_start_re}(\-|\+|)\s*raw\s*"
+backend\.venv\Lib\site-packages\jinja2\lexer.py:519 [question placeholders] rf"(?:\-{block_end_re}\s*|{block_end_re}))"
+backend\.venv\Lib\site-packages\jinja2\lexer.py:522 [question placeholders] [root_raw_re] + [rf"(?P<{n}>{r}(\-|\+|))" for n, r in root_tag_rules]
+backend\.venv\Lib\site-packages\jinja2\lexer.py:530 [question placeholders] c(rf"(.*?)(?:{root_parts_re})"),
+backend\.venv\Lib\site-packages\jinja2\lexer.py:541 [question placeholders] rf"(.*?)((?:\+{comment_end_re}|\-{comment_end_re}\s*"
+backend\.venv\Lib\site-packages\jinja2\lexer.py:553 [question placeholders] rf"(?:\+{block_end_re}|\-{block_end_re}\s*"
+backend\.venv\Lib\site-packages\jinja2\lexer.py:574 [question placeholders] rf"(.*?)((?:{block_start_re}(\-|\+|))\s*endraw\s*"
+backend\.venv\Lib\site-packages\jinja2\lexer.py:575 [question placeholders] rf"(?:\+{block_end_re}|\-{block_end_re}\s*"
+backend\.venv\Lib\site-packages\jinja2\lexer.py:591 [question placeholders] c(r"(.*?)()(?=\n|$)"),
+backend\.venv\Lib\site-packages\jinja2\parser.py:153 [question placeholders] """Are we at the end of a tuple?"""
+backend\.venv\Lib\site-packages\jinja2\utils.py:203 [question placeholders] (https?://|www\.)  # scheme or www
+backend\.venv\Lib\site-packages\jinja2\utils.py:204 [question placeholders] (([\w%-]+\.)+)?  # subdomain
+backend\.venv\Lib\site-packages\jinja2\utils.py:214 [question placeholders] (https?://)  # scheme
+backend\.venv\Lib\site-packages\jinja2\utils.py:218 [question placeholders] (\[([\da-f]{0,4}:){2}([\da-f]{0,4}:?){1,6}])  # IPv6
+backend\.venv\Lib\site-packages\jinja2\utils.py:221 [question placeholders] (?::[\d]{1,5})?  # port
+backend\.venv\Lib\site-packages\jinja2\utils.py:222 [question placeholders] (?:[/?#]\S*)?  # path, query, and fragment
+backend\.venv\Lib\site-packages\jinja2\utils.py:248 [question placeholders] ``mailto:address@example.com?cc=copy@example.com``).
+backend\.venv\Lib\site-packages\packaging\_manylinux.py:162 [question placeholders] m = re.match(r"(?P<major>[0-9]+)\.(?P<minor>[0-9]+)", version_str)
+backend\.venv\Lib\site-packages\packaging\_manylinux.py:240 [question placeholders] # https://sourceware.org/bugzilla/show_bug.cgi?id=24636
+backend\.venv\Lib\site-packages\packaging\_musllinux.py:75 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\packaging\_parser.py:104 [question placeholders] requirement = WS? IDENTIFIER WS? extras WS? requirement_details
+backend\.venv\Lib\site-packages\packaging\_parser.py:127 [question placeholders] requirement_details = AT URL (WS requirement_marker?)?
+backend\.venv\Lib\site-packages\packaging\_parser.py:128 [question placeholders] | specifier WS? (requirement_marker)?
+backend\.venv\Lib\site-packages\packaging\_parser.py:180 [question placeholders] requirement_marker = SEMICOLON marker WS?
+backend\.venv\Lib\site-packages\packaging\_parser.py:199 [question placeholders] extras = (LEFT_BRACKET wsp* extras_list? wsp* RIGHT_BRACKET)?
+backend\.venv\Lib\site-packages\packaging\_parser.py:245 [question placeholders] specifier = LEFT_PARENTHESIS WS? version_many WS? RIGHT_PARENTHESIS
+backend\.venv\Lib\site-packages\packaging\_parser.py:246 [question placeholders] | WS? version_many WS?
+backend\.venv\Lib\site-packages\packaging\_parser.py:262 [question placeholders] version_many = (SPECIFIER (WS? COMMA WS? SPECIFIER)*)?
+backend\.venv\Lib\site-packages\packaging\_parser.py:316 [question placeholders] marker_atom = WS? LEFT_PARENTHESIS WS? marker WS? RIGHT_PARENTHESIS WS?
+backend\.venv\Lib\site-packages\packaging\_parser.py:317 [question placeholders] | WS? marker_item WS?
+backend\.venv\Lib\site-packages\packaging\_parser.py:338 [question placeholders] marker_item = WS? marker_var WS? marker_op WS? marker_var WS?
+backend\.venv\Lib\site-packages\packaging\_tokenizer.py:71 [question placeholders] |extras?
+backend\.venv\Lib\site-packages\packaging\_tokenizer.py:85 [question placeholders] "VERSION_LOCAL_LABEL_TRAIL": re.compile(r"\+[a-z0-9]+(?:[-_\.][a-z0-9]+)*"),
+backend\.venv\Lib\site-packages\packaging\dependency_groups.py:186 [pragma] else:  # pragma: no cover
+backend\.venv\Lib\site-packages\packaging\direct_url.py:9 [pragma] if TYPE_CHECKING:  # pragma: no cover
+backend\.venv\Lib\site-packages\packaging\direct_url.py:34 [pragma] class _FromMappingProtocol(Protocol):  # pragma: no cover
+backend\.venv\Lib\site-packages\packaging\direct_url.py:79 [question placeholders] r"^\$\{[A-Za-z0-9-_]+\}(:\$\{[A-Za-z0-9-_]+\})?$"
+backend\.venv\Lib\site-packages\packaging\direct_url.py:130 [pragma] self.context = context  # pragma: no cover
+backend\.venv\Lib\site-packages\packaging\direct_url.py:246 [question placeholders] subdirectory: str | None = None  # XXX Path or str?
+backend\.venv\Lib\site-packages\packaging\direct_url.py:285 [question placeholders] # XXX subdirectory must be relative, can we, should we validate that here?
+backend\.venv\Lib\site-packages\packaging\errors.py:15 [pragma] if sys.version_info >= (3, 11):  # pragma: no cover
+backend\.venv\Lib\site-packages\packaging\errors.py:17 [pragma] else:  # pragma: no cover
+backend\.venv\Lib\site-packages\packaging\markers.py:245 [pragma] if isinstance(rhs, str):  # pragma: no cover
+backend\.venv\Lib\site-packages\packaging\markers.py:281 [pragma] else:  # pragma: nocover
+backend\.venv\Lib\site-packages\packaging\pylock.py:30 [pragma] if TYPE_CHECKING:  # pragma: no cover
+backend\.venv\Lib\site-packages\packaging\pylock.py:62 [pragma] class _FromMappingProtocol(Protocol):  # pragma: no cover
+backend\.venv\Lib\site-packages\packaging\pylock.py:905 [pragma] raise NotImplementedError  # pragma: no cover
+backend\.venv\Lib\site-packages\packaging\requirements.py:48 [question placeholders] # TODO: Can we test whether something is contained within a requirement?
+backend\.venv\Lib\site-packages\packaging\requirements.py:49 [question placeholders] #       If so how do we do that? Do we need to test against the _name_ of
+backend\.venv\Lib\site-packages\packaging\requirements.py:50 [question placeholders] #       the thing as well as the version? What about the markers?
+backend\.venv\Lib\site-packages\packaging\requirements.py:51 [question placeholders] # TODO: Can we normalize the name and extra name?
+backend\.venv\Lib\site-packages\packaging\specifiers.py:36 [pragma] from typing import TypeGuard  # pragma: no cover
+backend\.venv\Lib\site-packages\packaging\specifiers.py:119 [question placeholders] """Is ``other`` a version that this boundary sorts above?"""
+backend\.venv\Lib\site-packages\packaging\specifiers.py:169 [pragma] return NotImplemented  # pragma: no cover
+backend\.venv\Lib\site-packages\packaging\specifiers.py:173 [pragma] if not isinstance(other, _LowerBound):  # pragma: no cover
+backend\.venv\Lib\site-packages\packaging\specifiers.py:210 [pragma] return NotImplemented  # pragma: no cover
+backend\.venv\Lib\site-packages\packaging\specifiers.py:214 [pragma] if not isinstance(other, _UpperBound):  # pragma: no cover
+backend\.venv\Lib\site-packages\packaging\specifiers.py:467 [question placeholders] (?:
+backend\.venv\Lib\site-packages\packaging\specifiers.py:468 [question placeholders] (?:
+backend\.venv\Lib\site-packages\packaging\specifiers.py:482 [question placeholders] (?:
+backend\.venv\Lib\site-packages\packaging\specifiers.py:486 [question placeholders] (?:==|!=)            # Only match for equals and not equals
+backend\.venv\Lib\site-packages\packaging\specifiers.py:489 [question placeholders] v?
+backend\.venv\Lib\site-packages\packaging\specifiers.py:490 [question placeholders] (?:[0-9]+!)?          # epoch
+backend\.venv\Lib\site-packages\packaging\specifiers.py:491 [question placeholders] [0-9]+(?:\.[0-9]+)*   # release
+backend\.venv\Lib\site-packages\packaging\specifiers.py:495 [question placeholders] (?:
+backend\.venv\Lib\site-packages\packaging\specifiers.py:498 [question placeholders] (?a:                                  # pre release
+backend\.venv\Lib\site-packages\packaging\specifiers.py:499 [question placeholders] [-_\.]?
+backend\.venv\Lib\site-packages\packaging\specifiers.py:501 [question placeholders] [-_\.]?
+backend\.venv\Lib\site-packages\packaging\specifiers.py:503 [question placeholders] )?
+backend\.venv\Lib\site-packages\packaging\specifiers.py:504 [question placeholders] (?a:                                  # post release
+backend\.venv\Lib\site-packages\packaging\specifiers.py:505 [question placeholders] (?:-[0-9]+)|(?:[-_\.]?(post|rev|r)[-_\.]?[0-9]*)
+backend\.venv\Lib\site-packages\packaging\specifiers.py:506 [question placeholders] )?
+backend\.venv\Lib\site-packages\packaging\specifiers.py:507 [question placeholders] (?a:[-_\.]?dev[-_\.]?[0-9]*)?         # dev release
+backend\.venv\Lib\site-packages\packaging\specifiers.py:508 [question placeholders] (?a:\+[a-z0-9]+(?:[-_\.][a-z0-9]+)*)? # local
+backend\.venv\Lib\site-packages\packaging\specifiers.py:509 [question placeholders] )?
+backend\.venv\Lib\site-packages\packaging\specifiers.py:512 [question placeholders] (?:
+backend\.venv\Lib\site-packages\packaging\specifiers.py:515 [question placeholders] (?:~=)               # Only match for the compatible operator
+backend\.venv\Lib\site-packages\packaging\specifiers.py:518 [question placeholders] v?
+backend\.venv\Lib\site-packages\packaging\specifiers.py:519 [question placeholders] (?:[0-9]+!)?          # epoch
+backend\.venv\Lib\site-packages\packaging\specifiers.py:520 [question placeholders] [0-9]+(?:\.[0-9]+)+   # release  (We have a + instead of a *)
+backend\.venv\Lib\site-packages\packaging\specifiers.py:521 [question placeholders] (?:                   # pre release
+backend\.venv\Lib\site-packages\packaging\specifiers.py:522 [question placeholders] [-_\.]?
+backend\.venv\Lib\site-packages\packaging\specifiers.py:524 [question placeholders] [-_\.]?
+backend\.venv\Lib\site-packages\packaging\specifiers.py:526 [question placeholders] )?
+backend\.venv\Lib\site-packages\packaging\specifiers.py:527 [question placeholders] (?:                                   # post release
+backend\.venv\Lib\site-packages\packaging\specifiers.py:528 [question placeholders] (?:-[0-9]+)|(?:[-_\.]?(post|rev|r)[-_\.]?[0-9]*)
+backend\.venv\Lib\site-packages\packaging\specifiers.py:529 [question placeholders] )?
+backend\.venv\Lib\site-packages\packaging\specifiers.py:530 [question placeholders] (?:[-_\.]?dev[-_\.]?[0-9]*)?          # dev release
+backend\.venv\Lib\site-packages\packaging\specifiers.py:533 [question placeholders] (?:
+backend\.venv\Lib\site-packages\packaging\specifiers.py:538 [question placeholders] (?:<=|>=|<|>)
+backend\.venv\Lib\site-packages\packaging\specifiers.py:541 [question placeholders] v?
+backend\.venv\Lib\site-packages\packaging\specifiers.py:542 [question placeholders] (?:[0-9]+!)?          # epoch
+backend\.venv\Lib\site-packages\packaging\specifiers.py:543 [question placeholders] [0-9]+(?:\.[0-9]+)*   # release
+backend\.venv\Lib\site-packages\packaging\specifiers.py:544 [question placeholders] (?a:                   # pre release
+backend\.venv\Lib\site-packages\packaging\specifiers.py:545 [question placeholders] [-_\.]?
+backend\.venv\Lib\site-packages\packaging\specifiers.py:547 [question placeholders] [-_\.]?
+backend\.venv\Lib\site-packages\packaging\specifiers.py:549 [question placeholders] )?
+backend\.venv\Lib\site-packages\packaging\specifiers.py:550 [question placeholders] (?a:                                   # post release
+backend\.venv\Lib\site-packages\packaging\specifiers.py:551 [question placeholders] (?:-[0-9]+)|(?:[-_\.]?(post|rev|r)[-_\.]?[0-9]*)
+backend\.venv\Lib\site-packages\packaging\specifiers.py:552 [question placeholders] )?
+backend\.venv\Lib\site-packages\packaging\specifiers.py:553 [question placeholders] (?a:[-_\.]?dev[-_\.]?[0-9]*)?          # dev release
+backend\.venv\Lib\site-packages\packaging\specifiers.py:730 [pragma] raise ValueError(f"Unknown operator: {op!r}")  # pragma: no cover
+backend\.venv\Lib\site-packages\packaging\specifiers.py:1195 [question placeholders] _prefix_regex = re.compile(r"([0-9]+)((?:a|b|c|rc)[0-9]+)")
+backend\.venv\Lib\site-packages\packaging\specifiers.py:1331 [pragma] raise ValueError(f"Unknown operator: {op!r}")  # pragma: no cover
+backend\.venv\Lib\site-packages\packaging\specifiers.py:1632 [pragma] if result is None:  # pragma: no cover
+backend\.venv\Lib\site-packages\packaging\tags.py:438 [question placeholders] # pyston, ironpython, others?
+backend\.venv\Lib\site-packages\packaging\tags.py:559 [question placeholders] # TODO: Need to care about 32-bit PPC for ppc64 through 10.2?
+backend\.venv\Lib\site-packages\packaging\utils.py:61 [question placeholders] _normalized_regex = re.compile(r"[a-z0-9]|[a-z0-9]([a-z0-9-](?!--))*[a-z0-9]", re.ASCII)
+backend\.venv\Lib\site-packages\packaging\version.py:29 [pragma] if sys.version_info >= (3, 13):  # pragma: no cover
+backend\.venv\Lib\site-packages\packaging\version.py:33 [pragma] else:  # pragma: no cover
+backend\.venv\Lib\site-packages\packaging\version.py:194 [question placeholders] v?+                                                   # optional leading v
+backend\.venv\Lib\site-packages\packaging\version.py:195 [question placeholders] (?a:
+backend\.venv\Lib\site-packages\packaging\version.py:196 [question placeholders] (?:(?P<epoch>[0-9]+)!)?+                          # epoch
+backend\.venv\Lib\site-packages\packaging\version.py:197 [question placeholders] (?P<release>[0-9]+(?:\.[0-9]+)*+)                 # release segment
+backend\.venv\Lib\site-packages\packaging\version.py:198 [question placeholders] (?P<pre>                                          # pre-release
+backend\.venv\Lib\site-packages\packaging\version.py:199 [question placeholders] [._-]?+
+backend\.venv\Lib\site-packages\packaging\version.py:200 [question placeholders] (?P<pre_l>alpha|a|beta|b|preview|pre|c|rc)
+backend\.venv\Lib\site-packages\packaging\version.py:201 [question placeholders] [._-]?+
+backend\.venv\Lib\site-packages\packaging\version.py:202 [question placeholders] (?P<pre_n>[0-9]+)?
+backend\.venv\Lib\site-packages\packaging\version.py:203 [question placeholders] )?+
+backend\.venv\Lib\site-packages\packaging\version.py:204 [question placeholders] (?P<post>                                         # post release
+backend\.venv\Lib\site-packages\packaging\version.py:205 [question placeholders] (?:-(?P<post_n1>[0-9]+))
+backend\.venv\Lib\site-packages\packaging\version.py:207 [question placeholders] (?:
+backend\.venv\Lib\site-packages\packaging\version.py:208 [question placeholders] [._-]?
+backend\.venv\Lib\site-packages\packaging\version.py:209 [question placeholders] (?P<post_l>post|rev|r)
+backend\.venv\Lib\site-packages\packaging\version.py:210 [question placeholders] [._-]?
+backend\.venv\Lib\site-packages\packaging\version.py:211 [question placeholders] (?P<post_n2>[0-9]+)?
+backend\.venv\Lib\site-packages\packaging\version.py:213 [question placeholders] )?+
+backend\.venv\Lib\site-packages\packaging\version.py:214 [question placeholders] (?P<dev>                                          # dev release
+backend\.venv\Lib\site-packages\packaging\version.py:215 [question placeholders] [._-]?+
+backend\.venv\Lib\site-packages\packaging\version.py:216 [question placeholders] (?P<dev_l>dev)
+backend\.venv\Lib\site-packages\packaging\version.py:217 [question placeholders] [._-]?+
+backend\.venv\Lib\site-packages\packaging\version.py:218 [question placeholders] (?P<dev_n>[0-9]+)?
+backend\.venv\Lib\site-packages\packaging\version.py:219 [question placeholders] )?+
+backend\.venv\Lib\site-packages\packaging\version.py:221 [question placeholders] (?a:\+
+backend\.venv\Lib\site-packages\packaging\version.py:222 [question placeholders] (?P<local>                                        # local version
+backend\.venv\Lib\site-packages\packaging\version.py:224 [question placeholders] (?:[._-][a-z0-9]+)*+
+backend\.venv\Lib\site-packages\packaging\version.py:226 [question placeholders] )?+
+backend\.venv\Lib\site-packages\packaging\version.py:229 [question placeholders] _VERSION_PATTERN_OLD = _VERSION_PATTERN.replace("*+", "*").replace("?+", "?")
+backend\.venv\Lib\site-packages\packaging\version.py:259 [question placeholders] _LOCAL_PATTERN = re.compile(r"[a-z0-9]+(?:[._-][a-z0-9]+)*", re.IGNORECASE | re.ASCII)
+backend\.venv\Lib\site-packages\packaging\version.py:424 [pragma] raise  # pragma: no cover
+backend\.venv\Lib\site-packages\packaging\version.py:1083 [pragma] super().__init__(version)  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_internal\build_env.py:559 [question placeholders] # FIXME: Consider direct URL?
+backend\.venv\Lib\site-packages\pip\_internal\cli\base_command.py:218 [question placeholders] # TODO: Try to get these passing down from the command?
+backend\.venv\Lib\site-packages\pip\_internal\cli\cmdoptions.py:497 [datetime functions] "Accepts an ISO 8601 datetime (e.g., '2023-01-01T00:00:00Z', "
+backend\.venv\Lib\site-packages\pip\_internal\cli\req_command.py:422 [question placeholders] '(maybe you meant "pip {name} {links}"?)'.format(
+backend\.venv\Lib\site-packages\pip\_internal\cli\spinners.py:215 [question placeholders] HIDE_CURSOR = "\x1b[?25l"
+backend\.venv\Lib\site-packages\pip\_internal\cli\spinners.py:216 [question placeholders] SHOW_CURSOR = "\x1b[?25h"
+backend\.venv\Lib\site-packages\pip\_internal\commands\cache.py:238 [question placeholders] #     {distribution}-{version}(-{build})?-{python}-{abi}-{platform}.whl
+backend\.venv\Lib\site-packages\pip\_internal\commands\inspect.py:60 [question placeholders] # TODO tags? scheme?
+backend\.venv\Lib\site-packages\pip\_internal\configuration.py:64 [question placeholders] f"Perhaps you wanted to use 'global.{name}' instead?"
+backend\.venv\Lib\site-packages\pip\_internal\index\package_finder.py:127 [question placeholders] _py_version_re = re.compile(r"-py([123]\.?[0-9]?)$")
+backend\.venv\Lib\site-packages\pip\_internal\locations\__init__.py:128 [question placeholders] (fortunately?) done quite unconditionally, so we create a default command
+backend\.venv\Lib\site-packages\pip\_internal\locations\_distutils.py:157 [question placeholders] # buildout uses 'bin' on Windows too?
+backend\.venv\Lib\site-packages\pip\_internal\metadata\base.py:162 [question placeholders] # TODO: this property is relatively costly to compute, memoize it ?
+backend\.venv\Lib\site-packages\pip\_internal\models\installation_report.py:54 [question placeholders] # --platform, perhaps under the form of an environment_override field?
+backend\.venv\Lib\site-packages\pip\_internal\models\link.py:173 [question placeholders] # `scheme://netloc/path?query#fragment`.
+backend\.venv\Lib\site-packages\pip\_internal\models\link.py:521 [question placeholders] return posixpath.basename(self._url.split("#", 1)[0].split("?", 1)[0])
+backend\.venv\Lib\site-packages\pip\_internal\operations\install\wheel.py:316 [question placeholders] pip_ep = [k for k in console if re.match(r"pip(\d+(\.\d+)?)?$", k)]
+backend\.venv\Lib\site-packages\pip\_internal\operations\install\wheel.py:329 [question placeholders] k for k in console if re.match(r"easy_install(-\d+\.\d+)?$", k)
+backend\.venv\Lib\site-packages\pip\_internal\operations\prepare.py:111 [question placeholders] # If a download dir is specified, is the file already downloaded there?
+backend\.venv\Lib\site-packages\pip\_internal\operations\prepare.py:132 [question placeholders] # If a download dir is specified, is the file already there and valid?
+backend\.venv\Lib\site-packages\pip\_internal\operations\prepare.py:209 [question placeholders] # If already downloaded, does its hash match?
+backend\.venv\Lib\site-packages\pip\_internal\operations\prepare.py:260 [question placeholders] # Is build isolation allowed?
+backend\.venv\Lib\site-packages\pip\_internal\operations\prepare.py:264 [question placeholders] # Should check build dependencies?
+backend\.venv\Lib\site-packages\pip\_internal\operations\prepare.py:267 [question placeholders] # Should hash-checking be required?
+backend\.venv\Lib\site-packages\pip\_internal\operations\prepare.py:270 [question placeholders] # Should install in user site-packages?
+backend\.venv\Lib\site-packages\pip\_internal\operations\prepare.py:273 [question placeholders] # Should wheels be downloaded lazily?
+backend\.venv\Lib\site-packages\pip\_internal\operations\prepare.py:276 [question placeholders] # How verbose should underlying tooling be?
+backend\.venv\Lib\site-packages\pip\_internal\operations\prepare.py:279 [question placeholders] # Are we using the legacy resolver?
+backend\.venv\Lib\site-packages\pip\_internal\req\constructors.py:84 [question placeholders] r"([\w\t .-]+)(\[[^\]]*\])?(.*)",
+backend\.venv\Lib\site-packages\pip\_internal\req\constructors.py:408 [question placeholders] add_msg = "= is not a valid operator. Did you mean == ?"
+backend\.venv\Lib\site-packages\pip\_internal\req\pep723.py:6 [question placeholders] REGEX = r"(?m)^# /// (?P<type>[a-zA-Z0-9-]+)$\s(?P<content>(^#(| .*)$\s)+)^# ///$"
+backend\.venv\Lib\site-packages\pip\_internal\req\req_file.py:48 [question placeholders] ENV_VAR_RE = re.compile(r"(?P<var>\$\{(?P<name>[A-Z0-9_]+)\})")
+backend\.venv\Lib\site-packages\pip\_internal\req\req_install.py:232 [question placeholders] # Things that are valid for all kinds of requirements?
+backend\.venv\Lib\site-packages\pip\_internal\req\req_install.py:360 [question placeholders] # FIXME: Is there a better place to create the build_dir? (hg and bzr
+backend\.venv\Lib\site-packages\pip\_internal\req\req_uninstall.py:407 [question placeholders] return ask("Proceed (Y/n)? ", ("y", "n", "")) != "n"
+backend\.venv\Lib\site-packages\pip\_internal\resolution\legacy\resolver.py:375 [question placeholders] # Why don't we just raise here?
+backend\.venv\Lib\site-packages\pip\_internal\resolution\resolvelib\factory.py:672 [question placeholders] # TODO: Are there more cases this needs to return True? Editable?
+backend\.venv\Lib\site-packages\pip\_internal\resolution\resolvelib\provider.py:263 [question placeholders] """Are upgrades allowed for this project?
+backend\.venv\Lib\site-packages\pip\_internal\self_outdated_check.py:191 [question placeholders] logger.debug("Was pip installed by pip? %s", installed_by_pip)
+backend\.venv\Lib\site-packages\pip\_internal\utils\compatibility_tags.py:43 [question placeholders] # arch pattern didn't match (?!)
+backend\.venv\Lib\site-packages\pip\_internal\utils\compatibility_tags.py:63 [question placeholders] # arch pattern didn't match (?!)
+backend\.venv\Lib\site-packages\pip\_internal\utils\compatibility_tags.py:74 [question placeholders] # arch pattern didn't match (?!)
+backend\.venv\Lib\site-packages\pip\_internal\utils\misc.py:288 [question placeholders] """Is path is a directory containing pyproject.toml or setup.py?
+backend\.venv\Lib\site-packages\pip\_internal\utils\misc.py:611 [question placeholders] """Is this console interactive?"""
+backend\.venv\Lib\site-packages\pip\_internal\utils\unpacking.py:105 [question placeholders] # user/group/world?
+backend\.venv\Lib\site-packages\pip\_internal\utils\unpacking.py:329 [question placeholders] # member have any execute permissions for user/group/world?
+backend\.venv\Lib\site-packages\pip\_internal\utils\virtualenv.py:11 [question placeholders] r"include-system-site-packages\s*=\s*(?P<value>true|false)"
+backend\.venv\Lib\site-packages\pip\_internal\vcs\git.py:36 [question placeholders] r"(?:\.(\d+))?"  # Optional dot, patch.
+backend\.venv\Lib\site-packages\pip\_internal\vcs\git.py:46 [question placeholders] (\w+@)?
+backend\.venv\Lib\site-packages\pip\_internal\vcs\subversion.py:60 [question placeholders] # FIXME: should we warn?
+backend\.venv\Lib\site-packages\pip\_internal\vcs\subversion.py:148 [question placeholders] elif data.startswith("<?xml"):
+backend\.venv\Lib\site-packages\pip\_internal\vcs\versioncontrol.py:557 [question placeholders] response = ask_path_exists(f"What to do?  {prompt[0]}", prompt[1])
+backend\.venv\Lib\site-packages\pip\_internal\vcs\versioncontrol.py:658 [question placeholders] f"{cls.name!r} installed and in your PATH?"
+backend\.venv\Lib\site-packages\pip\_vendor\cachecontrol\controller.py:34 [question placeholders] URI = re.compile(r"^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?")
+backend\.venv\Lib\site-packages\pip\_vendor\cachecontrol\controller.py:80 [question placeholders] request_uri = query and "?".join([path, query]) or path
+backend\.venv\Lib\site-packages\pip\_vendor\cachecontrol\controller.py:236 [pragma] # Check the max-age pragma in the cache control header
+backend\.venv\Lib\site-packages\pip\_vendor\cachecontrol\heuristics.py:73 [datetime functions] date=datetime(*date[:6], tzinfo=timezone.utc),  # type: ignore[index,misc]
+backend\.venv\Lib\site-packages\pip\_vendor\cachecontrol\heuristics.py:154 [datetime functions] return {"expires": time.strftime(TIME_FMT, time.gmtime(expires))}
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\__init__.py:18 [pragma] except ImportError:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\compat.py:16 [pragma] except ImportError:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\compat.py:19 [pragma] if sys.version_info[0] < 3:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\compat.py:63 [pragma] else:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\compat.py:91 [pragma] except ImportError:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\compat.py:190 [pragma] except ImportError:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\compat.py:203 [pragma] except ImportError:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\compat.py:272 [pragma] if hasattr(BaseZipFile, '__enter__'):  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\compat.py:274 [pragma] else:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\compat.py:305 [pragma] except ImportError:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\compat.py:322 [pragma] except NameError:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\compat.py:332 [pragma] except AttributeError:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\compat.py:366 [pragma] except ImportError:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\compat.py:487 [pragma] except ImportError:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\compat.py:630 [pragma] except ImportError:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\compat.py:645 [pragma] except ImportError:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\compat.py:912 [pragma] except ImportError:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\compat.py:1009 [question placeholders] CONVERT_PATTERN = re.compile(r'^(?P<prefix>[a-z]+)://(?P<suffix>.*)$')
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\resources.py:36 [question placeholders] Is the cache stale for the given resource?
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\scripts.py:23 [question placeholders] <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\scripts.py:41 [question placeholders] FIRST_LINE_RE = re.compile(b'^#!.*pythonw?[0-9.]*([ \t].*)?$')
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\scripts.py:47 [question placeholders] sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\scripts.py:115 [pragma] if options.get('gui', False) and self._is_nt:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\scripts.py:121 [pragma] if sys.platform.startswith('java'):  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\scripts.py:190 [pragma] elif in_venv():  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\scripts.py:192 [pragma] else:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\scripts.py:205 [pragma] if sys.platform.startswith('java'):  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\scripts.py:226 [pragma] '-X:FullFrames' not in post_interp):  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\scripts.py:236 [pragma] except UnicodeDecodeError:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\scripts.py:244 [pragma] except UnicodeDecodeError:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\scripts.py:263 [pragma] else:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\scripts.py:281 [pragma] if use_launcher:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\scripts.py:304 [pragma] if self._is_nt and not outname.endswith('.' + ext):  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\scripts.py:355 [pragma] except IOError:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\scripts.py:361 [pragma] if not first_line:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\scripts.py:383 [pragma] if b'pythonw' in first_line:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\scripts.py:400 [pragma] if os.name == 'nt' or (os.name == 'java' and os._name == 'nt'):  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\util.py:19 [pragma] except ImportError:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\util.py:29 [pragma] except ImportError:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\util.py:46 [question placeholders] COMPARE_OP = re.compile(r'^(<=?|>=?|={2,3}|[~!]=)\s*')
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\util.py:47 [question placeholders] MARKER_OP = re.compile(r'^((<=?)|(>=?)|={2,3}|[~!]=|in|not\s+in)\s*')
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\util.py:51 [question placeholders] STRING_CHUNK = re.compile(r'([\s\w\.{}()*+#:;,/?!~`@$%^&=|<>\[\]-]+)')
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\util.py:699 [pragma] def __repr__(self):  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\util.py:714 [question placeholders] r'''(?P<name>([^\[]\S*))
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\util.py:715 [question placeholders] \s*=\s*(?P<callable>(\w+)([:\.]\w+)*)
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\util.py:716 [question placeholders] \s*(\[\s*(?P<flags>[\w-]+(=\w+)?(,\s*\w+(=\w+)?)*)\s*\])?
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\util.py:849 [question placeholders] PYTHON_VERSION = re.compile(r'-py(\d\.?\d?)')
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\util.py:878 [question placeholders] NAME_VERSION_RE = re.compile(r'(?P<name>[\w .-]+)\s*'
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\util.py:879 [question placeholders] r'\(\s*(?P<ver>[^\s)]+)\)$')
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\util.py:978 [pragma] if not os.path.isdir(base):  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\util.py:1116 [pragma] except KeyError:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\util.py:1121 [pragma] except KeyError:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\util.py:1248 [pragma] else:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\util.py:1356 [question placeholders] result = ' ?? %'
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\util.py:1364 [question placeholders] result = '??:??:??'
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\util.py:1368 [datetime functions] result = time.strftime('%H:%M:%S', time.gmtime(duration))
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\util.py:1486 [pragma] except CertificateError:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\util.py:1898 [question placeholders] linux-alpha (?)
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\util.py:1922 [question placeholders] # XXX what about the architecture? NT is Intel or Alpha,
+backend\.venv\Lib\site-packages\pip\_vendor\distlib\util.py:1938 [question placeholders] # XXX what about Alpha, SPARC, etc?
+backend\.venv\Lib\site-packages\pip\_vendor\distro\distro.py:119 [question placeholders] r"(?:[^)]*\)(.*)\()? *(?:STL )?([\d.+\-a-z]*\d) *(?:esaeler *)?(.+)"
+backend\.venv\Lib\site-packages\pip\_vendor\distro\distro.py:935 [question placeholders] version_regex = re.compile(r"(\d+)\.?(\d+)?\.?(\d+)?")
+backend\.venv\Lib\site-packages\pip\_vendor\idna\intranges.py:5 [question placeholders] in the original list?" in time O(log(# runs)).
+backend\.venv\Lib\site-packages\pip\_vendor\idna\uts46data.py:2286 [question placeholders] (0x2047, "M", "??"),
+backend\.venv\Lib\site-packages\pip\_vendor\idna\uts46data.py:2287 [question placeholders] (0x2048, "M", "?!"),
+backend\.venv\Lib\site-packages\pip\_vendor\idna\uts46data.py:2288 [question placeholders] (0x2049, "M", "!?"),
+backend\.venv\Lib\site-packages\pip\_vendor\idna\uts46data.py:5251 [question placeholders] (0xFE16, "M", "?"),
+backend\.venv\Lib\site-packages\pip\_vendor\idna\uts46data.py:5291 [question placeholders] (0xFE56, "M", "?"),
+backend\.venv\Lib\site-packages\pip\_vendor\idna\uts46data.py:5408 [question placeholders] (0xFF1F, "M", "?"),
+backend\.venv\Lib\site-packages\pip\_vendor\msgpack\fallback.py:156 [datetime functions] 3 - datetime.datetime  (UTC).
+backend\.venv\Lib\site-packages\pip\_vendor\msgpack\fallback.py:499 [question placeholders] # TODO should we eliminate the recursion?
+backend\.venv\Lib\site-packages\pip\_vendor\msgpack\fallback.py:511 [question placeholders] # TODO is the interaction between `list_hook` and `use_list` ok?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\_manylinux.py:162 [question placeholders] m = re.match(r"(?P<major>[0-9]+)\.(?P<minor>[0-9]+)", version_str)
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\_manylinux.py:240 [question placeholders] # https://sourceware.org/bugzilla/show_bug.cgi?id=24636
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\_musllinux.py:75 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\_parser.py:104 [question placeholders] requirement = WS? IDENTIFIER WS? extras WS? requirement_details
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\_parser.py:127 [question placeholders] requirement_details = AT URL (WS requirement_marker?)?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\_parser.py:128 [question placeholders] | specifier WS? (requirement_marker)?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\_parser.py:180 [question placeholders] requirement_marker = SEMICOLON marker WS?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\_parser.py:199 [question placeholders] extras = (LEFT_BRACKET wsp* extras_list? wsp* RIGHT_BRACKET)?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\_parser.py:245 [question placeholders] specifier = LEFT_PARENTHESIS WS? version_many WS? RIGHT_PARENTHESIS
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\_parser.py:246 [question placeholders] | WS? version_many WS?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\_parser.py:262 [question placeholders] version_many = (SPECIFIER (WS? COMMA WS? SPECIFIER)*)?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\_parser.py:316 [question placeholders] marker_atom = WS? LEFT_PARENTHESIS WS? marker WS? RIGHT_PARENTHESIS WS?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\_parser.py:317 [question placeholders] | WS? marker_item WS?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\_parser.py:338 [question placeholders] marker_item = WS? marker_var WS? marker_op WS? marker_var WS?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\_tokenizer.py:71 [question placeholders] |extras?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\_tokenizer.py:85 [question placeholders] "VERSION_LOCAL_LABEL_TRAIL": re.compile(r"\+[a-z0-9]+(?:[-_\.][a-z0-9]+)*"),
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\dependency_groups.py:186 [pragma] else:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\direct_url.py:9 [pragma] if TYPE_CHECKING:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\direct_url.py:34 [pragma] class _FromMappingProtocol(Protocol):  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\direct_url.py:79 [question placeholders] r"^\$\{[A-Za-z0-9-_]+\}(:\$\{[A-Za-z0-9-_]+\})?$"
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\direct_url.py:130 [pragma] self.context = context  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\direct_url.py:246 [question placeholders] subdirectory: str | None = None  # XXX Path or str?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\direct_url.py:285 [question placeholders] # XXX subdirectory must be relative, can we, should we validate that here?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\errors.py:15 [pragma] if sys.version_info >= (3, 11):  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\errors.py:17 [pragma] else:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\markers.py:245 [pragma] if isinstance(rhs, str):  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\markers.py:281 [pragma] else:  # pragma: nocover
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\pylock.py:30 [pragma] if TYPE_CHECKING:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\pylock.py:62 [pragma] class _FromMappingProtocol(Protocol):  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\pylock.py:905 [pragma] raise NotImplementedError  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\requirements.py:48 [question placeholders] # TODO: Can we test whether something is contained within a requirement?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\requirements.py:49 [question placeholders] #       If so how do we do that? Do we need to test against the _name_ of
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\requirements.py:50 [question placeholders] #       the thing as well as the version? What about the markers?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\requirements.py:51 [question placeholders] # TODO: Can we normalize the name and extra name?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:36 [pragma] from typing import TypeGuard  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:119 [question placeholders] """Is ``other`` a version that this boundary sorts above?"""
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:169 [pragma] return NotImplemented  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:173 [pragma] if not isinstance(other, _LowerBound):  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:210 [pragma] return NotImplemented  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:214 [pragma] if not isinstance(other, _UpperBound):  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:467 [question placeholders] (?:
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:468 [question placeholders] (?:
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:482 [question placeholders] (?:
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:486 [question placeholders] (?:==|!=)            # Only match for equals and not equals
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:489 [question placeholders] v?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:490 [question placeholders] (?:[0-9]+!)?          # epoch
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:491 [question placeholders] [0-9]+(?:\.[0-9]+)*   # release
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:495 [question placeholders] (?:
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:498 [question placeholders] (?a:                                  # pre release
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:499 [question placeholders] [-_\.]?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:501 [question placeholders] [-_\.]?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:503 [question placeholders] )?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:504 [question placeholders] (?a:                                  # post release
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:505 [question placeholders] (?:-[0-9]+)|(?:[-_\.]?(post|rev|r)[-_\.]?[0-9]*)
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:506 [question placeholders] )?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:507 [question placeholders] (?a:[-_\.]?dev[-_\.]?[0-9]*)?         # dev release
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:508 [question placeholders] (?a:\+[a-z0-9]+(?:[-_\.][a-z0-9]+)*)? # local
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:509 [question placeholders] )?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:512 [question placeholders] (?:
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:515 [question placeholders] (?:~=)               # Only match for the compatible operator
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:518 [question placeholders] v?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:519 [question placeholders] (?:[0-9]+!)?          # epoch
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:520 [question placeholders] [0-9]+(?:\.[0-9]+)+   # release  (We have a + instead of a *)
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:521 [question placeholders] (?:                   # pre release
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:522 [question placeholders] [-_\.]?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:524 [question placeholders] [-_\.]?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:526 [question placeholders] )?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:527 [question placeholders] (?:                                   # post release
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:528 [question placeholders] (?:-[0-9]+)|(?:[-_\.]?(post|rev|r)[-_\.]?[0-9]*)
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:529 [question placeholders] )?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:530 [question placeholders] (?:[-_\.]?dev[-_\.]?[0-9]*)?          # dev release
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:533 [question placeholders] (?:
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:538 [question placeholders] (?:<=|>=|<|>)
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:541 [question placeholders] v?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:542 [question placeholders] (?:[0-9]+!)?          # epoch
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:543 [question placeholders] [0-9]+(?:\.[0-9]+)*   # release
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:544 [question placeholders] (?a:                   # pre release
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:545 [question placeholders] [-_\.]?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:547 [question placeholders] [-_\.]?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:549 [question placeholders] )?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:550 [question placeholders] (?a:                                   # post release
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:551 [question placeholders] (?:-[0-9]+)|(?:[-_\.]?(post|rev|r)[-_\.]?[0-9]*)
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:552 [question placeholders] )?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:553 [question placeholders] (?a:[-_\.]?dev[-_\.]?[0-9]*)?          # dev release
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:730 [pragma] raise ValueError(f"Unknown operator: {op!r}")  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:1195 [question placeholders] _prefix_regex = re.compile(r"([0-9]+)((?:a|b|c|rc)[0-9]+)")
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:1331 [pragma] raise ValueError(f"Unknown operator: {op!r}")  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\specifiers.py:1632 [pragma] if result is None:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\tags.py:438 [question placeholders] # pyston, ironpython, others?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\tags.py:559 [question placeholders] # TODO: Need to care about 32-bit PPC for ppc64 through 10.2?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\utils.py:61 [question placeholders] _normalized_regex = re.compile(r"[a-z0-9]|[a-z0-9]([a-z0-9-](?!--))*[a-z0-9]", re.ASCII)
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:29 [pragma] if sys.version_info >= (3, 13):  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:33 [pragma] else:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:194 [question placeholders] v?+                                                   # optional leading v
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:195 [question placeholders] (?a:
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:196 [question placeholders] (?:(?P<epoch>[0-9]+)!)?+                          # epoch
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:197 [question placeholders] (?P<release>[0-9]+(?:\.[0-9]+)*+)                 # release segment
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:198 [question placeholders] (?P<pre>                                          # pre-release
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:199 [question placeholders] [._-]?+
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:200 [question placeholders] (?P<pre_l>alpha|a|beta|b|preview|pre|c|rc)
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:201 [question placeholders] [._-]?+
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:202 [question placeholders] (?P<pre_n>[0-9]+)?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:203 [question placeholders] )?+
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:204 [question placeholders] (?P<post>                                         # post release
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:205 [question placeholders] (?:-(?P<post_n1>[0-9]+))
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:207 [question placeholders] (?:
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:208 [question placeholders] [._-]?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:209 [question placeholders] (?P<post_l>post|rev|r)
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:210 [question placeholders] [._-]?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:211 [question placeholders] (?P<post_n2>[0-9]+)?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:213 [question placeholders] )?+
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:214 [question placeholders] (?P<dev>                                          # dev release
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:215 [question placeholders] [._-]?+
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:216 [question placeholders] (?P<dev_l>dev)
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:217 [question placeholders] [._-]?+
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:218 [question placeholders] (?P<dev_n>[0-9]+)?
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:219 [question placeholders] )?+
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:221 [question placeholders] (?a:\+
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:222 [question placeholders] (?P<local>                                        # local version
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:224 [question placeholders] (?:[._-][a-z0-9]+)*+
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:226 [question placeholders] )?+
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:229 [question placeholders] _VERSION_PATTERN_OLD = _VERSION_PATTERN.replace("*+", "*").replace("?+", "?")
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:259 [question placeholders] _LOCAL_PATTERN = re.compile(r"[a-z0-9]+(?:[._-][a-z0-9]+)*", re.IGNORECASE | re.ASCII)
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:424 [pragma] raise  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\packaging\version.py:1083 [pragma] super().__init__(version)  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:143 [question placeholders] _PEP440_FALLBACK = re.compile(r"^v?(?P<safe>(?:[0-9]+!)?[0-9]+(?:\.[0-9]+)*)", re.I)
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:483 [question placeholders] """Can code for the `provided` platform run on the `required` platform?
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:498 [question placeholders] # is this a Mac package?
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:517 [question placeholders] # are they the same major version and machine type?
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:521 [question placeholders] # is the required OS major update >= the provided one?
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:570 [question placeholders] """Does the package's distribution contain the named metadata?"""
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:582 [question placeholders] """Is the named metadata a directory?  (like ``os.path.isdir()``)"""
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:616 [question placeholders] """Does the package contain the named resource?"""
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:619 [question placeholders] """Is the named resource a directory?  (like ``os.path.isdir()``)"""
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:1157 [question placeholders] """Is distribution `dist` acceptable for this environment?
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:1352 [question placeholders] """Does the named resource exist?"""
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:1356 [question placeholders] """Is the named resource an existing directory?"""
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:1404 [question placeholders] Perhaps your account does not have write access to this directory?
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:1563 [question placeholders] >>> parse_version(_forgiving_version('42.+?1'))
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:2608 [pragma] def _cygwin_patch(filename: StrOrBytesPath):  # pragma: nocover
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:2669 [question placeholders] (?P<name>[^-]+) (
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:2670 [question placeholders] -(?P<ver>[^-]+) (
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:2671 [question placeholders] -py(?P<pyver>[^-]+) (
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:2672 [question placeholders] -(?P<plat>.+)
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:2673 [question placeholders] )?
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:2674 [question placeholders] )?
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:2675 [question placeholders] )?
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:2777 [question placeholders] r'(?P<name>.+?)\s*'
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:2779 [question placeholders] r'(?P<module>[\w.]+)\s*'
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:2780 [question placeholders] r'(:\s*(?P<attr>[\w.]+))?\s*'
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:2781 [question placeholders] r'(?P<extras>\[.*\])?\s*$'
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:3352 [question placeholders] EQEQ = re.compile(r"([\(,])\s*(\d.*?)\s*([,\)])")
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:3582 [pragma] except UnicodeDecodeError:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\pkg_resources\__init__.py:3598 [question placeholders] # TODO: Add a deadline?
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexer.py:26 [question placeholders] line_re = re.compile('.*?\n')
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexer.py:808 [question placeholders] # altered the state stack?
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\__init__.py:295 [question placeholders] # - is primary filename pattern?
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:68 [question placeholders] (r'%(\(\w+\))?[-#0 +]*([0-9]+|[*])?(\.([0-9]+|[*]))?'
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:69 [question placeholders] '[hlL]?[E-GXc-giorsaux%]', String.Interpol),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:72 [question placeholders] r'((\w+)((\.\w+)|(\[[^\]]+\]))*)?'  # field name
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:73 [question placeholders] r'(\![sra])?'                       # conversion
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:74 [question placeholders] r'(\:(.?[<>=\^])?[-+ ]?#?0?(\d+)?,?(\.\d+)?[E-GXb-gnosx%]?)?'
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:102 [question placeholders] (r'^(\s*)([rRuUbB]{,2})("""(?:.|\n)*?""")',
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:104 [question placeholders] (r"^(\s*)([rRuUbB]{,2})('''(?:.|\n)*?''')",
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:112 [question placeholders] (r'(def)((?:\s|\\\s)+)', bygroups(Keyword, Whitespace), 'funcname'),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:113 [question placeholders] (r'(class)((?:\s|\\\s)+)', bygroups(Keyword, Whitespace), 'classname'),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:114 [question placeholders] (r'(from)((?:\s|\\\s)+)', bygroups(Keyword.Namespace, Whitespace),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:116 [question placeholders] (r'(import)((?:\s|\\\s)+)', bygroups(Keyword.Namespace, Whitespace),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:122 [question placeholders] ('(?i)(rf|fr)(""")',
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:125 [question placeholders] ("(?i)(rf|fr)(''')",
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:128 [question placeholders] ('(?i)(rf|fr)(")',
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:131 [question placeholders] ("(?i)(rf|fr)(')",
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:144 [question placeholders] ('(?i)(rb|br|r)(""")',
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:146 [question placeholders] ("(?i)(rb|br|r)(''')",
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:148 [question placeholders] ('(?i)(rb|br|r)(")',
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:150 [question placeholders] ("(?i)(rb|br|r)(')",
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:153 [question placeholders] ('([uU]?)(""")', bygroups(String.Affix, String.Double),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:155 [question placeholders] ("([uU]?)(''')", bygroups(String.Affix, String.Single),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:157 [question placeholders] ('([uU]?)(")', bygroups(String.Affix, String.Double),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:159 [question placeholders] ("([uU]?)(')", bygroups(String.Affix, String.Single),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:185 [question placeholders] (r'(=\s*)?'         # debug (https://bugs.python.org/issue36817)
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:186 [question placeholders] r'(\![sraf])?'     # conversion
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:190 [question placeholders] (r'(=\s*)?'         # debug (https://bugs.python.org/issue36817)
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:191 [question placeholders] r'(\![sraf])?'     # conversion
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:223 [question placeholders] r'(?![ \t]*(?:'           # not followed by...
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:224 [question placeholders] r'[:,;=^&|@~)\]}]|(?:' +  # characters and keywords that mean this isn't
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:245 [question placeholders] 'tuple', 'type', 'vars', 'zip'), prefix=r'(?<!\.)', suffix=r'\b'),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:247 [question placeholders] (r'(?<!\.)(self|Ellipsis|NotImplemented|cls)\b', Name.Builtin.Pseudo),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:272 [question placeholders] prefix=r'(?<!\.)', suffix=r'\b'),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:310 [question placeholders] (r'(\d(?:_?\d)*\.(?:\d(?:_?\d)*)?|(?:\d(?:_?\d)*)?\.\d(?:_?\d)*)'
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:311 [question placeholders] r'([eE][+-]?\d(?:_?\d)*)?', Number.Float),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:312 [question placeholders] (r'\d(?:_?\d)*[eE][+-]?\d(?:_?\d)*j?', Number.Float),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:313 [question placeholders] (r'0[oO](?:_?[0-7])+', Number.Oct),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:314 [question placeholders] (r'0[bB](?:_?[01])+', Number.Bin),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:315 [question placeholders] (r'0[xX](?:_?[a-fA-F0-9])+', Number.Hex),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:316 [question placeholders] (r'\d(?:_?\d)*', Number.Integer),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:359 [question placeholders] (r'\\(N\{.*?\}|u[a-fA-F0-9]{4}|U[a-fA-F0-9]{8})', String.Escape),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:409 [question placeholders] return shebang_matches(text, r'pythonw?(3(\.\d)?)?') or \
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:436 [question placeholders] (r'%(\(\w+\))?[-#0 +]*([0-9]+|[*])?(\.([0-9]+|[*]))?'
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:437 [question placeholders] '[hlL]?[E-GXc-giorsux%]', String.Interpol),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:449 [question placeholders] (r'^(\s*)([rRuUbB]{,2})("""(?:.|\n)*?""")',
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:451 [question placeholders] (r"^(\s*)([rRuUbB]{,2})('''(?:.|\n)*?''')",
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:462 [question placeholders] (r'(def)((?:\s|\\\s)+)', bygroups(Keyword, Whitespace), 'funcname'),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:463 [question placeholders] (r'(class)((?:\s|\\\s)+)', bygroups(Keyword, Whitespace), 'classname'),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:464 [question placeholders] (r'(from)((?:\s|\\\s)+)', bygroups(Keyword.Namespace, Whitespace),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:466 [question placeholders] (r'(import)((?:\s|\\\s)+)', bygroups(Keyword.Namespace, Whitespace),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:480 [question placeholders] ('([uUbB]?)(""")', bygroups(String.Affix, String.Double),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:482 [question placeholders] ("([uUbB]?)(''')", bygroups(String.Affix, String.Single),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:484 [question placeholders] ('([uUbB]?)(")', bygroups(String.Affix, String.Double),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:486 [question placeholders] ("([uUbB]?)(')", bygroups(String.Affix, String.Single),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:512 [question placeholders] prefix=r'(?<!\.)', suffix=r'\b'),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:514 [question placeholders] (r'(?<!\.)(self|None|Ellipsis|NotImplemented|False|True|cls'
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:530 [question placeholders] 'WindowsError', 'ZeroDivisionError'), prefix=r'(?<!\.)', suffix=r'\b'),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:565 [question placeholders] (r'(\d+\.\d*|\d*\.\d+)([eE][+-]?[0-9]+)?j?', Number.Float),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:566 [question placeholders] (r'\d+[eE][+-]?[0-9]+j?', Number.Float),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:567 [question placeholders] (r'0[0-7]+j?', Number.Oct),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:571 [question placeholders] (r'\d+j?', Number.Integer)
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:574 [question placeholders] ('`.*?`', String.Backtick),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:589 [question placeholders] (r'(?:[ \t]|\\\n)+', Text),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:596 [question placeholders] (r'(?:[ \t]|\\\n)+', Text),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:608 [question placeholders] (r'\\([\\abfnrtv"\']|\n|N\{.*?\}|u[a-fA-F0-9]{4}|'
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:636 [question placeholders] return shebang_matches(text, r'pythonw?2(\.\d)?')
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:655 [question placeholders] (r'(\^C)?Traceback \(most recent call last\):\n', Other.Traceback, 'traceback'),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:669 [question placeholders] (r'(?=>>>( |$))', Text, '#pop'),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:744 [question placeholders] (r'^(\^C)?Traceback \(most recent call last\):\n', Generic.Traceback, 'intb'),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:749 [question placeholders] (r'^(?=  File "[^"]+", line \d+)', Generic.Traceback, 'intb'),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:763 [question placeholders] (r'^([a-zA-Z_][\w.]*)(:?\n)',
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:802 [question placeholders] (r'^(\^C)?(Traceback.*\n)',
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:805 [question placeholders] (r'^(?=  File "[^"]+", line \d+)', Generic.Traceback, 'intb'),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:819 [question placeholders] (r'^([a-zA-Z_]\w*)(:?\n)',
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:845 [question placeholders] (r'^(\s*)("""(?:.|\n)*?""")', bygroups(Whitespace, String.Doc)),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:846 [question placeholders] (r"^(\s*)('''(?:.|\n)*?''')", bygroups(Whitespace, String.Doc)),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:853 [question placeholders] (r'(<)([a-zA-Z0-9.?]+)(>)',
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:855 [question placeholders] (r'!=|==|<<|>>|[-~+/*%=<>&^|.?]', Operator),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:861 [question placeholders] (r'(cp?def)(\s+)', bygroups(Keyword, Whitespace), 'cdef'),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:866 [question placeholders] (r'(c?import)(\s+)', bygroups(Keyword, Whitespace), 'import'),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:869 [question placeholders] ('(?:[rR]|[uU][rR]|[rR][uU])"""', String, 'tdqs'),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:870 [question placeholders] ("(?:[rR]|[uU][rR]|[rR][uU])'''", String, 'tsqs'),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:871 [question placeholders] ('(?:[rR]|[uU][rR]|[rR][uU])"', String, 'dqs'),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:872 [question placeholders] ("(?:[rR]|[uU][rR]|[rR][uU])'", String, 'sqs'),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:873 [question placeholders] ('[uU]?"""', String, combined('stringescape', 'tdqs')),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:874 [question placeholders] ("[uU]?'''", String, combined('stringescape', 'tsqs')),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:875 [question placeholders] ('[uU]?"', String, combined('stringescape', 'dqs')),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:876 [question placeholders] ("[uU]?'", String, combined('stringescape', 'sqs')),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:883 [question placeholders] 'else', 'except', 'except?', 'exec', 'finally', 'for', 'fused', 'gil',
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:902 [question placeholders] 'vars', 'xrange', 'zip'), prefix=r'(?<!\.)', suffix=r'\b'),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:904 [question placeholders] (r'(?<!\.)(self|None|Ellipsis|NotImplemented|False|True|NULL'
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:920 [question placeholders] 'ZeroDivisionError'), prefix=r'(?<!\.)', suffix=r'\b'),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:924 [question placeholders] (r'(\d+\.?\d*|\d*\.\d+)([eE][+-]?[0-9]+)?', Number.Float),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:931 [question placeholders] ('`.*?`', String.Backtick),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:943 [question placeholders] (r'([a-zA-Z_]\w*)(\s*)(?=[(:#=]|$)',
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:950 [question placeholders] (r'(?=["\'])', Text, '#pop'),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:964 [question placeholders] (r'(\s+)(c?import)\b', bygroups(Whitespace, Keyword), '#pop'),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:970 [question placeholders] (r'\\([\\abfnrtv"\']|\n|N\{.*?\}|u[a-fA-F0-9]{4}|'
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:974 [question placeholders] (r'%(\([a-zA-Z0-9]+\))?[-#0 +]*([0-9]+|[*])?(\.([0-9]+|[*]))?'
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:975 [question placeholders] '[hlL]?[E-GXc-giorsux%]', String.Interpol),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1025 [question placeholders] (r'#.*?$', Comment.Single),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1027 [question placeholders] (r'(?i)0b[01]+', Number.Bin),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1028 [question placeholders] (r'(?i)0o[0-7]+', Number.Oct),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1029 [question placeholders] (r'(?i)0x[0-9a-f]+', Number.Hex),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1030 [question placeholders] (r'(?i)[+-]?[0-9]+\.[0-9]+(e[+-]?[0-9]+)?j?', Number.Float),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1031 [question placeholders] (r'(?i)[+-]?[0-9]+e[+-]?\d+j?', Number.Float),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1032 [question placeholders] (r'(?i)[+-]?[0-9]+j?', Number.Integer),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1034 [question placeholders] (r"(?i)(br|r?b?)'''", String, combined('stringescape', 'tsqs', 'string')),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1035 [question placeholders] (r'(?i)(br|r?b?)"""', String, combined('stringescape', 'tdqs', 'string')),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1036 [question placeholders] (r"(?i)(br|r?b?)'", String, combined('stringescape', 'sqs', 'string')),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1037 [question placeholders] (r'(?i)(br|r?b?)"', String, combined('stringescape', 'dqs', 'string')),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1048 [question placeholders] prefix=r'(?<!\.)', suffix=r'(?![\'\w])'),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1053 [question placeholders] 'eval', 'exhaust', 'filter', 'flip', 'foldl1?', 'format', 'fst',
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1057 [question placeholders] 'print', 'repr', 'reversed', 'round', 'setattr', 'scanl1?', 'snd',
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1059 [question placeholders] prefix=r'(?<!\.)', suffix=r'(?![\'\w])'),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1061 [question placeholders] (r"(?<!\.)(self|Ellipsis|NotImplemented|None|True|False)(?!['\w])",
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1064 [question placeholders] (r"(?<!\.)[A-Z]\w*(Error|Exception|Warning)'*(?!['\w])",
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1066 [question placeholders] (r"(?<!\.)(Exception|GeneratorExit|KeyboardInterrupt|StopIteration|"
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1067 [question placeholders] r"SystemExit)(?!['\w])", Name.Exception),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1069 [question placeholders] (r"(?<![\w.])(except|finally|for|if|import|not|otherwise|raise|"
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1070 [question placeholders] r"subclass|while|with|yield)(?!['\w])", Keyword.Reserved),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1072 [question placeholders] (r"[A-Z_]+'*(?!['\w])", Name),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1073 [question placeholders] (r"[A-Z]\w+'*(?!['\w])", Keyword.Type),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1080 [question placeholders] (r'\\([\\abfnrtv"\']|\n|N\{.*?\}|u[a-fA-F0-9]{4}|'
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1084 [question placeholders] (r'%(\(\w+\))?[-#0 +]*([0-9]+|[*])?(\.([0-9]+|[*]))?'
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1085 [question placeholders] '[hlL]?[E-GXc-giorsux%]', String.Interpol),
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\lexers\python.py:1199 [question placeholders] return (shebang_matches(text, r'pythonw?(3(\.\d)?)?') or
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\modeline.py:17 [question placeholders] (?: vi | vim | ex ) (?: [<=>]? \d* )? :
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\modeline.py:18 [question placeholders] .* (?: ft | filetype | syn | syntax ) = ( [^:\s]+ )
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\regexopt.py:39 [question placeholders] return open_paren + regex_opt_inner(strings[1:], '(?:') \
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\regexopt.py:40 [question placeholders] + '?' + close_paren
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\regexopt.py:42 [question placeholders] # multiple one-char strings? make a charset
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\regexopt.py:50 [question placeholders] if len(oneletter) > 1:  # do we have more than one oneletter string?
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\regexopt.py:63 [question placeholders] + regex_opt_inner([s[plen:] for s in strings], '(?:') \
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\regexopt.py:65 [question placeholders] # is there a suffix?
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\regexopt.py:72 [question placeholders] + regex_opt_inner(sorted(s[:-slen] for s in strings), '(?:') \
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\unistring.py:56 [question placeholders] Po = "!-#%-'*,.-/:-;?-@\\\\\xa1\xa7\xb6-\xb7\xbf\u037e\u0387\u055a-\u055f\u0589\u05c0\u05c3\u05c6\u05f3-\u05f4\u0609-\u060a\u060c-\u060d\u061b\u061e-\u061f\u066a-\u066d\u06d4\u0700-\u070d\u07f7-\u07f9\u0830-\u083e\u085e\u0964-\u0965\u0970\u09fd\u0a76\u0af0\u0c84\u0df4\u0e4f\u0e5a-\u0e5b\u0f04-\u0f12\u0f14\u0f85\u0fd0-\u0fd4\u0fd9-\u0fda\u104a-\u104f\u10fb\u1360-\u1368\u166d-\u166e\u16eb-\u16ed\u1735-\u1736\u17d4-\u17d6\u17d8-\u17da\u1800-\u1805\u1807-\u180a\u1944-\u1945\u1a1e-\u1a1f\u1aa0-\u1aa6\u1aa8-\u1aad\u1b5a-\u1b60\u1bfc-\u1bff\u1c3b-\u1c3f\u1c7e-\u1c7f\u1cc0-\u1cc7\u1cd3\u2016-\u2017\u2020-\u2027\u2030-\u2038\u203b-\u203e\u2041-\u2043\u2047-\u2051\u2053\u2055-\u205e\u2cf9-\u2cfc\u2cfe-\u2cff\u2d70\u2e00-\u2e01\u2e06-\u2e08\u2e0b\u2e0e-\u2e16\u2e18-\u2e19\u2e1b\u2e1e-\u2e1f\u2e2a-\u2e2e\u2e30-\u2e39\u2e3c-\u2e3f\u2e41\u2e43-\u2e4e\u3001-\u3003\u303d\u30fb\ua4fe-\ua4ff\ua60d-\ua60f\ua673\ua67e\ua6f2-\ua6f7\ua874-\ua877\ua8ce-\ua8cf\ua8f8-\ua8fa\ua8fc\ua92e-\ua92f\ua95f\ua9c1-\ua9cd\ua9de-\ua9df\uaa5c-\uaa5f\uaade-\uaadf\uaaf0-\uaaf1\uabeb\ufe10-\ufe16\ufe19\ufe30\ufe45-\ufe46\ufe49-\ufe4c\ufe50-\ufe52\ufe54-\ufe57\ufe5f-\ufe61\ufe68\ufe6a-\ufe6b\uff01-\uff03\uff05-\uff07\uff0a\uff0c\uff0e-\uff0f\uff1a-\uff1b\uff1f-\uff20\uff3c\uff61\uff64-\uff65\U00010100-\U00010102\U0001039f\U000103d0\U0001056f\U00010857\U0001091f\U0001093f\U00010a50-\U00010a58\U00010a7f\U00010af0-\U00010af6\U00010b39-\U00010b3f\U00010b99-\U00010b9c\U00010f55-\U00010f59\U00011047-\U0001104d\U000110bb-\U000110bc\U000110be-\U000110c1\U00011140-\U00011143\U00011174-\U00011175\U000111c5-\U000111c8\U000111cd\U000111db\U000111dd-\U000111df\U00011238-\U0001123d\U000112a9\U0001144b-\U0001144f\U0001145b\U0001145d\U000114c6\U000115c1-\U000115d7\U00011641-\U00011643\U00011660-\U0001166c\U0001173c-\U0001173e\U0001183b\U00011a3f-\U00011a46\U00011a9a-\U00011a9c\U00011a9e-\U00011aa2\U00011c41-\U00011c45\U00011c70-\U00011c71\U00011ef7-\U00011ef8\U00012470-\U00012474\U00016a6e-\U00016a6f\U00016af5\U00016b37-\U00016b3b\U00016b44\U00016e97-\U00016e9a\U0001bc9f\U0001da87-\U0001da8b\U0001e95e-\U0001e95f"
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\unistring.py:93 [pragma] def _handle_runs(char_list):  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\unistring.py:110 [pragma] if __name__ == '__main__':  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\util.py:19 [question placeholders] (?: \s+      # optional in HTML5
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\util.py:21 [question placeholders] "[^"]*")?
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\util.py:25 [question placeholders] tag_re = re.compile(r'<(.+?)(\s.*?)?>.*?</.+?>',
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\util.py:27 [question placeholders] xml_decl_re = re.compile(r'\s*<\?xml[^>]*\?>', re.I)
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\util.py:144 [question placeholders] >>> shebang_matches('#!/usr/bin/env python', r'python(2\.\d)?')
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\util.py:146 [question placeholders] >>> shebang_matches('#!/usr/bin/python2.4', r'python(2\.\d)?')
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\util.py:148 [question placeholders] >>> shebang_matches('#!/usr/bin/python-ruby', r'python(2\.\d)?')
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\util.py:150 [question placeholders] >>> shebang_matches('#!/usr/bin/python/ruby', r'python(2\.\d)?')
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\util.py:153 [question placeholders] ...                 r'python(2\.\d)?')
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\util.py:158 [question placeholders] >>> shebang_matches('#!C:\\Python2.4\\Python.exe', r'python(2\.\d)?')
+backend\.venv\Lib\site-packages\pip\_vendor\pygments\util.py:178 [question placeholders] regex = re.compile(rf'^{regex}(\.(exe|cmd|bat|bin))?$', re.IGNORECASE)
+backend\.venv\Lib\site-packages\pip\_vendor\requests\auth.py:187 [question placeholders] path += f"?{p_parsed.query}"
+backend\.venv\Lib\site-packages\pip\_vendor\requests\auth.py:220 [question placeholders] # XXX should the partial digests be encoded too?
+backend\.venv\Lib\site-packages\pip\_vendor\requests\compat.py:44 [question placeholders] #: Python 2.x?
+backend\.venv\Lib\site-packages\pip\_vendor\requests\compat.py:47 [question placeholders] #: Python 3.x?
+backend\.venv\Lib\site-packages\pip\_vendor\requests\cookies.py:106 [question placeholders] ...what? Basically, expose the parsed HTTP headers from the server response
+backend\.venv\Lib\site-packages\pip\_vendor\requests\models.py:103 [question placeholders] url.append("?")
+backend\.venv\Lib\site-packages\pip\_vendor\requests\models.py:442 [question placeholders] f"Perhaps you meant https://{url}?"
+backend\.venv\Lib\site-packages\pip\_vendor\requests\utils.py:109 [question placeholders] test = test.replace("?", r".")  # change glob char
+backend\.venv\Lib\site-packages\pip\_vendor\requests\utils.py:493 [question placeholders] charset_re = re.compile(r'<meta.*?charset=["\']*(.+?)["\'>]', flags=re.I)
+backend\.venv\Lib\site-packages\pip\_vendor\requests\utils.py:494 [question placeholders] pragma_re = re.compile(r'<meta.*?content=["\']*;?charset=(.+?)["\'>]', flags=re.I)
+backend\.venv\Lib\site-packages\pip\_vendor\requests\utils.py:495 [question placeholders] xml_re = re.compile(r'^<\?xml.*?encoding=["\']*(.+?)["\'>]')
+backend\.venv\Lib\site-packages\pip\_vendor\requests\utils.py:655 [question placeholders] safe_with_percent = "!#$%&'()*+,/:;=?@[]~"
+backend\.venv\Lib\site-packages\pip\_vendor\requests\utils.py:656 [question placeholders] safe_without_percent = "!#$&'()*+,/:;=?@[]~"
+backend\.venv\Lib\site-packages\pip\_vendor\resolvelib\providers.py:77 [question placeholders] * Is this package pinned in the current resolution result?
+backend\.venv\Lib\site-packages\pip\_vendor\resolvelib\providers.py:78 [question placeholders] * How relaxed is the requirement? Stricter ones should probably be
+backend\.venv\Lib\site-packages\pip\_vendor\resolvelib\providers.py:79 [question placeholders] worked on first? (I don't know, actually.)
+backend\.venv\Lib\site-packages\pip\_vendor\resolvelib\providers.py:80 [question placeholders] * How many possibilities are there to satisfy this requirement? Those
+backend\.venv\Lib\site-packages\pip\_vendor\resolvelib\providers.py:81 [question placeholders] with few left should likely be worked on first, I guess?
+backend\.venv\Lib\site-packages\pip\_vendor\resolvelib\providers.py:82 [question placeholders] * Are there any known conflicts for this requirement? We should
+backend\.venv\Lib\site-packages\pip\_vendor\rich\__init__.py:176 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\__main__.py:209 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\_emoji_replace.py:15 [question placeholders] _emoji_sub: _EmojiSubMethod = re.compile(r"(:(\S*?)(?:(?:\-)(emoji|text))?:)").sub,
+backend\.venv\Lib\site-packages\pip\_vendor\rich\_extension.py:4 [pragma] def load_ipython_extension(ip: Any) -> None:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\_log_render.py:62 [datetime functions] log_time_display = Text(log_time.strftime(time_format))
+backend\.venv\Lib\site-packages\pip\_vendor\rich\_log_render.py:89 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\_wrap.py:81 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\abc.py:21 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\align.py:285 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\ansi.py:12 [question placeholders] (?:\x1b[0-?])|
+backend\.venv\Lib\site-packages\pip\_vendor\rich\ansi.py:13 [question placeholders] (?:\x1b\](.*?)\x1b\\)|
+backend\.venv\Lib\site-packages\pip\_vendor\rich\ansi.py:14 [question placeholders] (?:\x1b([(@-Z\\-_]|\[[0-?]*[ -/]*[@-~]))
+backend\.venv\Lib\site-packages\pip\_vendor\rich\ansi.py:214 [pragma] if sys.platform != "win32" and __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\box.py:424 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\cells.py:168 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\color.py:13 [pragma] if TYPE_CHECKING:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\color.py:594 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\columns.py:174 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\console.py:258 [pragma] ) -> Union["ConsoleRenderable", "RichCast", str]:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\console.py:268 [pragma] ) -> "RenderResult":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\console.py:511 [pragma] def _is_jupyter() -> bool:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\console.py:528 [question placeholders] return False  # Other type (?)
+backend\.venv\Lib\site-packages\pip\_vendor\rich\console.py:572 [pragma] def get_windows_console_features() -> "WindowsConsoleFeatures":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\console.py:801 [pragma] if WINDOWS:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\console.py:802 [pragma] if self.legacy_windows:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\console.py:1793 [question placeholders] f"json must be str. Did you mean print_json(data={json!r}) ?"
+backend\.venv\Lib\site-packages\pip\_vendor\rich\console.py:2051 [pragma] if self.is_jupyter:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\console.py:2627 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\console.py:2655 [question placeholders] "question": "Which one is correct team name in NBA?",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\console.py:2668 [question placeholders] "question": "5 + 7 = ?",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\console.py:2673 [question placeholders] "question": "12 - 8 = ?",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\control.py:33 [question placeholders] ControlType.ENABLE_ALT_SCREEN: lambda: "\x1b[?1049h",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\control.py:34 [question placeholders] ControlType.DISABLE_ALT_SCREEN: lambda: "\x1b[?1049l",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\control.py:35 [question placeholders] ControlType.SHOW_CURSOR: lambda: "\x1b[?25h",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\control.py:36 [question placeholders] ControlType.HIDE_CURSOR: lambda: "\x1b[?25l",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\control.py:211 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\default_styles.py:172 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\diagnose.py:10 [pragma] def report() -> None:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\diagnose.py:38 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\emoji.py:76 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:85 [question placeholders] r"(?P<tag_start><)(?P<tag_name>[-\w.:|]*)(?P<tag_contents>[\w\W]*)(?P<tag_end>>)",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:86 [question placeholders] r'(?P<attrib_name>[\w_]{1,50})=(?P<attrib_value>"?[\w_]+"?)?',
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:87 [question placeholders] r"(?P<brace>[][{}()])",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:89 [question placeholders] r"(?P<ipv4>[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:90 [question placeholders] r"(?P<ipv6>([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4})",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:91 [question placeholders] r"(?P<eui64>(?:[0-9A-Fa-f]{1,2}-){7}[0-9A-Fa-f]{1,2}|(?:[0-9A-Fa-f]{1,2}:){7}[0-9A-Fa-f]{1,2}|(?:[0-9A-Fa-f]{4}\.){3}[0-9A-Fa-f]{4})",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:92 [question placeholders] r"(?P<eui48>(?:[0-9A-Fa-f]{1,2}-){5}[0-9A-Fa-f]{1,2}|(?:[0-9A-Fa-f]{1,2}:){5}[0-9A-Fa-f]{1,2}|(?:[0-9A-Fa-f]{4}\.){2}[0-9A-Fa-f]{4})",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:93 [question placeholders] r"(?P<uuid>[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:94 [question placeholders] r"(?P<call>[\w.]*?)\(",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:95 [question placeholders] r"\b(?P<bool_true>True)\b|\b(?P<bool_false>False)\b|\b(?P<none>None)\b",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:96 [question placeholders] r"(?P<ellipsis>\.\.\.)",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:97 [question placeholders] r"(?P<number_complex>(?<!\w)(?:\-?[0-9]+\.?[0-9]*(?:e[-+]?\d+?)?)(?:[-+](?:[0-9]+\.?[0-9]*(?:e[-+]?\d+)?))?j)",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:98 [question placeholders] r"(?P<number>(?<!\w)\-?[0-9]+\.?[0-9]*(e[-+]?\d+?)?\b|0x[0-9a-fA-F]*)",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:99 [question placeholders] r"(?P<path>\B(/[-\w._+]+)*\/)(?P<filename>[-\w._+]*)?",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:100 [question placeholders] r"(?<![\\\w])(?P<str>b?'''.*?(?<!\\)'''|b?'.*?(?<!\\)'|b?\"\"\".*?(?<!\\)\"\"\"|b?\".*?(?<!\\)\")",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:101 [question placeholders] r"(?P<url>(file|https|http|ws|wss)://[-0-9a-zA-Z$_+!`(),.?/;:&=%#~@]*)",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:110 [question placeholders] JSON_STR = r"(?<![\\\w])(?P<str>b?\".*?(?<!\\)\")"
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:116 [question placeholders] r"(?P<brace>[\{\[\(\)\]\}])",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:117 [question placeholders] r"\b(?P<bool_true>true)\b|\b(?P<bool_false>false)\b|\b(?P<null>null)\b",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:118 [question placeholders] r"(?P<number>(?<!\w)\-?[0-9]+\.?[0-9]*(e[\-\+]?\d+?)?\b|0x[0-9a-fA-F]*)",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:154 [question placeholders] r"^(?P<year>[0-9]{4})-(?P<month>1[0-2]|0[1-9])$",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:156 [question placeholders] r"^(?P<date>(?P<year>[0-9]{4})(?P<month>1[0-2]|0[1-9])(?P<day>3[01]|0[1-9]|[12][0-9]))$",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:158 [question placeholders] r"^(?P<date>(?P<year>[0-9]{4})-?(?P<day>36[0-6]|3[0-5][0-9]|[12][0-9]{2}|0[1-9][0-9]|00[1-9]))$",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:163 [question placeholders] r"^(?P<date>(?P<year>[0-9]{4})-?W(?P<week>5[0-3]|[1-4][0-9]|0[1-9]))$",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:165 [question placeholders] r"^(?P<date>(?P<year>[0-9]{4})-?W(?P<week>5[0-3]|[1-4][0-9]|0[1-9])-?(?P<day>[1-7]))$",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:170 [question placeholders] r"^(?P<time>(?P<hour>2[0-3]|[01][0-9]):?(?P<minute>[0-5][0-9]))$",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:172 [question placeholders] r"^(?P<time>(?P<hour>2[0-3]|[01][0-9])(?P<minute>[0-5][0-9])(?P<second>[0-5][0-9]))$",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:174 [question placeholders] r"^(?P<timezone>(Z|[+-](?:2[0-3]|[01][0-9])(?::?(?:[0-5][0-9]))?))$",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:177 [question placeholders] r"^(?P<time>(?P<hour>2[0-3]|[01][0-9])(?P<minute>[0-5][0-9])(?P<second>[0-5][0-9]))(?P<timezone>Z|[+-](?:2[0-3]|[01][0-9])(?::?(?:[0-5][0-9]))?)$",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:185 [question placeholders] r"^(?P<date>(?P<year>[0-9]{4})(?P<hyphen>-)?(?P<month>1[0-2]|0[1-9])(?(hyphen)-)(?P<day>3[01]|0[1-9]|[12][0-9])) (?P<time>(?P<hour>2[0-3]|[01][0-9])(?(hyphen):)(?P<minute>[0-5][0-9])(?(hyphen):)(?P<second>[0-5][0-9]))$",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:191 [question placeholders] r"^(?P<date>(?P<year>-?(?:[1-9][0-9]*)?[0-9]{4})-(?P<month>1[0-2]|0[1-9])-(?P<day>3[01]|0[1-9]|[12][0-9]))(?P<timezone>Z|[+-](?:2[0-3]|[01][0-9]):[0-5][0-9])?$",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:194 [question placeholders] r"^(?P<time>(?P<hour>2[0-3]|[01][0-9]):(?P<minute>[0-5][0-9]):(?P<second>[0-5][0-9])(?P<frac>\.[0-9]+)?)(?P<timezone>Z|[+-](?:2[0-3]|[01][0-9]):[0-5][0-9])?$",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:197 [question placeholders] r"^(?P<date>(?P<year>-?(?:[1-9][0-9]*)?[0-9]{4})-(?P<month>1[0-2]|0[1-9])-(?P<day>3[01]|0[1-9]|[12][0-9]))T(?P<time>(?P<hour>2[0-3]|[01][0-9]):(?P<minute>[0-5][0-9]):(?P<second>[0-5][0-9])(?P<ms>\.[0-9]+)?)(?P<timezone>Z|[+-](?:2[0-3]|[01][0-9]):[0-5][0-9])?$",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:201 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:213 [question placeholders] console.print("/foo/bar/baz?foo=bar+egg&egg=baz")
+backend\.venv\Lib\site-packages\pip\_vendor\rich\highlighter.py:221 [question placeholders] console.print("https://example.org?foo=bar#header")
+backend\.venv\Lib\site-packages\pip\_vendor\rich\live.py:19 [pragma] from typing_extensions import Self  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\live.py:177 [pragma] self.ipy_widget.close()  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\live.py:249 [pragma] if self.console.is_jupyter:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\live.py:296 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\logging.py:242 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\markup.py:13 [question placeholders] r"""((\\*)\[([a-z#/@][^[]*?)])""",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\markup.py:17 [question placeholders] RE_HANDLER = re.compile(r"^([\w.]*?)(\(.*?\))?$")
+backend\.venv\Lib\site-packages\pip\_vendor\rich\markup.py:50 [question placeholders] _escape: _EscapeSubMethod = re.compile(r"(\\*)(\[[a-z#/@][^[]*?])").sub,
+backend\.venv\Lib\site-packages\pip\_vendor\rich\markup.py:234 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\padding.py:138 [pragma] if __name__ == "__main__":  #  pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\pager.py:20 [pragma] def _pager(self, content: str) -> Any:  #  pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\pager.py:28 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\palette.py:75 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\panel.py:300 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\pretty.py:36 [pragma] except ImportError:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\pretty.py:86 [pragma] except Exception:  # pragma: no coverage
+backend\.venv\Lib\site-packages\pip\_vendor\rich\pretty.py:955 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\progress.py:41 [pragma] from typing_extensions import Self  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\progress.py:857 [question placeholders] total = int(task.total) if task.total is not None else "?"
+backend\.venv\Lib\site-packages\pip\_vendor\rich\progress.py:907 [question placeholders] total_str = "?"
+backend\.venv\Lib\site-packages\pip\_vendor\rich\progress.py:921 [question placeholders] return Text("?", style="progress.data.speed")
+backend\.venv\Lib\site-packages\pip\_vendor\rich\progress.py:1653 [pragma] if __name__ == "__main__":  # pragma: no coverage
+backend\.venv\Lib\site-packages\pip\_vendor\rich\progress_bar.py:210 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\prompt.py:366 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\prompt.py:369 [question placeholders] if Confirm.ask("Run [i]prompt[/i] tests?", default=True):
+backend\.venv\Lib\site-packages\pip\_vendor\rich\prompt.py:393 [question placeholders] "What's the best Dog? (Case INSENSITIVE)",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\rule.py:117 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\scope.py:70 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\segment.py:721 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\spinner.py:117 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\status.py:109 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\styled.py:37 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\syntax.py:130 [pragma] raise NotImplementedError  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\syntax.py:135 [pragma] raise NotImplementedError  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\syntax.py:868 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\table.py:929 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\text.py:32 [pragma] if TYPE_CHECKING:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\text.py:1336 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\theme.py:113 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\traceback.py:159 [pragma] def ipy_excepthook_closure(ip: Any) -> None:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\traceback.py:202 [pragma] try:  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\traceback.py:252 [question placeholders] highlights = [r"(?P<dim>.*/)(?P<bold>.+)"]
+backend\.venv\Lib\site-packages\pip\_vendor\rich\traceback.py:492 [question placeholders] filename=exc_value.filename or "?",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\traceback.py:554 [question placeholders] filename=filename or "?",
+backend\.venv\Lib\site-packages\pip\_vendor\rich\traceback.py:597 [pragma] break  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\traceback.py:873 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\rich\tree.py:204 [pragma] if __name__ == "__main__":  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\tomli\_parser.py:696 [pragma] raise RecursionError(  # pragma: no cover
+backend\.venv\Lib\site-packages\pip\_vendor\tomli\_re.py:21 [question placeholders] r"([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])(?:\.([0-9]{1,6})[0-9]*)?"
+backend\.venv\Lib\site-packages\pip\_vendor\tomli\_re.py:27 [question placeholders] (?:
+backend\.venv\Lib\site-packages\pip\_vendor\tomli\_re.py:28 [question placeholders] x[0-9A-Fa-f](?:_?[0-9A-Fa-f])*   # hex
+backend\.venv\Lib\site-packages\pip\_vendor\tomli\_re.py:30 [question placeholders] b[01](?:_?[01])*                 # bin
+backend\.venv\Lib\site-packages\pip\_vendor\tomli\_re.py:32 [question placeholders] o[0-7](?:_?[0-7])*               # oct
+backend\.venv\Lib\site-packages\pip\_vendor\tomli\_re.py:35 [question placeholders] [+-]?(?:0|[1-9](?:_?[0-9])*)         # dec, integer part
+backend\.venv\Lib\site-packages\pip\_vendor\tomli\_re.py:36 [question placeholders] (?P<floatpart>
+backend\.venv\Lib\site-packages\pip\_vendor\tomli\_re.py:37 [question placeholders] (?:\.[0-9](?:_?[0-9])*)?         # optional fractional part
+backend\.venv\Lib\site-packages\pip\_vendor\tomli\_re.py:38 [question placeholders] (?:[eE][+-]?[0-9](?:_?[0-9])*)?  # optional exponent part
+backend\.venv\Lib\site-packages\pip\_vendor\tomli\_re.py:47 [question placeholders] (?:
+backend\.venv\Lib\site-packages\pip\_vendor\tomli\_re.py:50 [question placeholders] (?:([Zz])|([+-])([01][0-9]|2[0-3]):([0-5][0-9]))?  # optional time offset
+backend\.venv\Lib\site-packages\pip\_vendor\tomli\_re.py:51 [question placeholders] )?
+backend\.venv\Lib\site-packages\pip\_vendor\tomli\_re.py:89 [datetime functions] return datetime(year, month, day, hour, minute, sec, micros, tzinfo=tz)
+backend\.venv\Lib\site-packages\pip\_vendor\truststore\_macos.py:552 [question placeholders] # Can this ever return 'None' if there's a CFError?
+backend\.venv\Lib\site-packages\pip\_vendor\truststore\_macos.py:558 [question placeholders] # TODO: Not sure if we need the SecTrustResultType for anything?
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\_request_methods.py:180 [question placeholders] url += "?" + urlencode(fields)
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\connection.py:30 [question placeholders] try:  # Compiled with SSL?
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\connection.py:567 [question placeholders] # TODO should we implement it everywhere?
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\connection.py:590 [question placeholders] version_string=getattr(self, "_http_vsn_str", "HTTP/?"),
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\connection.py:763 [question placeholders] # Do we need to establish a tunnel?
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\connectionpool.py:364 [question placeholders] """Is the error actually a timeout? Will raise a ReadTimeout or pass"""
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\connectionpool.py:770 [question placeholders] # Is this a closed/new connection that requires CONNECT tunnelling?
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\connectionpool.py:889 [question placeholders] # Handle redirect?
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\contrib\emscripten\response.py:48 [question placeholders] version_string="HTTP/?",
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\response.py:497 [question placeholders] Should we redirect and where to?
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\response.py:722 [question placeholders] version_string: str = "HTTP/?",
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\response.py:767 [question placeholders] # Are we using the chunked-style of transfer encoding?
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\response.py:905 [question placeholders] # FIXME: Is there a better way to differentiate between SSLErrors?
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\request.py:218 [question placeholders] # File-like object, TODO: use seek() and tell() for length?
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\response.py:99 [question placeholders] # FIXME: Can we do this somehow without accessing private httplib _method?
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\retry.py:406 [question placeholders] """Is this method/status code retryable? (Based on allowlists and control
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\retry.py:426 [question placeholders] """Are we out of retries?"""
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\retry.py:481 [question placeholders] # Connect retry?
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\retry.py:488 [question placeholders] # Read retry?
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\retry.py:495 [question placeholders] # Other retry?
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\retry.py:500 [question placeholders] # Redirect retry?
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\ssl_.py:93 [question placeholders] try:  # Do we have ssl at all?
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:16 [question placeholders] _SCHEME_RE = re.compile(r"^(?:[a-zA-Z][a-zA-Z0-9+-]*:|/)")
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:18 [question placeholders] r"^(?:([a-zA-Z][a-zA-Z0-9+.-]*):)?"
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:19 [question placeholders] r"(?://([^\\/?#]*))?"
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:20 [question placeholders] r"([^?#]*)"
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:21 [question placeholders] r"(?:\?([^#]*))?"
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:22 [question placeholders] r"(?:#(.*))?$",
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:26 [question placeholders] _IPV4_PAT = r"(?:[0-9]{1,3}\.){3}[0-9]{1,3}"
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:28 [question placeholders] _LS32_PAT = "(?:{hex}:{hex}|{ipv4})".format(hex=_HEX_PAT, ipv4=_IPV4_PAT)
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:32 [question placeholders] "(?:%(hex)s:){6}%(ls32)s",
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:34 [question placeholders] "::(?:%(hex)s:){5}%(ls32)s",
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:36 [question placeholders] "(?:%(hex)s)?::(?:%(hex)s:){4}%(ls32)s",
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:38 [question placeholders] "(?:(?:%(hex)s:)?%(hex)s)?::(?:%(hex)s:){3}%(ls32)s",
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:40 [question placeholders] "(?:(?:%(hex)s:){0,2}%(hex)s)?::(?:%(hex)s:){2}%(ls32)s",
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:42 [question placeholders] "(?:(?:%(hex)s:){0,3}%(hex)s)?::%(hex)s:%(ls32)s",
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:44 [question placeholders] "(?:(?:%(hex)s:){0,4}%(hex)s)?::%(ls32)s",
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:46 [question placeholders] "(?:(?:%(hex)s:){0,5}%(hex)s)?::%(hex)s",
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:48 [question placeholders] "(?:(?:%(hex)s:){0,6}%(hex)s)?::",
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:52 [question placeholders] _IPV6_PAT = "(?:" + "|".join([x % _subs for x in _variations]) + ")"
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:53 [question placeholders] _ZONE_ID_PAT = "(?:%25|%)(?:[" + _UNRESERVED_PAT + "]|%[a-fA-F0-9]{2})+"
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:54 [question placeholders] _IPV6_ADDRZ_PAT = r"\[" + _IPV6_PAT + r"(?:" + _ZONE_ID_PAT + r")?\]"
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:55 [question placeholders] _REG_NAME_PAT = r"(?:[^\[\]%:/?#]|%[a-fA-F0-9]{2})*"
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:56 [question placeholders] _TARGET_RE = re.compile(r"^(/[^?#]*)(?:\?([^#]*))?(?:#.*)?$")
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:64 [question placeholders] _HOST_PORT_PAT = ("^(%s|%s|%s)(?::0*?(|0|[1-9][0-9]{0,4}))?$") % (
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:77 [question placeholders] _QUERY_CHARS = _FRAGMENT_CHARS = _PATH_CHARS | {"?"}
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:127 [question placeholders] uri += "?" + self.query
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:186 [question placeholders] # "https://username:password@host.com:80/path?query#fragment"
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:203 [question placeholders] url += "?" + query
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:363 [question placeholders] encoded_target += "?" + query
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\url.py:392 [question placeholders] print( urllib3.util.parse_url('/foo?bar'))
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\wait.py:10 [question placeholders] # How should we wait on sockets?
+backend\.venv\Lib\site-packages\pip\_vendor\urllib3\util\wait.py:20 [question placeholders] # Now, how do we choose between select() and poll()? On traditional Unixes,
+backend\.venv\Lib\site-packages\psycopg\_connection_info.py:94 [question placeholders] # Not returned by the libq. Bug? Bet we're using SSH.
+backend\.venv\Lib\site-packages\psycopg\_dns.py:101 [question placeholders] re_srv_rr = re.compile(r"^(?P<service>_[^\.]+)\.(?P<proto>_[^\.]+)\.(?P<target>.+)")
+backend\.venv\Lib\site-packages\psycopg\_queries.py:363 [question placeholders] _re_placeholder = re.compile(rb"""(?x)
+backend\.venv\Lib\site-packages\psycopg\_queries.py:365 [question placeholders] (?:
+backend\.venv\Lib\site-packages\psycopg\_queries.py:366 [question placeholders] (?:
+backend\.venv\Lib\site-packages\psycopg\_queries.py:371 [question placeholders] (?:.)               # or any char, really
+backend\.venv\Lib\site-packages\psycopg\_server_cursor.py:46 [row factory] row_factory: RowFactory[Row],
+backend\.venv\Lib\site-packages\psycopg\_server_cursor.py:56 [row factory] row_factory: RowFactory[Row] | None = None,
+backend\.venv\Lib\site-packages\psycopg\_server_cursor.py:61 [row factory] self, connection, row_factory=row_factory or connection.row_factory
+backend\.venv\Lib\site-packages\psycopg\_server_cursor_async.py:45 [row factory] row_factory: AsyncRowFactory[Row],
+backend\.venv\Lib\site-packages\psycopg\_server_cursor_async.py:55 [row factory] row_factory: AsyncRowFactory[Row] | None = None,
+backend\.venv\Lib\site-packages\psycopg\_server_cursor_async.py:60 [row factory] self, connection, row_factory=row_factory or connection.row_factory
+backend\.venv\Lib\site-packages\psycopg\_tpc.py:90 [question placeholders] postgresql/xa/RecoveredXid.java?rev=1.2
+backend\.venv\Lib\site-packages\psycopg\_typeinfo.py:102 [row factory] with conn.transaction(), Cursor(conn, row_factory=dict_row) as cur:
+backend\.venv\Lib\site-packages\psycopg\_typeinfo.py:120 [row factory] async with AsyncCursor(conn, row_factory=dict_row) as cur:
+backend\.venv\Lib\site-packages\psycopg\abc.py:150 [question placeholders] size of int?...)
+backend\.venv\Lib\site-packages\psycopg\connection.py:67 [row factory] row_factory: RowFactory[Row]
+backend\.venv\Lib\site-packages\psycopg\connection.py:73 [row factory] row_factory: RowFactory[Row] = cast(RowFactory[Row], tuple_row),
+backend\.venv\Lib\site-packages\psycopg\connection.py:76 [row factory] self.row_factory = row_factory
+backend\.venv\Lib\site-packages\psycopg\connection.py:89 [row factory] row_factory: RowFactory[Row] | None = None,
+backend\.venv\Lib\site-packages\psycopg\connection.py:143 [row factory] if row_factory:
+backend\.venv\Lib\site-packages\psycopg\connection.py:144 [row factory] rv.row_factory = row_factory
+backend\.venv\Lib\site-packages\psycopg\connection.py:195 [question placeholders] # TODO: maybe send a cancel on close, if the connection is ACTIVE?
+backend\.venv\Lib\site-packages\psycopg\connection.py:204 [row factory] self, *, binary: bool = False, row_factory: RowFactory[CursorRow]
+backend\.venv\Lib\site-packages\psycopg\connection.py:223 [row factory] row_factory: RowFactory[CursorRow],
+backend\.venv\Lib\site-packages\psycopg\connection.py:233 [row factory] row_factory: RowFactory[Any] | None = None,
+backend\.venv\Lib\site-packages\psycopg\connection.py:242 [row factory] if not row_factory:
+backend\.venv\Lib\site-packages\psycopg\connection.py:243 [row factory] row_factory = self.row_factory
+backend\.venv\Lib\site-packages\psycopg\connection.py:250 [row factory] row_factory=row_factory,
+backend\.venv\Lib\site-packages\psycopg\connection.py:255 [row factory] cur = self.cursor_factory(self, row_factory=row_factory)
+backend\.venv\Lib\site-packages\psycopg\connection.py:562 [row factory] with self.cursor(row_factory=args_row(Xid._from_record)) as cur:
+backend\.venv\Lib\site-packages\psycopg\connection_async.py:71 [row factory] row_factory: AsyncRowFactory[Row]
+backend\.venv\Lib\site-packages\psycopg\connection_async.py:77 [row factory] row_factory: AsyncRowFactory[Row] = cast(AsyncRowFactory[Row], tuple_row),
+backend\.venv\Lib\site-packages\psycopg\connection_async.py:80 [row factory] self.row_factory = row_factory
+backend\.venv\Lib\site-packages\psycopg\connection_async.py:93 [row factory] row_factory: AsyncRowFactory[Row] | None = None,
+backend\.venv\Lib\site-packages\psycopg\connection_async.py:164 [row factory] if row_factory:
+backend\.venv\Lib\site-packages\psycopg\connection_async.py:165 [row factory] rv.row_factory = row_factory
+backend\.venv\Lib\site-packages\psycopg\connection_async.py:216 [question placeholders] # TODO: maybe send a cancel on close, if the connection is ACTIVE?
+backend\.venv\Lib\site-packages\psycopg\connection_async.py:225 [row factory] self, *, binary: bool = False, row_factory: AsyncRowFactory[CursorRow]
+backend\.venv\Lib\site-packages\psycopg\connection_async.py:244 [row factory] row_factory: AsyncRowFactory[CursorRow],
+backend\.venv\Lib\site-packages\psycopg\connection_async.py:254 [row factory] row_factory: AsyncRowFactory[Any] | None = None,
+backend\.venv\Lib\site-packages\psycopg\connection_async.py:263 [row factory] if not row_factory:
+backend\.venv\Lib\site-packages\psycopg\connection_async.py:264 [row factory] row_factory = self.row_factory
+backend\.venv\Lib\site-packages\psycopg\connection_async.py:271 [row factory] row_factory=row_factory,
+backend\.venv\Lib\site-packages\psycopg\connection_async.py:276 [row factory] cur = self.cursor_factory(self, row_factory=row_factory)
+backend\.venv\Lib\site-packages\psycopg\connection_async.py:617 [row factory] async with self.cursor(row_factory=args_row(Xid._from_record)) as cur:
+backend\.venv\Lib\site-packages\psycopg\cursor.py:41 [row factory] self, connection: Connection[Any], *, row_factory: RowFactory[Row]
+backend\.venv\Lib\site-packages\psycopg\cursor.py:45 [row factory] self, connection: Connection[Any], *, row_factory: RowFactory[Row] | None = None
+backend\.venv\Lib\site-packages\psycopg\cursor.py:48 [row factory] self._row_factory = row_factory or connection.row_factory
+backend\.venv\Lib\site-packages\psycopg\cursor.py:68 [row factory] def row_factory(self) -> RowFactory[Row]:
+backend\.venv\Lib\site-packages\psycopg\cursor.py:72 [row factory] @row_factory.setter
+backend\.venv\Lib\site-packages\psycopg\cursor.py:73 [row factory] def row_factory(self, row_factory: RowFactory[Row]) -> None:
+backend\.venv\Lib\site-packages\psycopg\cursor.py:74 [row factory] self._row_factory = row_factory
+backend\.venv\Lib\site-packages\psycopg\cursor.py:76 [row factory] self._make_row = row_factory(self)
+backend\.venv\Lib\site-packages\psycopg\cursor.py:245 [row factory] :rtype: Row | None, with Row defined by `row_factory`
+backend\.venv\Lib\site-packages\psycopg\cursor.py:261 [row factory] :rtype: Sequence[Row], with Row defined by `row_factory`
+backend\.venv\Lib\site-packages\psycopg\cursor.py:278 [row factory] :rtype: Sequence[Row], with Row defined by `row_factory`
+backend\.venv\Lib\site-packages\psycopg\cursor_async.py:38 [row factory] self, connection: AsyncConnection[Any], *, row_factory: AsyncRowFactory[Row]
+backend\.venv\Lib\site-packages\psycopg\cursor_async.py:45 [row factory] row_factory: AsyncRowFactory[Row] | None = None,
+backend\.venv\Lib\site-packages\psycopg\cursor_async.py:48 [row factory] self._row_factory = row_factory or connection.row_factory
+backend\.venv\Lib\site-packages\psycopg\cursor_async.py:68 [row factory] def row_factory(self) -> AsyncRowFactory[Row]:
+backend\.venv\Lib\site-packages\psycopg\cursor_async.py:72 [row factory] @row_factory.setter
+backend\.venv\Lib\site-packages\psycopg\cursor_async.py:73 [row factory] def row_factory(self, row_factory: AsyncRowFactory[Row]) -> None:
+backend\.venv\Lib\site-packages\psycopg\cursor_async.py:74 [row factory] self._row_factory = row_factory
+backend\.venv\Lib\site-packages\psycopg\cursor_async.py:76 [row factory] self._make_row = row_factory(self)
+backend\.venv\Lib\site-packages\psycopg\cursor_async.py:247 [row factory] :rtype: Row | None, with Row defined by `row_factory`
+backend\.venv\Lib\site-packages\psycopg\cursor_async.py:263 [row factory] :rtype: Sequence[Row], with Row defined by `row_factory`
+backend\.venv\Lib\site-packages\psycopg\cursor_async.py:280 [row factory] :rtype: Sequence[Row], with Row defined by `row_factory`
+backend\.venv\Lib\site-packages\psycopg\dbapi20.py:17 [datetime functions] EPOCH = dt.datetime(1970, 1, 1, tzinfo=dt.timezone.utc)
+backend\.venv\Lib\site-packages\psycopg\dbapi20.py:115 [datetime functions] return dt.datetime(year, month, day, hour, minute, second)
+backend\.venv\Lib\site-packages\psycopg\generators.py:325 [question placeholders] # TODO: too brutal? Copy worked.
+backend\.venv\Lib\site-packages\psycopg\pq\misc.py:104 [question placeholders] ^ (?:
+backend\.venv\Lib\site-packages\psycopg\rows.py:104 [row factory] `~psycopg.Connection.cursor()` are called without a `!row_factory`
+backend\.venv\Lib\site-packages\psycopg\types\array.py:207 [question placeholders] return re.compile(rb"""(?xi)
+backend\.venv\Lib\site-packages\psycopg\types\array.py:431 [question placeholders] return re.compile(rb"""(?xi)
+backend\.venv\Lib\site-packages\psycopg\types\array.py:433 [question placeholders] | " (?: [^"\\] | \\. )* "     # or a quoted string
+backend\.venv\Lib\site-packages\psycopg\types\array.py:435 [question placeholders] ) ,?
+backend\.venv\Lib\site-packages\psycopg\types\composite.py:318 [question placeholders] raise TypeError("no info passed. Is the requested composite available?")
+backend\.venv\Lib\site-packages\psycopg\types\composite.py:475 [question placeholders] _re_tokenize = re.compile(rb"""(?x)
+backend\.venv\Lib\site-packages\psycopg\types\composite.py:477 [question placeholders] | " ((?: [^"] | "")*) " ,?  # or a quoted string
+backend\.venv\Lib\site-packages\psycopg\types\composite.py:478 [question placeholders] | ([^",)]+) ,?              # or an unquoted string
+backend\.venv\Lib\site-packages\psycopg\types\datetime.py:38 [datetime functions] _pg_datetime_epoch = datetime(2000, 1, 1)
+backend\.venv\Lib\site-packages\psycopg\types\datetime.py:39 [datetime functions] _pg_datetimetz_epoch = datetime(2000, 1, 1, tzinfo=utc)
+backend\.venv\Lib\site-packages\psycopg\types\datetime.py:289 [question placeholders] _re_format = re.compile(rb"^(\d+):(\d+):(\d+)(?:\.(\d+))?")
+backend\.venv\Lib\site-packages\psycopg\types\datetime.py:328 [question placeholders] _re_format = re.compile(rb"""(?ix)
+backend\.venv\Lib\site-packages\psycopg\types\datetime.py:330 [question placeholders] (\d+) : (\d+) : (\d+) (?: \. (\d+) )?       # Time and micros
+backend\.venv\Lib\site-packages\psycopg\types\datetime.py:331 [question placeholders] ([-+]) (\d+) (?: : (\d+) )? (?: : (\d+) )?  # Timezone
+backend\.venv\Lib\site-packages\psycopg\types\datetime.py:382 [question placeholders] _re_format = re.compile(rb"""(?ix)
+backend\.venv\Lib\site-packages\psycopg\types\datetime.py:385 [question placeholders] (?: T | [^a-z0-9] )                     # Separator, including T
+backend\.venv\Lib\site-packages\psycopg\types\datetime.py:387 [question placeholders] (?: \.(\d+) )?                          # Micros
+backend\.venv\Lib\site-packages\psycopg\types\datetime.py:390 [question placeholders] _re_format_pg = re.compile(rb"""(?ix)
+backend\.venv\Lib\site-packages\psycopg\types\datetime.py:396 [question placeholders] (?: \.(\d+) )?                          # Micros
+backend\.venv\Lib\site-packages\psycopg\types\datetime.py:454 [datetime functions] return datetime(int(ye), imo, int(da), int(ho), int(mi), int(se), us)
+backend\.venv\Lib\site-packages\psycopg\types\datetime.py:474 [question placeholders] _re_format = re.compile(rb"""(?ix)
+backend\.venv\Lib\site-packages\psycopg\types\datetime.py:477 [question placeholders] (?: T | [^a-z0-9] )                         # Separator, including T
+backend\.venv\Lib\site-packages\psycopg\types\datetime.py:479 [question placeholders] (?: \.(\d+) )?                              # Micros
+backend\.venv\Lib\site-packages\psycopg\types\datetime.py:480 [question placeholders] ([-+]) (\d+) (?: : (\d+) )? (?: : (\d+) )?  # Timezone
+backend\.venv\Lib\site-packages\psycopg\types\datetime.py:527 [datetime functions] dt = datetime(int(ye), int(mo), int(da), int(ho), int(mi), int(se), us, utc)
+backend\.venv\Lib\site-packages\psycopg\types\datetime.py:589 [question placeholders] (?: ([-+]?\d+) \s+ years? \s* )?                # Years
+backend\.venv\Lib\site-packages\psycopg\types\datetime.py:590 [question placeholders] (?: ([-+]?\d+) \s+ mons? \s* )?                 # Months
+backend\.venv\Lib\site-packages\psycopg\types\datetime.py:591 [question placeholders] (?: ([-+]?\d+) \s+ days? \s* )?                 # Days
+backend\.venv\Lib\site-packages\psycopg\types\datetime.py:592 [question placeholders] (?: ([-+])? (\d+) : (\d+) : (\d+ (?:\.\d+)?)    # Time
+backend\.venv\Lib\site-packages\psycopg\types\datetime.py:593 [question placeholders] )?
+backend\.venv\Lib\site-packages\psycopg\types\enum.py:145 [question placeholders] raise TypeError("no info passed. Is the requested enum available?")
+backend\.venv\Lib\site-packages\psycopg\types\hstore.py:30 [question placeholders] "((?: [^"\\] | \\. )*)"
+backend\.venv\Lib\site-packages\psycopg\types\hstore.py:32 [question placeholders] (?:
+backend\.venv\Lib\site-packages\psycopg\types\hstore.py:35 [question placeholders] | "((?: [^"\\] | \\. )*)"
+backend\.venv\Lib\site-packages\psycopg\types\hstore.py:37 [question placeholders] (?:\s*,\s*|$) # pairs separated by comma or end of string.
+backend\.venv\Lib\site-packages\psycopg\types\hstore.py:205 [question placeholders] raise TypeError("no info passed. Is the 'hstore' extension loaded?")
+backend\.venv\Lib\site-packages\psycopg\types\multirange.py:382 [question placeholders] raise TypeError("no info passed. Is the requested multirange available?")
+backend\.venv\Lib\site-packages\psycopg\types\range.py:490 [question placeholders] (?:                         # lower bound:
+backend\.venv\Lib\site-packages\psycopg\types\range.py:491 [question placeholders] " ( (?: [^"] | "")* ) "   #   - a quoted string
+backend\.venv\Lib\site-packages\psycopg\types\range.py:493 [question placeholders] )?                          #   - or empty (not caught)
+backend\.venv\Lib\site-packages\psycopg\types\range.py:495 [question placeholders] (?:                         # upper bound:
+backend\.venv\Lib\site-packages\psycopg\types\range.py:496 [question placeholders] " ( (?: [^"] | "")* ) "   #   - a quoted string
+backend\.venv\Lib\site-packages\psycopg\types\range.py:498 [question placeholders] )?                          #   - or empty (not caught)
+backend\.venv\Lib\site-packages\psycopg\types\range.py:561 [question placeholders] raise TypeError("no info passed. Is the requested range available?")
+backend\.venv\Lib\site-packages\psycopg\types\shapely.py:66 [question placeholders] raise TypeError("no info passed. Is the 'postgis' extension loaded?")
+backend\.venv\Lib\site-packages\waitress\__init__.py:10 [pragma] if not _quiet:  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\__init__.py:14 [pragma] if not _quiet:  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\__init__.py:16 [pragma] if _profile:  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\__init__.py:27 [pragma] def profile(cmd, globals, locals, sort_order, callers):  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\__main__.py:1 [pragma] from waitress.runner import run  # pragma nocover
+backend\.venv\Lib\site-packages\waitress\__main__.py:3 [pragma] run()  # pragma nocover
+backend\.venv\Lib\site-packages\waitress\adjustments.py:174 [question placeholders] # that were encountered while processing the proxy headers? This only makes
+backend\.venv\Lib\site-packages\waitress\adjustments.py:328 [pragma] if not self.ipv4 and not HAS_IPV6:  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\adjustments.py:346 [pragma] if "]" in port:  # pragma: nocover
+backend\.venv\Lib\site-packages\waitress\adjustments.py:351 [pragma] if WIN:  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\adjustments.py:362 [pragma] if "[" in host and "]" in host:  # pragma: nocover
+backend\.venv\Lib\site-packages\waitress\channel.py:139 [pragma] except Exception:  # pragma: nocover
+backend\.venv\Lib\site-packages\waitress\compat.py:18 [pragma] else:  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\parser.py:231 [question placeholders] # TODO(xistence): Should we drop this request instead?
+backend\.venv\Lib\site-packages\waitress\parser.py:310 [pragma] elif encodings:  # pragma: nocover
+backend\.venv\Lib\site-packages\waitress\parser.py:368 [question placeholders] if b"?" in path:
+backend\.venv\Lib\site-packages\waitress\parser.py:369 [question placeholders] path, query = path.split(b"?", 1)
+backend\.venv\Lib\site-packages\waitress\parser.py:413 [question placeholders] rb"(?P<method>[!#$%&'*+\-.^_`|~0-9A-Za-z]+) "
+backend\.venv\Lib\site-packages\waitress\parser.py:414 [question placeholders] rb"(?P<uri>(?:[^ :?#]+://[^ ?#/]*(?:[0-9]{1,5})?)?[^ ]+)"
+backend\.venv\Lib\site-packages\waitress\parser.py:415 [question placeholders] rb"(?: HTTP/(?P<version>[0-9]\.[0-9]))?"
+backend\.venv\Lib\site-packages\waitress\rfc7230.py:12 [question placeholders] OWS = WS + "{0,}?"
+backend\.venv\Lib\site-packages\waitress\rfc7230.py:13 [question placeholders] RWS = WS + "{1,}?"
+backend\.venv\Lib\site-packages\waitress\rfc7230.py:35 [question placeholders] QUOTED_STRING = '"(?:(?:' + QDTEXT + ")|(?:" + QUOTED_PAIR + '))*"'
+backend\.venv\Lib\site-packages\waitress\rfc7230.py:43 [question placeholders] # Errata from: https://www.rfc-editor.org/errata_search.php?rfc=7230&eid=4189
+backend\.venv\Lib\site-packages\waitress\rfc7230.py:51 [question placeholders] FIELD_CONTENT = FIELD_VCHAR + "+(?:[ \t]+" + FIELD_VCHAR + "+)*"
+backend\.venv\Lib\site-packages\waitress\rfc7230.py:53 [question placeholders] FIELD_VALUE = "(?:" + FIELD_CONTENT + ")?"
+backend\.venv\Lib\site-packages\waitress\rfc7230.py:60 [question placeholders] CHUNK_EXT_VAL = "(?:" + TOKEN + ")|(?:" + QUOTED_STRING + ")"
+backend\.venv\Lib\site-packages\waitress\rfc7230.py:62 [question placeholders] "(?:;(?P<extension>" + CHUNK_EXT_NAME + ")(?:=(?P<value>" + CHUNK_EXT_VAL + "))?)*"
+backend\.venv\Lib\site-packages\waitress\rfc7230.py:70 [question placeholders] "^(?P<name>" + TOKEN + "):" + OWS + "(?P<value>" + FIELD_VALUE + ")" + OWS + "$"
+backend\.venv\Lib\site-packages\waitress\runner.py:185 [question placeholders] (?P<module>
+backend\.venv\Lib\site-packages\waitress\runner.py:186 [question placeholders] [a-z_][a-z0-9_]*(?:\.[a-z_][a-z0-9_]*)*
+backend\.venv\Lib\site-packages\waitress\runner.py:189 [question placeholders] (?P<object>
+backend\.venv\Lib\site-packages\waitress\runner.py:190 [question placeholders] [a-z_][a-z0-9_]*(?:\.[a-z_][a-z0-9_]*)*
+backend\.venv\Lib\site-packages\waitress\runner.py:224 [pragma] def show_help(stream, name, error=None):  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\server.py:51 [pragma] if map is None:  # pragma: nocover
+backend\.venv\Lib\site-packages\waitress\server.py:155 [pragma] def print_listen(self, format_str):  # pragma: nocover
+backend\.venv\Lib\site-packages\waitress\server.py:237 [pragma] if self.family == socket.AF_INET6:  # pragma: nocover
+backend\.venv\Lib\site-packages\waitress\server.py:252 [pragma] raise NotImplementedError  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\server.py:255 [pragma] raise NotImplementedError  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\server.py:353 [pragma] def print_listen(self, format_str):  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\task.py:211 [pragma] continue  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\task.py:291 [pragma] continue  # pragma: nocover
+backend\.venv\Lib\site-packages\waitress\trigger.py:132 [pragma] else:  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\utilities.py:106 [question placeholders] group("[0-9][0-9]?"),  # date
+backend\.venv\Lib\site-packages\waitress\utilities.py:138 [question placeholders] join([group("[0-9][0-9]?"), months_reg, group("[0-9]+")], "-"),
+backend\.venv\Lib\site-packages\waitress\utilities.py:246 [pragma] raise  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\utilities.py:251 [pragma] except OSError:  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\wasyncore.py:151 [pragma] if map is None:  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\wasyncore.py:181 [pragma] if obj is None:  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\wasyncore.py:187 [pragma] if obj is None:  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\wasyncore.py:193 [pragma] if obj is None:  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\wasyncore.py:200 [pragma] if map is None:  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\wasyncore.py:226 [pragma] if obj is None:  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\wasyncore.py:235 [pragma] if map is None:  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\wasyncore.py:243 [pragma] if count is None:  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\wasyncore.py:256 [pragma] if not tb:  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\wasyncore.py:288 [pragma] if map is None:  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\wasyncore.py:328 [pragma] except TypeError:  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\wasyncore.py:389 [pragma] if os.name == "nt" and num > 5:  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\wasyncore.py:405 [pragma] ):  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\wasyncore.py:539 [pragma] except:  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\wasyncore.py:597 [pragma] if self.debug:  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\wasyncore.py:604 [pragma] if map is None:  # pragma: no cover
+backend\.venv\Lib\site-packages\waitress\wasyncore.py:631 [question placeholders] # What other OS's (besides NT) support async file i/o?  [VMS?]
+backend\.venv\Lib\site-packages\waitress\wasyncore.py:656 [pragma] def getsockopt(self, level, optname, buflen=None):  # pragma: no cover
+backend\.venv\Lib\site-packages\werkzeug\_internal.py:196 [question placeholders] _plain_int_re = re.compile(r"-?\d+", re.ASCII)
+backend\.venv\Lib\site-packages\werkzeug\datastructures\accept.py:201 [question placeholders] _mime_split_re = re.compile(r"/|(?:\s*;\s*)")
+backend\.venv\Lib\site-packages\werkzeug\debug\repr.py:20 [question placeholders] _paragraph_re = re.compile(r"(?:\r\n|\r|\n){2,}")
+backend\.venv\Lib\site-packages\werkzeug\debug\repr.py:221 [question placeholders] info = "?"
+backend\.venv\Lib\site-packages\werkzeug\debug\tbtools.py:22 [question placeholders] <link rel="stylesheet" href="?__debugger__=yes&amp;cmd=resource&amp;f=style.css">
+backend\.venv\Lib\site-packages\werkzeug\debug\tbtools.py:24 [question placeholders] href="?__debugger__=yes&amp;cmd=resource&amp;f=console.png">
+backend\.venv\Lib\site-packages\werkzeug\debug\tbtools.py:25 [question placeholders] <script src="?__debugger__=yes&amp;cmd=resource&amp;f=debugger.js"></script>
+backend\.venv\Lib\site-packages\werkzeug\exceptions.py:182 [question placeholders] code = self.code if self.code is not None else "???"
+backend\.venv\Lib\site-packages\werkzeug\exceptions.py:186 [question placeholders] code = self.code if self.code is not None else "???"
+backend\.venv\Lib\site-packages\werkzeug\http.py:28 [question placeholders] _etag_re = re.compile(r'([Ww]/)?(?:"(.*?)"|(.*?))(?:\s*,\s*|$)')
+backend\.venv\Lib\site-packages\werkzeug\http.py:610 [question placeholders] _q_value_re = re.compile(r"-?\d+(\.\d+)?", re.ASCII)
+backend\.venv\Lib\site-packages\werkzeug\http.py:1259 [question placeholders] _cookie_no_quote_re = re.compile(r"[\w!#$%&'()*+\-./:<=>?@\[\]^`{|}~]*", re.A)
+backend\.venv\Lib\site-packages\werkzeug\middleware\http_proxy.py:170 [question placeholders] remote_url = f"{remote_url}?{querystring}"
+backend\.venv\Lib\site-packages\werkzeug\routing\converters.py:102 [question placeholders] self.regex = f"(?:{'|'.join([re.escape(x) for x in items])})"
+backend\.venv\Lib\site-packages\werkzeug\routing\converters.py:123 [question placeholders] regex = "[^/].*?"
+backend\.venv\Lib\site-packages\werkzeug\routing\converters.py:170 [question placeholders] return f"-?{self.regex}"
+backend\.venv\Lib\site-packages\werkzeug\routing\exceptions.py:127 [question placeholders] f" {sorted(self.suggested.methods)!r}?"
+backend\.venv\Lib\site-packages\werkzeug\routing\exceptions.py:134 [question placeholders] f" Did you forget to specify values {sorted(missing_values)!r}?"
+backend\.venv\Lib\site-packages\werkzeug\routing\exceptions.py:137 [question placeholders] message.append(f" Did you mean {self.suggested.endpoint!r} instead?")
+backend\.venv\Lib\site-packages\werkzeug\routing\map.py:783 [question placeholders] url += f"?{self.encode_query_args(query_args)}"
+backend\.venv\Lib\site-packages\werkzeug\routing\map.py:850 [question placeholders] (``?key=value``) part of the URL.
+backend\.venv\Lib\site-packages\werkzeug\routing\rules.py:47 [question placeholders] (?:
+backend\.venv\Lib\site-packages\werkzeug\routing\rules.py:48 [question placeholders] (?P<slash>/)                                 # a slash
+backend\.venv\Lib\site-packages\werkzeug\routing\rules.py:50 [question placeholders] (?P<static>[^</]+)                           # static rule data
+backend\.venv\Lib\site-packages\werkzeug\routing\rules.py:52 [question placeholders] (?:
+backend\.venv\Lib\site-packages\werkzeug\routing\rules.py:54 [question placeholders] (?:
+backend\.venv\Lib\site-packages\werkzeug\routing\rules.py:55 [question placeholders] (?P<converter>[a-zA-Z_][a-zA-Z0-9_]*)   # converter name
+backend\.venv\Lib\site-packages\werkzeug\routing\rules.py:56 [question placeholders] (?:\((?P<arguments>.*?)\))?             # converter arguments
+backend\.venv\Lib\site-packages\werkzeug\routing\rules.py:58 [question placeholders] )?
+backend\.venv\Lib\site-packages\werkzeug\routing\rules.py:59 [question placeholders] (?P<variable>[a-zA-Z_][a-zA-Z0-9_]*)      # variable name
+backend\.venv\Lib\site-packages\werkzeug\routing\rules.py:71 [question placeholders] ((?P<name>\w+)\s*=\s*)?
+backend\.venv\Lib\site-packages\werkzeug\routing\rules.py:72 [question placeholders] (?P<value>
+backend\.venv\Lib\site-packages\werkzeug\routing\rules.py:78 [question placeholders] [urUR]?(?P<stringval>"[^"]*?"|'[^']*')
+backend\.venv\Lib\site-packages\werkzeug\routing\rules.py:318 [question placeholders] q = "?" if params else ""
+backend\.venv\Lib\site-packages\werkzeug\routing\rules.py:638 [question placeholders] content += f"(?P<__werkzeug_{convertor_number}>{convobj.regex})"
+backend\.venv\Lib\site-packages\werkzeug\routing\rules.py:677 [question placeholders] content = content[:-1] + "(?<!/)(/?)"
+backend\.venv\Lib\site-packages\werkzeug\sansio\http.py:14 [question placeholders] _etag_re = re.compile(r'([Ww]/)?(?:"(.*?)"|(.*?))(?:\s*,\s*|$)')
+backend\.venv\Lib\site-packages\werkzeug\sansio\http.py:99 [question placeholders] (?:\s*=\s*
+backend\.venv\Lib\site-packages\werkzeug\sansio\http.py:101 [question placeholders] "(?:[^\\"]|\\.)*"
+backend\.venv\Lib\site-packages\werkzeug\sansio\http.py:103 [question placeholders] .*?
+backend\.venv\Lib\site-packages\werkzeug\sansio\http.py:105 [question placeholders] )?
+backend\.venv\Lib\site-packages\werkzeug\sansio\multipart.py:65 [question placeholders] LINE_BREAK = b"(?:\r\n|\n|\r)"
+backend\.venv\Lib\site-packages\werkzeug\sansio\multipart.py:66 [question placeholders] BLANK_LINE_RE = re.compile(b"(?:\r\n\r\n|\r\r|\n\n)", re.MULTILINE)
+backend\.venv\Lib\site-packages\werkzeug\sansio\multipart.py:111 [question placeholders] rb"%s?--%s(--[^\S\n\r]*%s?|[^\S\n\r]*%s)"
+backend\.venv\Lib\site-packages\werkzeug\sansio\multipart.py:120 [question placeholders] rb"%s--%s(--[^\S\n\r]*%s?|[^\S\n\r]*%s)"
+backend\.venv\Lib\site-packages\werkzeug\sansio\request.py:57 [question placeholders] :param query_string: The part of the URL after the "?".
+backend\.venv\Lib\site-packages\werkzeug\sansio\request.py:141 [question placeholders] #: The part of the URL after the "?". This is the raw value, use
+backend\.venv\Lib\site-packages\werkzeug\sansio\request.py:195 [question placeholders] return f"{self.path}?{self.query_string.decode()}"
+backend\.venv\Lib\site-packages\werkzeug\sansio\request.py:354 [pragma] def pragma(self) -> HeaderSet:
+backend\.venv\Lib\site-packages\werkzeug\sansio\request.py:355 [pragma] """The Pragma general-header field is used to include
+backend\.venv\Lib\site-packages\werkzeug\sansio\request.py:357 [pragma] along the request/response chain.  All pragma directives specify
+backend\.venv\Lib\site-packages\werkzeug\sansio\request.py:361 [pragma] return parse_set_header(self.headers.get("Pragma", ""))
+backend\.venv\Lib\site-packages\werkzeug\sansio\utils.py:19 [question placeholders] (?::[0-9]+)?  # optional port
+backend\.venv\Lib\site-packages\werkzeug\sansio\utils.py:177 [question placeholders] :param query_string: The portion of the URL after the "?".
+backend\.venv\Lib\site-packages\werkzeug\sansio\utils.py:196 [question placeholders] url.append("?")
+backend\.venv\Lib\site-packages\werkzeug\sansio\utils.py:197 [question placeholders] url.append(quote(query_string, safe="!$&'()*+,/:;=?@%"))
+backend\.venv\Lib\site-packages\werkzeug\test.py:319 [question placeholders] if query_string is not None and "?" in path:
+backend\.venv\Lib\site-packages\werkzeug\test.py:322 [question placeholders] if query_string is None and "?" in path:
+backend\.venv\Lib\site-packages\werkzeug\testapp.py:23 [question placeholders] @import url(https://fonts.googleapis.com/css?family=Ubuntu);
+backend\.venv\Lib\site-packages\werkzeug\urls.py:35 [question placeholders] pattern = re.compile(f"((?:%(?:{choices}))+)", re.I)
+backend\.venv\Lib\site-packages\werkzeug\urls.py:57 [question placeholders] _unquote_path = _make_unquote_part("path", _always_unsafe + "/?#")
+backend\.venv\Lib\site-packages\werkzeug\urls.py:58 [question placeholders] _unquote_user = _make_unquote_part("user", _always_unsafe + ":@/?#")
+backend\.venv\Lib\site-packages\werkzeug\urls.py:66 [question placeholders] >>> uri_to_iri("http://xn--n3h.net/p%C3%A5th?q=%C3%A8ry%DF")
+backend\.venv\Lib\site-packages\werkzeug\urls.py:67 [question placeholders] 'http://\\u2603.net/p\\xe5th?q=\\xe8ry%DF'
+backend\.venv\Lib\site-packages\werkzeug\urls.py:117 [question placeholders] >>> iri_to_uri('http://\\u2603.net/p\\xe5th?q=\\xe8ry%DF')
+backend\.venv\Lib\site-packages\werkzeug\urls.py:118 [question placeholders] 'http://xn--n3h.net/p%C3%A5th?q=%C3%A8ry%DF'
+backend\.venv\Lib\site-packages\werkzeug\urls.py:142 [question placeholders] query = quote(parts.query, safe="%!$&'()*+,/:;=?@")
+backend\.venv\Lib\site-packages\werkzeug\urls.py:143 [question placeholders] fragment = quote(parts.fragment, safe="%!#$&'()*+,/:;=?@")
+backend\.venv\Lib\site-packages\werkzeug\urls.py:203 [question placeholders] return urlencode(items, safe="!$'()*,/:;?@")
+backend\.venv\Lib\site-packages\werkzeug\utils.py:307 [question placeholders] new_path = f"{new_path}?{query_string}"
+backend\.venv\Lib\site-packages\werkzeug\wrappers\response.py:130 [question placeholders] #: header if possible?  This is true by default.
+backend\.venv\Lib\site-packages\werkzeug\wsgi.py:353 [question placeholders] # private for now, but should we make it public in the future ?
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:6 [sqlite imports] import sqlite3
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:86 [row factory] con.row_factory = sqlite3.Row
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:91 [pragma] rows = con.execute(f"PRAGMA table_info({table})").fetchall()
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:164 [autoincrement] id INTEGER PRIMARY KEY AUTOINCREMENT,
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:258 [insert or ignore] INSERT OR IGNORE INTO stores (id, slug, name, brand, system, plan, status, created_at)
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:259 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:268 [question placeholders] name = COALESCE(NULLIF(name, ''), ?),
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:269 [question placeholders] brand = COALESCE(NULLIF(brand, ''), ?),
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:270 [question placeholders] system = COALESCE(NULLIF(system, ''), ?),
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:273 [question placeholders] created_at = COALESCE(NULLIF(created_at, ''), ?)
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:328 [question placeholders] "SELECT id FROM products WHERE sku = ? LIMIT 1",
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:338 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:356 [question placeholders] "https://placehold.co/900x700/111827/FFFFFF?text=Starter+Storefront",
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:367 [question placeholders] "https://placehold.co/900x700/111827/FFFFFF?text=Pro+Dashboard",
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:378 [question placeholders] "https://placehold.co/900x700/111827/FFFFFF?text=Custom+SaaS",
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:389 [question placeholders] "https://placehold.co/900x700/111827/FFFFFF?text=Launch+Kit",
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:400 [question placeholders] "https://placehold.co/900x700/111827/FFFFFF?text=Brand+Audit",
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:406 [question placeholders] "SELECT id FROM products WHERE sku = ? LIMIT 1",
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:416 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:468 [question placeholders] "SELECT id FROM setup_requests WHERE id = ? LIMIT 1",
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:478 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:522 [question placeholders] "SELECT id FROM orders WHERE id = ? LIMIT 1",
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:533 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:562 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?)
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:601 [question placeholders] data["image_url"] = f"https://placehold.co/900x700/png?text={data.get('sku') or 'PRODUCT'}"
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:683 [question placeholders] "SELECT id, slug, name, brand, system, plan, status FROM stores WHERE slug = ? LIMIT 1",
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:694 [question placeholders] WHERE store_id = ?
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:745 [question placeholders] "SELECT id, slug FROM stores WHERE slug = ? LIMIT 1",
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:753 [question placeholders] "SELECT id FROM products WHERE store_id = ? AND sku = ? LIMIT 1",
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:768 [question placeholders] "SELECT id FROM products WHERE id = ? LIMIT 1",
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:783 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:807 [question placeholders] WHERE id = ?
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:845 [begin immediate] con.execute("BEGIN IMMEDIATE")
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:848 [question placeholders] "SELECT id, slug, name FROM stores WHERE slug = ? LIMIT 1",
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:870 [question placeholders] "SELECT * FROM products WHERE store_id = ? AND sku = ? LIMIT 1",
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:875 [question placeholders] "SELECT * FROM products WHERE store_id = ? AND id = ? LIMIT 1",
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:921 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:950 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?)
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:964 [question placeholders] "UPDATE products SET stock = stock - ?, updated_at = ? WHERE id = ?",
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:1015 [question placeholders] "SELECT * FROM orders WHERE id = ? LIMIT 1",
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:1031 [question placeholders] WHERE order_id = ?
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:1112 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:1267 [question placeholders] "SELECT id, slug FROM stores WHERE slug = ? LIMIT 1",
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:1275 [question placeholders] "SELECT id FROM products WHERE store_id = ? AND sku = ? LIMIT 1",
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:1290 [question placeholders] "SELECT id FROM products WHERE id = ? LIMIT 1",
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:1305 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+backend\app\__init__.before-pipeline-persistence-20260711-212736.py:1329 [question placeholders] WHERE id = ?
+backend\app\__init__.py:95 [pragma] rows = con.execute(f"PRAGMA table_info({table})").fetchall()
+backend\app\__init__.py:168 [autoincrement] id INTEGER PRIMARY KEY AUTOINCREMENT,
+backend\app\__init__.py:299 [insert or ignore] INSERT OR IGNORE INTO stores (id, slug, name, brand, system, plan, status, created_at)
+backend\app\__init__.py:300 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+backend\app\__init__.py:309 [question placeholders] name = COALESCE(NULLIF(name, ''), ?),
+backend\app\__init__.py:310 [question placeholders] brand = COALESCE(NULLIF(brand, ''), ?),
+backend\app\__init__.py:311 [question placeholders] system = COALESCE(NULLIF(system, ''), ?),
+backend\app\__init__.py:314 [question placeholders] created_at = COALESCE(NULLIF(created_at, ''), ?)
+backend\app\__init__.py:369 [question placeholders] "SELECT id FROM products WHERE sku = ? LIMIT 1",
+backend\app\__init__.py:379 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+backend\app\__init__.py:397 [question placeholders] "https://placehold.co/900x700/111827/FFFFFF?text=Starter+Storefront",
+backend\app\__init__.py:408 [question placeholders] "https://placehold.co/900x700/111827/FFFFFF?text=Pro+Dashboard",
+backend\app\__init__.py:419 [question placeholders] "https://placehold.co/900x700/111827/FFFFFF?text=Custom+SaaS",
+backend\app\__init__.py:430 [question placeholders] "https://placehold.co/900x700/111827/FFFFFF?text=Launch+Kit",
+backend\app\__init__.py:441 [question placeholders] "https://placehold.co/900x700/111827/FFFFFF?text=Brand+Audit",
+backend\app\__init__.py:470 [question placeholders] SET name = ?, description = ?, price_cents = ?, updated_at = ?
+backend\app\__init__.py:471 [question placeholders] WHERE sku = ?
+backend\app\__init__.py:484 [question placeholders] "SELECT id FROM products WHERE sku = ? LIMIT 1",
+backend\app\__init__.py:494 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+backend\app\__init__.py:546 [question placeholders] "SELECT id FROM setup_requests WHERE id = ? LIMIT 1",
+backend\app\__init__.py:556 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+backend\app\__init__.py:600 [question placeholders] "SELECT id FROM orders WHERE id = ? LIMIT 1",
+backend\app\__init__.py:611 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+backend\app\__init__.py:640 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?)
+backend\app\__init__.py:679 [question placeholders] data["image_url"] = f"https://placehold.co/900x700/png?text={data.get('sku') or 'PRODUCT'}"
+backend\app\__init__.py:768 [question placeholders] "SELECT id, slug, name, brand, system, plan, status FROM stores WHERE slug = ? LIMIT 1",
+backend\app\__init__.py:779 [question placeholders] WHERE store_id = ?
+backend\app\__init__.py:830 [question placeholders] "SELECT id, slug FROM stores WHERE slug = ? LIMIT 1",
+backend\app\__init__.py:838 [question placeholders] "SELECT id FROM products WHERE store_id = ? AND sku = ? LIMIT 1",
+backend\app\__init__.py:853 [question placeholders] "SELECT id FROM products WHERE id = ? LIMIT 1",
+backend\app\__init__.py:868 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+backend\app\__init__.py:903 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?)
+backend\app\__init__.py:922 [question placeholders] WHERE id = ?
+backend\app\__init__.py:980 [question placeholders] WHERE p.id = ?
+backend\app\__init__.py:981 [question placeholders] AND s.slug = ?
+backend\app\__init__.py:1000 [question placeholders] SET stock = ?,
+backend\app\__init__.py:1001 [question placeholders] updated_at = ?
+backend\app\__init__.py:1002 [question placeholders] WHERE id = ?
+backend\app\__init__.py:1026 [question placeholders] WHERE p.id = ?
+backend\app\__init__.py:1070 [begin immediate] con.execute("BEGIN IMMEDIATE")
+backend\app\__init__.py:1073 [question placeholders] "SELECT id, slug, name FROM stores WHERE slug = ? LIMIT 1",
+backend\app\__init__.py:1095 [question placeholders] "SELECT * FROM products WHERE store_id = ? AND sku = ? LIMIT 1 FOR UPDATE",
+backend\app\__init__.py:1100 [question placeholders] "SELECT * FROM products WHERE store_id = ? AND id = ? LIMIT 1 FOR UPDATE",
+backend\app\__init__.py:1146 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+backend\app\__init__.py:1175 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?)
+backend\app\__init__.py:1189 [question placeholders] "UPDATE products SET stock = stock - ?, updated_at = ? WHERE id = ?",
+backend\app\__init__.py:1240 [question placeholders] "SELECT * FROM orders WHERE id = ? LIMIT 1",
+backend\app\__init__.py:1256 [question placeholders] WHERE order_id = ?
+backend\app\__init__.py:1337 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+backend\app\__init__.py:1458 [question placeholders] WHERE pa.lead_id = ?
+backend\app\__init__.py:1465 [question placeholders] LIMIT ?
+backend\app\__init__.py:1536 [question placeholders] WHERE pa.lead_id = ?
+backend\app\__init__.py:1543 [question placeholders] LIMIT ?
+backend\app\__init__.py:1674 [question placeholders] WHERE id = ?
+backend\app\__init__.py:1698 [question placeholders] WHERE lead_id = ?
+backend\app\__init__.py:1762 [question placeholders] stage = ?,
+backend\app\__init__.py:1763 [question placeholders] deal_value = ?,
+backend\app\__init__.py:1764 [question placeholders] next_action = ?,
+backend\app\__init__.py:1765 [question placeholders] updated_at = ?
+backend\app\__init__.py:1766 [question placeholders] WHERE lead_id = ?
+backend\app\__init__.py:1786 [question placeholders] VALUES (?, ?, ?, ?, ?)
+backend\app\__init__.py:1808 [question placeholders] WHERE lead_id = ?
+backend\app\__init__.py:1990 [question placeholders] WHERE id = ?
+backend\app\__init__.py:2012 [question placeholders] WHERE lead_id = ?
+backend\app\__init__.py:2095 [question placeholders] VALUES (?, ?, ?, ?, ?)
+backend\app\__init__.py:2129 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?)
+backend\app\__init__.py:2153 [question placeholders] WHERE lead_id = ?
+backend\app\__init__.py:2314 [question placeholders] WHERE id = ?
+backend\app\__init__.py:2337 [question placeholders] SET payment_status = ?
+backend\app\__init__.py:2338 [question placeholders] WHERE id = ?
+backend\app\__init__.py:2352 [question placeholders] WHERE id = ?
+backend\app\__init__.py:2421 [question placeholders] "SELECT id, slug FROM stores WHERE slug = ? LIMIT 1",
+backend\app\__init__.py:2429 [question placeholders] "SELECT id FROM products WHERE store_id = ? AND sku = ? LIMIT 1",
+backend\app\__init__.py:2444 [question placeholders] "SELECT id FROM products WHERE id = ? LIMIT 1",
+backend\app\__init__.py:2459 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+backend\app\__init__.py:2483 [question placeholders] WHERE id = ?
+backend\app\db.py:4 [sqlite imports] import sqlite3
+backend\app\db.py:23 [row factory] con.row_factory = sqlite3.Row
+backend\app\db.py:24 [pragma] con.execute("PRAGMA foreign_keys = ON")
+backend\app\db.py:43 [row factory] con.row_factory = sqlite3.Row
+backend\app\db.py:44 [pragma] con.execute("PRAGMA foreign_keys = ON")
+backend\app\db.py:157 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+backend\app\db.py:189 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)
+backend\app\db_compat.py:6 [sqlite imports] import sqlite3
+backend\app\db_compat.py:77 [question placeholders] output.append("%s" if char == "?" and not single and not double else char)
+backend\app\db_compat.py:97 [question placeholders] r"\s+FOR\s+UPDATE\s*(?=;?\s*$)",
+backend\app\db_compat.py:104 [autoincrement] r"\bINTEGER\s+PRIMARY\s+KEY\s+AUTOINCREMENT\b",
+backend\app\db_compat.py:157 [pragma] pragma = re.fullmatch(
+backend\app\db_compat.py:158 [question placeholders] r"PRAGMA\s+table_info\(([^)]+)\)\s*;?",
+backend\app\db_compat.py:158 [pragma] r"PRAGMA\s+table_info\(([^)]+)\)\s*;?",
+backend\app\db_compat.py:163 [pragma] if pragma:
+backend\app\db_compat.py:164 [pragma] table = pragma.group(1).strip().strip('"').strip("'")
+backend\app\db_compat.py:177 [question placeholders] r"BEGIN\s+IMMEDIATE\s*;?",
+backend\app\db_compat.py:214 [row factory] row_factory=dict_row,
+backend\app\db_compat.py:220 [row factory] raw.row_factory = sqlite3.Row
+backend\app\db_compat.py:221 [pragma] raw.execute("PRAGMA foreign_keys = ON")
+backend\app\db_compat.py:222 [pragma] raw.execute("PRAGMA busy_timeout = 30000")
+backend\app\routes\analytics.py:1 [question placeholders] # Copyright ? 2026 Andrew Wolverton. All Rights Reserved.
+backend\app\routes\analytics.py:32 [autoincrement] id INTEGER PRIMARY KEY AUTOINCREMENT,
+backend\app\routes\analytics.py:63 [question placeholders] "SELECT COUNT(*) AS total FROM analytics_events WHERE event_name = ?",
+backend\app\routes\analytics.py:75 [question placeholders] WHERE event_name = ?
+backend\app\routes\analytics.py:76 [question placeholders] AND created_at LIKE ?
+backend\app\routes\analytics.py:118 [question placeholders] VALUES (?, ?, ?, ?, ?)
+backend\app\routes\checkout.py:40 [begin immediate] con.execute("BEGIN IMMEDIATE")
+backend\app\routes\checkout.py:42 [question placeholders] store = con.execute("SELECT * FROM stores WHERE slug = ?", (slug,)).fetchone()
+backend\app\routes\checkout.py:65 [question placeholders] WHERE store_slug = ?
+backend\app\routes\checkout.py:66 [question placeholders] AND id = ?
+backend\app\routes\checkout.py:75 [question placeholders] WHERE store_slug = ?
+backend\app\routes\checkout.py:76 [question placeholders] AND sku = ?
+backend\app\routes\checkout.py:123 [question placeholders] SET stock = stock - ?, updated_at = ?
+backend\app\routes\checkout.py:124 [question placeholders] WHERE id = ?
+backend\app\routes\checkout.py:139 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, 'new', 'unpaid', ?, ?, ?, ?, ?, ?)
+backend\app\routes\checkout.py:162 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+backend\app\routes\checkout.py:178 [question placeholders] order = con.execute("SELECT * FROM orders WHERE id = ?", (order_id,)).fetchone()
+backend\app\routes\checkout.py:182 [question placeholders] WHERE store_slug = ?
+backend\app\routes\orders.py:48 [question placeholders] WHERE o.id = ?
+backend\app\routes\orders.py:60 [question placeholders] WHERE order_id = ?
+backend\app\routes\products.py:4 [sqlite imports] import sqlite3
+backend\app\routes\products.py:12 [row factory] con.row_factory = sqlite3.Row
+backend\app\routes\products.py:21 [question placeholders] "SELECT * FROM stores WHERE slug = ?",
+backend\app\routes\products.py:32 [question placeholders] WHERE store_id = ?
+backend\app\routes\stores.py:48 [question placeholders] WHERE s.slug = ?
+backend\app\routes\stores.py:93 [question placeholders] VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+backend\app\routes\stores.py:99 [question placeholders] row = con.execute("SELECT * FROM stores WHERE id = ?", (store_id,)).fetchone()
+backend\app\routes\stores.py:120 [question placeholders] updates.append(f"{field} = ?")
+backend\app\routes\stores.py:126 [question placeholders] updates.append("updated_at = ?")
+backend\app\routes\stores.py:132 [question placeholders] con.execute(f"UPDATE stores SET {', '.join(updates)} WHERE slug = ?", values)
+backend\app\routes\stores.py:135 [question placeholders] row = con.execute("SELECT * FROM stores WHERE slug = ?", (slug,)).fetchone()

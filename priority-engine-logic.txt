@@ -1,0 +1,470 @@
+    document.createElement(
+      "textarea"
+    );
+
+  textarea.value = text;
+  textarea.style.position =
+    "fixed";
+  textarea.style.opacity = "0";
+
+  document.body.appendChild(
+    textarea
+  );
+
+  textarea.focus();
+  textarea.select();
+
+  document.execCommand("copy");
+
+  document.body.removeChild(
+    textarea
+  );
+}
+
+export default function PriorityEngine({
+  setupRequests,
+}: Props) {
+  const {
+    pipeline,
+    pipelineStatus,
+  } = useUnifiedPipeline();
+
+  const [status, setStatus] =
+    useState(
+      "Priority Engine scanning live buyer opportunities..."
+    );
+
+  const [executing, setExecuting] =
+    useState(false);
+
+  const [feedbackState, setFeedbackState] =
+    useState<FeedbackState>("idle");
+
+  const [feedbackMessage, setFeedbackMessage] =
+    useState("SYSTEM READY");
+
+  const feedbackTimer =
+    useRef<number | null>(null);
+
+  const showFeedback = (
+    state: FeedbackState,
+    message: string,
+    duration = 2200
+  ) => {
+    if (feedbackTimer.current !== null) {
+      window.clearTimeout(
+        feedbackTimer.current
+      );
+    }
+
+    setFeedbackState(state);
+    setFeedbackMessage(message);
+
+    if (state !== "locking") {
+      feedbackTimer.current =
+        window.setTimeout(() => {
+          setFeedbackState("idle");
+          setFeedbackMessage(
+            "SYSTEM READY"
+          );
+
+          feedbackTimer.current = null;
+        }, duration);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (
+        feedbackTimer.current !== null
+      ) {
+        window.clearTimeout(
+          feedbackTimer.current
+        );
+      }
+    };
+  }, []);
+
+  const leads = useMemo<Lead[]>(() => {
+    return setupRequests.map(
+      (rawLead, index) => {
+        const lead =
+          asRecord(rawLead);
+
+        const business = valueText(
+          lead,
+          [
+            "business_name",
+            "businessName",
+            "business",
+          ],
+          `Buyer Lead ${index + 1}`
+        );
+
+        const name = valueText(
+          lead,
+          [
+            "name",
+            "contact_name",
+            "contactName",
+          ],
+          "Buyer"
+        );
+
+        const email = valueText(
+          lead,
+          ["email"]
+        );
+
+        const details = valueText(
+          lead,
+          [
+            "what_i_sell",
+            "whatISell",
+            "business_details",
+            "details",
+          ],
+          "Business setup opportunity"
+        );
+
+        const budget = valueText(
+          lead,
+          [
+            "budget",
+            "budget_range",
+            "budgetRange",
+            "budget_level",
+            "budgetLevel",
+            "project_budget",
+            "projectBudget",
+            "package",
+            "package_interest",
+            "packageInterest",
+            "selected_package",
+            "selectedPackage",
+            "package_name",
+            "packageName",
+          ],
+          Object.entries(lead)
+            .filter(([key]) =>
+              /budget|package/i.test(
+                key
+              )
+            )
+            .map(([, value]) =>
+              typeof value ===
+                "string" ||
+              typeof value ===
+                "number"
+                ? String(
+                    value
+                  ).trim()
+                : ""
+            )
+            .find(Boolean) ||
+            "Package not selected"
+        );
+
+        const timeline = valueText(
+          lead,
+          ["timeline"],
+          "Timeline not selected"
+        );
+
+        const id = valueText(
+          lead,
+          [
+            "id",
+            "request_id",
+            "created_at",
+          ]
+        );
+
+        return {
+          key:
+            id ||
+            `${business}-${email || name}-${index}`,
+          business,
+          name,
+          email,
+          details,
+          budget,
+          timeline,
+        };
+      }
+    );
+  }, [setupRequests]);
+
+  const rankedTargets =
+    useMemo<RankedTarget[]>(() => {
+      return leads
+        .map((lead) => {
+          const deal =
+            pipeline[lead.key] ||
+            defaultDeal(
+              lead.budget
+            );
+
+          const valueScore =
+            Math.min(
+              60,
+              Math.round(
+                deal.dealValue / 50
+              )
+            );
+
+          const score =
+            stageScore(
+              deal.stage
+            ) +
+            timelineScore(
+              lead.timeline
+            ) +
+            valueScore;
+
+          return {
+            lead,
+            deal,
+            score,
+            priority:
+              priorityLabel(score),
+            reason: reasonFor(
+              lead,
+              deal
+            ),
+            nextMove: nextMoveFor(
+              deal.stage
+            ),
+          };
+        })
+        .filter(
+          ({ deal }) =>
+            deal.stage !== "Won" &&
+            deal.stage !== "Lost"
+        )
+        .sort(
+          (a, b) =>
+            b.score - a.score
+        );
+    }, [leads, pipeline]);
+
+  const primaryTarget =
+    rankedTargets[0];
+
+  const activeMoney =
+    rankedTargets.reduce(
+      (total, target) =>
+        total +
+        target.deal.dealValue,
+      0
+    );
+
+  const buildCloseMessage = (
+    target: RankedTarget
+  ) =>
+    [
+      `Hi ${target.lead.name},`,
+      "",
+      `I wanted to follow up about the ${target.lead.business} storefront and owner system.`,
+      "",
+      `Based on what you shared — ${target.lead.details} — I believe the next move is straightforward.`,
+      "",
+      `Recommended direction: ${target.lead.budget}`,
+      `Current project value: ${money(target.deal.dealValue)}`,
+      `Timeline: ${target.lead.timeline}`,
+      "",
+      target.nextMove,
+      "",
+      "I can walk you through the live system and confirm the exact build scope, deposit, and launch date.",
+      "",
+      "Are you ready to move forward?",
+      "",
+      "Andrew Wolverton",
+      "I AM THE ONE™ · WOLF OS™",
+    ].join("\n");
+
+  const copyTargetMessage =
+    async (
+      target: RankedTarget
+    ) => {
+      const message =
+        buildCloseMessage(target);
+
+      try {
+        if (
+          navigator.clipboard
+            ?.writeText
+        ) {
+          await navigator.clipboard.writeText(
+            message
+          );
+        } else {
+          copyFallback(message);
+        }
+      } catch {
+        copyFallback(message);
+      }
+
+      setStatus(
+        `${target.lead.business} priority close message copied.`
+      );
+    };
+
+  const openTargetEmail = (
+    target: RankedTarget
+  ) => {
+    if (!target.lead.email) {
+      setStatus(
+        `${target.lead.business} does not have an email address.`
+      );
+
+      return;
+    }
+
+    const subject =
+      `${target.lead.business} storefront + owner system`;
+
+    const body =
+      buildCloseMessage(target);
+
+    window.location.href =
+      `mailto:${encodeURIComponent(
+        target.lead.email
+      )}?subject=${encodeURIComponent(
+        subject
+      )}&body=${encodeURIComponent(
+        body
+      )}`;
+
+    setStatus(
+      `${target.lead.business} priority email opened.`
+    );
+  };
+
+  const executeNextMove =
+    async (
+      target: RankedTarget
+    ) => {
+      if (executing) {
+        return;
+      }
+
+      if (
+        target.deal.stage ===
+        "Closing"
+      ) {
+        showFeedback(
+          "closing",
+          "CLOSING MODE · CLOSE MESSAGE ARMED",
+          2800
+        );
+
+        await copyTargetMessage(
+          target
+        );
+
+        setStatus(
+          `${target.lead.business} is at CLOSING. Close message copied. Ask for the deposit before marking the deal Won.`
+        );
+
+        return;
+      }
+
+      const currentIndex =
+        stages.indexOf(
+          target.deal.stage
+        );
+
+      const nextStage =
+        stages[
+          Math.min(
+            currentIndex + 1,
+            stages.indexOf(
+              "Closing"
+            )
+          )
+        ];
+
+      const nextDeal: PipelineState =
+        {
+          ...target.deal,
+          stage: nextStage,
+          nextAction:
+            nextMoveFor(
+              nextStage
+            ),
+        };
+
+      const ownerToken =
+        window.localStorage.getItem(
+          "wolf_owner_token"
+        ) || "";
+
+      if (!ownerToken) {
+        setStatus(
+          "Unlock Owner Console before executing the priority move."
+        );
+
+        return;
+      }
+
+      setExecuting(true);
+
+      showFeedback(
+        "locking",
+        `TARGET LOCK · ${target.lead.business.toUpperCase()}`
+      );
+
+      setStatus(
+        `Executing next move for ${target.lead.business}...`
+      );
+
+      try {
+        await saveUnifiedPipelineDeal(
+          target.lead.key,
+          nextDeal,
+          ownerToken
+        );
+
+        showFeedback(
+          "executed",
+          `MOVE EXECUTED · ${target.deal.stage.toUpperCase()} → ${nextStage.toUpperCase()}`,
+          2800
+        );
+
+        setStatus(
+          `${target.lead.business} advanced from ${target.deal.stage} to ${nextStage}. Priority Engine recalculated the attack queue.`
+        );
+      } catch (error) {
+        showFeedback(
+          "error",
+          "EXECUTION FAILED · CHECK SYSTEM",
+          3200
+        );
+
+        setStatus(
+          error instanceof Error
+            ? `Priority Engine error: ${error.message}`
+            : "Priority action failed."
+        );
+      } finally {
+        setExecuting(false);
+      }
+    };
+
+  if (!primaryTarget) {
+    return (
+      <section className="priority-engine priority-engine-clear">
+        <div>
+          <p className="priority-engine-kicker">
+            WOLF OS™ PRIORITY ENGINE
+          </p>
+
+          <h2>
+            Revenue Attack Queue Clear
+          </h2>
+
+          <p>
+            No open buyer deals require
+            action. Review won deals or
+            capture a new setup request.

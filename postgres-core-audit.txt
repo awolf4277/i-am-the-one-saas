@@ -1,0 +1,1039 @@
+WOLF OS PostgreSQL Core Audit
+Branch: main
+Source root: X:\i-am-the-one-saas\backend\app
+Files scanned: 12
+
+==============================================================================
+FILE: backend\app\__init__.py
+HITS: 76
+==============================================================================
+
+MATCH 95: pragma
+     92: 
+     93: 
+     94: def table_columns(con: DatabaseConnection, table: str) -> set[str]:
+>    95:     rows = con.execute(f"PRAGMA table_info({table})").fetchall()
+     96:     return {str(row["name"]) for row in rows}
+     97: 
+     98: 
+
+MATCH 168: autoincrement
+    165:         con.execute(
+    166:             """
+    167:             CREATE TABLE IF NOT EXISTS order_items (
+>   168:                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+    169:                 order_id TEXT,
+    170:                 product_id TEXT,
+    171:                 sku TEXT,
+
+MATCH 299: insert or ignore
+    296: 
+    297:         con.execute(
+    298:             """
+>   299:             INSERT OR IGNORE INTO stores (id, slug, name, brand, system, plan, status, created_at)
+    300:             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    301:             """,
+    302:             ("store_demo", "demo", f"{BRAND} Demo Store", BRAND, SYSTEM, "demo", "active", now_iso()),
+
+MATCH 300: question placeholder
+    303:         )
+
+MATCH 309: question placeholder
+    306:             """
+    307:             UPDATE stores
+    308:             SET slug = COALESCE(NULLIF(slug, ''), 'demo'),
+>   309:                 name = COALESCE(NULLIF(name, ''), ?),
+    310:                 brand = COALESCE(NULLIF(brand, ''), ?),
+    311:                 system = COALESCE(NULLIF(system, ''), ?),
+    312:                 plan = COALESCE(NULLIF(plan, ''), 'demo'),
+
+MATCH 310: question placeholder
+    313:                 status = COALESCE(NULLIF(status, ''), 'active'),
+
+MATCH 311: question placeholder
+    314:                 created_at = COALESCE(NULLIF(created_at, ''), ?)
+
+MATCH 314: question placeholder
+    315:             WHERE id = 'store_demo'
+    316:             """,
+    317:             (f"{BRAND} Demo Store", BRAND, SYSTEM, now_iso()),
+
+MATCH 369: question placeholder
+    366: 
+    367:         for item in seed_products:
+    368:             existing = con.execute(
+>   369:                 "SELECT id FROM products WHERE sku = ? LIMIT 1",
+    370:                 (item[2],),
+    371:             ).fetchone()
+    372:             if not existing:
+
+MATCH 379: question placeholder
+    376:                         id, store_id, store_slug, sku, name, category, description,
+    377:                         price_cents, stock, image_url, created_at, updated_at
+    378:                     )
+>   379:                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    380:                     """,
+    381:                     (*item[:2], "demo", *item[2:], now_iso(), now_iso()),
+    382:                 )
+
+MATCH 397: question placeholder
+    394:                 "Buyer-ready storefront with responsive design, products, cart, checkout, inventory controls, and deployment assistance. Full project pricing starts at $1,500.",
+    395:                 150000,
+    396:                 9,
+>   397:                 "https://placehold.co/900x700/111827/FFFFFF?text=Starter+Storefront",
+    398:             ),
+    399:             (
+    400:                 "prod_pro_dashboard",
+
+MATCH 408: question placeholder
+    405:                 "Everything in Starter plus the WOLF OS™ owner command center, orders, inventory, buyer leads, business intelligence, and revenue actions. Full project pricing starts at $4,500.",
+    406:                 450000,
+    407:                 5,
+>   408:                 "https://placehold.co/900x700/111827/FFFFFF?text=Pro+Dashboard",
+    409:             ),
+    410:             (
+    411:                 "prod_custom_saas",
+
+MATCH 419: question placeholder
+    416:                 "50% deposit for a custom SaaS platform starting at $9,000, including tailored workflows, dashboards, database features, automation, deployment, and launch support.",
+    417:                 450000,
+    418:                 3,
+>   419:                 "https://placehold.co/900x700/111827/FFFFFF?text=Custom+SaaS",
+    420:             ),
+    421:             (
+    422:                 "prod_launch_kit",
+
+MATCH 430: question placeholder
+    427:                 "Brand copy, offer cards, product structure, demo pitch, and buyer-ready launch materials.",
+    428:                 29900,
+    429:                 12,
+>   430:                 "https://placehold.co/900x700/111827/FFFFFF?text=Launch+Kit",
+    431:             ),
+    432:             (
+    433:                 "prod_brand_audit",
+
+MATCH 441: question placeholder
+    438:                 "Fast review of a business offer, buyer path, storefront structure, and next launch steps.",
+    439:                 19900,
+    440:                 7,
+>   441:                 "https://placehold.co/900x700/111827/FFFFFF?text=Brand+Audit",
+    442:             ),
+    443:         ]
+    444: 
+
+MATCH 470: question placeholder
+    467:             con.execute(
+    468:                 """
+    469:                 UPDATE products
+>   470:                 SET name = ?, description = ?, price_cents = ?, updated_at = ?
+    471:                 WHERE sku = ?
+    472:                 """,
+    473:                 (
+
+MATCH 471: question placeholder
+    474:                     package_name,
+
+MATCH 484: question placeholder
+    481: 
+    482:         for item in sales_ready_products:
+    483:             existing = con.execute(
+>   484:                 "SELECT id FROM products WHERE sku = ? LIMIT 1",
+    485:                 (item[2],),
+    486:             ).fetchone()
+    487:             if not existing:
+
+MATCH 494: question placeholder
+    491:                         id, store_id, store_slug, sku, name, category, description,
+    492:                         price_cents, stock, image_url, created_at, updated_at
+    493:                     )
+>   494:                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    495:                     """,
+    496:                     (*item[:2], "demo", *item[2:], now_iso(), now_iso()),
+    497:                 )
+
+MATCH 546: question placeholder
+    543: 
+    544:         for lead in sales_ready_leads:
+    545:             existing = con.execute(
+>   546:                 "SELECT id FROM setup_requests WHERE id = ? LIMIT 1",
+    547:                 (lead[0],),
+    548:             ).fetchone()
+    549:             if not existing:
+
+MATCH 556: question placeholder
+    553:                         id, name, business_name, email, phone, what_i_sell,
+    554:                         budget_range, timeline, website, message, source, status, created_at
+    555:                     )
+>   556:                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    557:                     """,
+    558:                     (*lead, now_iso()),
+    559:                 )
+
+MATCH 600: question placeholder
+    597:         for order in sales_ready_orders:
+    598:             order_id, buyer_name, buyer_email, buyer_phone, notes, total_cents, lines = order
+    599:             existing = con.execute(
+>   600:                 "SELECT id FROM orders WHERE id = ? LIMIT 1",
+    601:                 (order_id,),
+    602:             ).fetchone()
+    603:             if not existing:
+
+MATCH 611: question placeholder
+    608:                         subtotal_cents, tax_cents, shipping_cents, discount_cents, total_cents,
+    609:                         currency, payment_mode, payment_status, status, created_at
+    610:                     )
+>   611:                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    612:                     """,
+    613:                     (
+    614:                         order_id,
+
+MATCH 640: question placeholder
+    637:                         INSERT INTO order_items (
+    638:                             order_id, product_id, sku, name, qty, unit_amount_cents, line_total_cents
+    639:                         )
+>   640:                         VALUES (?, ?, ?, ?, ?, ?, ?)
+    641:                         """,
+    642:                         (
+    643:                             order_id,
+
+MATCH 679: question placeholder
+    676:     data["price_cents"] = int(data.get("price_cents") or 0)
+    677:     data["stock"] = int(data.get("stock") or 0)
+    678:     if not data.get("image_url"):
+>   679:         data["image_url"] = f"https://placehold.co/900x700/png?text={data.get('sku') or 'PRODUCT'}"
+    680:     return data
+    681: 
+    682: 
+
+MATCH 768: question placeholder
+    765:         con = connect(app)
+    766:         try:
+    767:             store = con.execute(
+>   768:                 "SELECT id, slug, name, brand, system, plan, status FROM stores WHERE slug = ? LIMIT 1",
+    769:                 (slug,),
+    770:             ).fetchone()
+    771: 
+
+MATCH 779: question placeholder
+    776:                 """
+    777:                 SELECT id, store_id, sku, name, category, description, price_cents, stock, image_url, updated_at
+    778:                 FROM products
+>   779:                 WHERE store_id = ?
+    780:                 ORDER BY category, name
+    781:                 """,
+    782:                 (store["id"],),
+
+MATCH 830: question placeholder
+    827:         con = connect(app)
+    828:         try:
+    829:             store = con.execute(
+>   830:                 "SELECT id, slug FROM stores WHERE slug = ? LIMIT 1",
+    831:                 (slug,),
+    832:             ).fetchone()
+    833: 
+
+MATCH 838: question placeholder
+    835:                 return jsonify({"ok": False, "error": f"Store not found: {slug}"}), 404
+    836: 
+    837:             duplicate = con.execute(
+>   838:                 "SELECT id FROM products WHERE store_id = ? AND sku = ? LIMIT 1",
+    839:                 (store["id"], sku),
+    840:             ).fetchone()
+    841: 
+
+MATCH 853: question placeholder
+    850:             product_id = base_id or f"product-{secrets.token_hex(4)}"
+    851: 
+    852:             existing_id = con.execute(
+>   853:                 "SELECT id FROM products WHERE id = ? LIMIT 1",
+    854:                 (product_id,),
+    855:             ).fetchone()
+    856: 
+
+MATCH 868: question placeholder
+    865:                     id, store_id, store_slug, sku, name, category, description,
+    866:                     price_cents, stock, image_url, created_at, updated_at
+    867:                 )
+>   868:                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    869:                 """,
+    870:                 (
+    871:                     product_id,
+
+MATCH 903: question placeholder
+    900:                         summary,
+    901:                         created_at
+    902:                     )
+>   903:                     VALUES (?, ?, ?, ?, ?, ?, ?)
+    904:                     """,
+    905:                     (
+    906:                         new_id("ACT"),
+
+MATCH 922: question placeholder
+    919:                 """
+    920:                 SELECT id, store_id, sku, name, category, description, price_cents, stock, image_url, updated_at
+    921:                 FROM products
+>   922:                 WHERE id = ?
+    923:                 LIMIT 1
+    924:                 """,
+    925:                 (product_id,),
+
+MATCH 980: question placeholder
+    977:                 FROM products AS p
+    978:                 INNER JOIN stores AS s
+    979:                     ON s.id = p.store_id
+>   980:                 WHERE p.id = ?
+    981:                   AND s.slug = ?
+    982:                 LIMIT 1
+    983:                 """,
+
+MATCH 981: question placeholder
+    984:                 (product_id, slug),
+
+MATCH 1000: question placeholder
+    997:             con.execute(
+    998:                 """
+    999:                 UPDATE products
+>  1000:                 SET stock = ?,
+   1001:                     updated_at = ?
+   1002:                 WHERE id = ?
+   1003:                 """,
+
+MATCH 1001: question placeholder
+   1004:                 (stock, updated_at, product_id),
+
+MATCH 1002: question placeholder
+   1005:             )
+
+MATCH 1026: question placeholder
+   1023:                 FROM products AS p
+   1024:                 INNER JOIN stores AS s
+   1025:                     ON s.id = p.store_id
+>  1026:                 WHERE p.id = ?
+   1027:                 LIMIT 1
+   1028:                 """,
+   1029:                 (product_id,),
+
+MATCH 1070: begin immediate
+   1067: 
+   1068:         con = connect(app)
+   1069:         try:
+>  1070:             con.execute("BEGIN IMMEDIATE")
+   1071: 
+   1072:             store = con.execute(
+   1073:                 "SELECT id, slug, name FROM stores WHERE slug = ? LIMIT 1",
+
+MATCH 1073: question placeholder
+   1074:                 (slug,),
+   1075:             ).fetchone()
+   1076: 
+
+MATCH 1095: question placeholder
+   1092: 
+   1093:                 if sku:
+   1094:                     product = con.execute(
+>  1095:                         "SELECT * FROM products WHERE store_id = ? AND sku = ? LIMIT 1 FOR UPDATE",
+   1096:                         (store["id"], sku),
+   1097:                     ).fetchone()
+   1098:                 else:
+
+MATCH 1100: question placeholder
+   1099:                     product = con.execute(
+>  1100:                         "SELECT * FROM products WHERE store_id = ? AND id = ? LIMIT 1 FOR UPDATE",
+   1101:                         (store["id"], product_id),
+   1102:                     ).fetchone()
+   1103: 
+
+MATCH 1146: question placeholder
+   1143:                     subtotal_cents, tax_cents, shipping_cents, discount_cents, total_cents,
+   1144:                     currency, payment_mode, payment_status, status, created_at
+   1145:                 )
+>  1146:                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+   1147:                 """,
+   1148:                 (
+   1149:                     order_id,
+
+MATCH 1175: question placeholder
+   1172:                     INSERT INTO order_items (
+   1173:                         order_id, product_id, sku, name, qty, unit_amount_cents, line_total_cents
+   1174:                     )
+>  1175:                     VALUES (?, ?, ?, ?, ?, ?, ?)
+   1176:                     """,
+   1177:                     (
+   1178:                         order_id,
+
+MATCH 1189: question placeholder
+   1186:                 )
+   1187: 
+   1188:                 con.execute(
+>  1189:                     "UPDATE products SET stock = stock - ?, updated_at = ? WHERE id = ?",
+   1190:                     (line["qty"], now_iso(), line["product_id"]),
+   1191:                 )
+   1192: 
+
+MATCH 1240: question placeholder
+   1237: 
+   1238:         try:
+   1239:             order = con.execute(
+>  1240:                 "SELECT * FROM orders WHERE id = ? LIMIT 1",
+   1241:                 (order_id,),
+   1242:             ).fetchone()
+   1243: 
+
+MATCH 1256: question placeholder
+   1253:                 """
+   1254:                 SELECT sku, name, qty, unit_amount_cents, line_total_cents
+   1255:                 FROM order_items
+>  1256:                 WHERE order_id = ?
+   1257:                 ORDER BY id ASC
+   1258:                 """,
+   1259:                 (order_id,),
+
+MATCH 1337: question placeholder
+   1334:                     id, name, business_name, email, phone, what_i_sell,
+   1335:                     budget_range, timeline, website, message, source, status, created_at
+   1336:                 )
+>  1337:                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+   1338:                 """,
+   1339:                 (
+   1340:                     request_id,
+
+MATCH 1458: question placeholder
+   1455: 
+   1456:             if lead_id:
+   1457:                 sql += """
+>  1458:                     WHERE pa.lead_id = ?
+   1459:                 """
+   1460: 
+   1461:                 params.append(lead_id)
+
+MATCH 1465: question placeholder
+   1462: 
+   1463:             sql += """
+   1464:                 ORDER BY pa.created_at DESC
+>  1465:                 LIMIT ?
+   1466:             """
+   1467: 
+   1468:             params.append(limit)
+
+MATCH 1536: question placeholder
+   1533: 
+   1534:             if lead_id:
+   1535:                 sql += """
+>  1536:                     WHERE pa.lead_id = ?
+   1537:                 """
+   1538: 
+   1539:                 params.append(lead_id)
+
+MATCH 1543: question placeholder
+   1540: 
+   1541:             sql += """
+   1542:                 ORDER BY pa.created_at DESC
+>  1543:                 LIMIT ?
+   1544:             """
+   1545: 
+   1546:             params.append(limit)
+
+MATCH 1674: question placeholder
+   1671:                 """
+   1672:                 SELECT id
+   1673:                 FROM setup_requests
+>  1674:                 WHERE id = ?
+   1675:                 LIMIT 1
+   1676:                 """,
+   1677:                 (lead_id,),
+
+MATCH 1698: question placeholder
+   1695:                     deal_value,
+   1696:                     next_action
+   1697:                 FROM pipeline_deals
+>  1698:                 WHERE lead_id = ?
+   1699:                 LIMIT 1
+   1700:                 """,
+   1701:                 (lead_id,),
+
+MATCH 1762: question placeholder
+   1759:                     """
+   1760:                     UPDATE pipeline_deals
+   1761:                     SET
+>  1762:                         stage = ?,
+   1763:                         deal_value = ?,
+   1764:                         next_action = ?,
+   1765:                         updated_at = ?
+
+MATCH 1763: question placeholder
+   1766:                     WHERE lead_id = ?
+
+MATCH 1764: question placeholder
+   1767:                     """,
+
+MATCH 1765: question placeholder
+   1768:                     (
+
+MATCH 1766: question placeholder
+   1769:                         stage,
+
+MATCH 1786: question placeholder
+   1783:                         next_action,
+   1784:                         updated_at
+   1785:                     )
+>  1786:                     VALUES (?, ?, ?, ?, ?)
+   1787:                     """,
+   1788:                     (
+   1789:                         lead_id,
+
+MATCH 1808: question placeholder
+   1805:                     next_action,
+   1806:                     updated_at
+   1807:                 FROM pipeline_deals
+>  1808:                 WHERE lead_id = ?
+   1809:                 LIMIT 1
+   1810:                 """,
+   1811:                 (lead_id,),
+
+MATCH 1990: question placeholder
+   1987:                     id,
+   1988:                     business_name
+   1989:                 FROM setup_requests
+>  1990:                 WHERE id = ?
+   1991:                 LIMIT 1
+   1992:                 """,
+   1993:                 (lead_id,),
+
+MATCH 2012: question placeholder
+   2009:                     deal_value,
+   2010:                     next_action
+   2011:                 FROM pipeline_deals
+>  2012:                 WHERE lead_id = ?
+   2013:                 LIMIT 1
+   2014:                 """,
+   2015:                 (lead_id,),
+
+MATCH 2095: question placeholder
+   2092:                     next_action,
+   2093:                     updated_at
+   2094:                 )
+>  2095:                 VALUES (?, ?, ?, ?, ?)
+   2096:                 ON CONFLICT(lead_id)
+   2097:                 DO UPDATE SET
+   2098:                     stage = excluded.stage,
+
+MATCH 2129: question placeholder
+   2126:                         summary,
+   2127:                         created_at
+   2128:                     )
+>  2129:                     VALUES (?, ?, ?, ?, ?, ?, ?)
+   2130:                     """,
+   2131:                     (
+   2132:                         new_id("ACT"),
+
+MATCH 2153: question placeholder
+   2150:                     next_action,
+   2151:                     updated_at
+   2152:                 FROM pipeline_deals
+>  2153:                 WHERE lead_id = ?
+   2154:                 LIMIT 1
+   2155:                 """,
+   2156:                 (lead_id,),
+
+MATCH 2314: question placeholder
+   2311:                 """
+   2312:                 SELECT *
+   2313:                 FROM orders
+>  2314:                 WHERE id = ?
+   2315:                 LIMIT 1
+   2316:                 """,
+   2317:                 (order_id,),
+
+MATCH 2337: question placeholder
+   2334:                 con.execute(
+   2335:                     """
+   2336:                     UPDATE orders
+>  2337:                     SET payment_status = ?
+   2338:                     WHERE id = ?
+   2339:                     """,
+   2340:                     (
+
+MATCH 2338: question placeholder
+   2341:                         payment_status,
+
+MATCH 2352: question placeholder
+   2349:                 """
+   2350:                 SELECT *
+   2351:                 FROM orders
+>  2352:                 WHERE id = ?
+   2353:                 LIMIT 1
+   2354:                 """,
+   2355:                 (order_id,),
+
+MATCH 2421: question placeholder
+   2418:                     return jsonify({"ok": False, "error": "Stock cannot be negative."}), 400
+   2419: 
+   2420:                 store = con.execute(
+>  2421:                     "SELECT id, slug FROM stores WHERE slug = ? LIMIT 1",
+   2422:                     ("demo",),
+   2423:                 ).fetchone()
+   2424: 
+
+MATCH 2429: question placeholder
+   2426:                     return jsonify({"ok": False, "error": "Demo store not found."}), 404
+   2427: 
+   2428:                 duplicate = con.execute(
+>  2429:                     "SELECT id FROM products WHERE store_id = ? AND sku = ? LIMIT 1",
+   2430:                     (store["id"], sku),
+   2431:                 ).fetchone()
+   2432: 
+
+MATCH 2444: question placeholder
+   2441:                 product_id = base_id or f"product-{secrets.token_hex(4)}"
+   2442: 
+   2443:                 existing_id = con.execute(
+>  2444:                     "SELECT id FROM products WHERE id = ? LIMIT 1",
+   2445:                     (product_id,),
+   2446:                 ).fetchone()
+   2447: 
+
+MATCH 2459: question placeholder
+   2456:                         id, store_id, store_slug, sku, name, category, description,
+   2457:                         price_cents, stock, image_url, created_at, updated_at
+   2458:                     )
+>  2459:                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+   2460:                     """,
+   2461:                     (
+   2462:                         product_id,
+
+MATCH 2483: question placeholder
+   2480:                     """
+   2481:                     SELECT id, store_id, sku, name, category, description, price_cents, stock, image_url, updated_at
+   2482:                     FROM products
+>  2483:                     WHERE id = ?
+   2484:                     LIMIT 1
+   2485:                     """,
+   2486:                     (product_id,),
+
+==============================================================================
+FILE: backend\app\db.py
+HITS: 9
+==============================================================================
+
+MATCH 4: sqlite import
+      1: # Copyright © 2026 Andrew Wolverton. All Rights Reserved.
+      2: from __future__ import annotations
+      3: 
+>     4: import sqlite3
+      5: import uuid
+      6: from datetime import datetime, timezone
+      7: from pathlib import Path
+
+MATCH 23: sqlite row
+     20: 
+     21: def connect() -> sqlite3.Connection:
+     22:     con = sqlite3.connect(current_app.config["DB_PATH"])
+>    23:     con.row_factory = sqlite3.Row
+     24:     con.execute("PRAGMA foreign_keys = ON")
+     25:     return con
+     26: 
+
+MATCH 24: pragma
+     27: 
+
+MATCH 28: sqlite row
+>    28: def row_to_dict(row: sqlite3.Row | None) -> dict[str, Any] | None:
+     29:     if row is None:
+     30:         return None
+     31:     return dict(row)
+
+MATCH 34: sqlite row
+     32: 
+     33: 
+>    34: def rows_to_dicts(rows: list[sqlite3.Row]) -> list[dict[str, Any]]:
+     35:     return [dict(row) for row in rows]
+     36: 
+     37: 
+
+MATCH 43: sqlite row
+     40:     db_file.parent.mkdir(parents=True, exist_ok=True)
+     41: 
+     42:     con = sqlite3.connect(str(db_file))
+>    43:     con.row_factory = sqlite3.Row
+     44:     con.execute("PRAGMA foreign_keys = ON")
+     45: 
+     46:     try:
+
+MATCH 44: pragma
+     47:         con.executescript(
+
+MATCH 157: question placeholder
+    154:             """
+    155:             INSERT INTO stores
+    156:             (id, slug, name, owner_name, status, plan, currency, created_at, updated_at)
+>   157:             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    158:             """,
+    159:             (
+    160:                 store["id"],
+
+MATCH 189: question placeholder
+    186:                 """
+    187:                 INSERT INTO products
+    188:                 (id, store_slug, sku, name, category, description, price_cents, stock, image_url, is_active, created_at, updated_at)
+>   189:                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)
+    190:                 """,
+    191:                 (
+    192:                     new_id("prod"),
+
+==============================================================================
+FILE: backend\app\db_compat.py
+HITS: 13
+==============================================================================
+
+MATCH 6: sqlite import
+      3: 
+      4: import os
+      5: import re
+>     6: import sqlite3
+      7: from pathlib import Path
+      8: from typing import Any, Iterable
+      9: 
+
+MATCH 77: question placeholder
+     74:             index += 1
+     75:             continue
+     76: 
+>    77:         output.append("%s" if char == "?" and not single and not double else char)
+     78:         index += 1
+     79: 
+     80:     return "".join(output)
+
+MATCH 97: question placeholder
+     94: 
+     95:         if not self.is_postgres:
+     96:             return re.sub(
+>    97:                 r"\s+FOR\s+UPDATE\s*(?=;?\s*$)",
+     98:                 "",
+     99:                 prepared,
+    100:                 flags=re.IGNORECASE,
+
+MATCH 104: autoincrement
+    101:             )
+    102: 
+    103:         prepared = re.sub(
+>   104:             r"\bINTEGER\s+PRIMARY\s+KEY\s+AUTOINCREMENT\b",
+    105:             "BIGSERIAL PRIMARY KEY",
+    106:             prepared,
+    107:             flags=re.IGNORECASE,
+
+MATCH 157: pragma
+    154:         statement = str(sql).strip()
+    155: 
+    156:         if self.is_postgres:
+>   157:             pragma = re.fullmatch(
+    158:                 r"PRAGMA\s+table_info\(([^)]+)\)\s*;?",
+    159:                 statement,
+    160:                 flags=re.IGNORECASE,
+
+MATCH 158: pragma, question placeholder
+    161:             )
+
+MATCH 163: pragma
+    162: 
+>   163:             if pragma:
+    164:                 table = pragma.group(1).strip().strip('"').strip("'")
+    165:                 return self.raw.execute(
+    166:                     """
+
+MATCH 164: pragma
+    167:                     SELECT column_name AS name
+
+MATCH 177: question placeholder
+    174:                 )
+    175: 
+    176:             if re.fullmatch(
+>   177:                 r"BEGIN\s+IMMEDIATE\s*;?",
+    178:                 statement,
+    179:                 flags=re.IGNORECASE,
+    180:             ):
+
+MATCH 214: sqlite row
+    211: 
+    212:         raw = psycopg.connect(
+    213:             url,
+>   214:             row_factory=dict_row,
+    215:             connect_timeout=15,
+    216:         )
+    217:         return DatabaseConnection(raw, "postgresql")
+
+MATCH 220: sqlite row
+    218: 
+    219:     raw = sqlite3.connect(_sqlite_path(app), timeout=30)
+>   220:     raw.row_factory = sqlite3.Row
+    221:     raw.execute("PRAGMA foreign_keys = ON")
+    222:     raw.execute("PRAGMA busy_timeout = 30000")
+    223:     return DatabaseConnection(raw, "sqlite")
+
+MATCH 221: pragma
+
+MATCH 222: pragma
+
+==============================================================================
+FILE: backend\app\routes\analytics.py
+HITS: 6
+==============================================================================
+
+MATCH 1: question placeholder
+>     1: # Copyright ? 2026 Andrew Wolverton. All Rights Reserved.
+      2: from __future__ import annotations
+      3: 
+      4: import os
+
+MATCH 32: autoincrement
+     29:         con.execute(
+     30:             """
+     31:             CREATE TABLE IF NOT EXISTS analytics_events (
+>    32:                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+     33:                 event_name TEXT NOT NULL,
+     34:                 path TEXT DEFAULT '',
+     35:                 source TEXT DEFAULT '',
+
+MATCH 63: question placeholder
+     60: 
+     61: def count_event(con: DatabaseConnection, event_name: str) -> int:
+     62:     row = con.execute(
+>    63:         "SELECT COUNT(*) AS total FROM analytics_events WHERE event_name = ?",
+     64:         (event_name,),
+     65:     ).fetchone()
+     66: 
+
+MATCH 75: question placeholder
+     72:         """
+     73:         SELECT COUNT(*) AS total
+     74:         FROM analytics_events
+>    75:         WHERE event_name = ?
+     76:           AND created_at LIKE ?
+     77:         """,
+     78:         (event_name, f"{today_prefix()}%"),
+
+MATCH 76: question placeholder
+     79:     ).fetchone()
+
+MATCH 118: question placeholder
+    115:                 user_agent,
+    116:                 created_at
+    117:             )
+>   118:             VALUES (?, ?, ?, ?, ?)
+    119:             """,
+    120:             (event_name, path, source, user_agent, now_iso()),
+    121:         )
+
+==============================================================================
+FILE: backend\app\routes\checkout.py
+HITS: 12
+==============================================================================
+
+MATCH 40: begin immediate
+     37:     con = connect()
+     38: 
+     39:     try:
+>    40:         con.execute("BEGIN IMMEDIATE")
+     41: 
+     42:         store = con.execute("SELECT * FROM stores WHERE slug = ?", (slug,)).fetchone()
+     43:         if not store:
+
+MATCH 42: question placeholder
+     44:             con.rollback()
+     45:             return jsonify({"ok": False, "error": "STORE_NOT_FOUND"}), 404
+
+MATCH 65: question placeholder
+     62:                 product = con.execute(
+     63:                     """
+     64:                     SELECT * FROM products
+>    65:                     WHERE store_slug = ?
+     66:                     AND id = ?
+     67:                     AND is_active = 1
+     68:                     """,
+
+MATCH 66: question placeholder
+     69:                     (slug, product_id),
+
+MATCH 75: question placeholder
+     72:                 product = con.execute(
+     73:                     """
+     74:                     SELECT * FROM products
+>    75:                     WHERE store_slug = ?
+     76:                     AND sku = ?
+     77:                     AND is_active = 1
+     78:                     """,
+
+MATCH 76: question placeholder
+     79:                     (slug, sku),
+
+MATCH 123: question placeholder
+    120:             con.execute(
+    121:                 """
+    122:                 UPDATE products
+>   123:                 SET stock = stock - ?, updated_at = ?
+    124:                 WHERE id = ?
+    125:                 """,
+    126:                 (qty, created, product["id"]),
+
+MATCH 124: question placeholder
+    127:             )
+
+MATCH 139: question placeholder
+    136:             INSERT INTO orders
+    137:             (id, store_slug, buyer_name, buyer_email, buyer_phone, notes, status, payment_status,
+    138:              subtotal_cents, tax_cents, shipping_cents, total_cents, currency, created_at)
+>   139:             VALUES (?, ?, ?, ?, ?, ?, 'new', 'unpaid', ?, ?, ?, ?, ?, ?)
+    140:             """,
+    141:             (
+    142:                 order_id,
+
+MATCH 162: question placeholder
+    159:                 """
+    160:                 INSERT INTO order_items
+    161:                 (id, order_id, product_id, sku, name, qty, unit_amount_cents, line_total_cents)
+>   162:                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    163:                 """,
+    164:                 (
+    165:                     line["id"],
+
+MATCH 178: question placeholder
+    175: 
+    176:         con.commit()
+    177: 
+>   178:         order = con.execute("SELECT * FROM orders WHERE id = ?", (order_id,)).fetchone()
+    179:         updated_products = con.execute(
+    180:             """
+    181:             SELECT * FROM products
+
+MATCH 182: question placeholder
+>   182:             WHERE store_slug = ?
+    183:             AND is_active = 1
+    184:             ORDER BY created_at ASC
+    185:             """,
+
+==============================================================================
+FILE: backend\app\routes\orders.py
+HITS: 2
+==============================================================================
+
+MATCH 48: question placeholder
+     45:                 s.name AS store_name
+     46:             FROM orders o
+     47:             JOIN stores s ON s.slug = o.store_slug
+>    48:             WHERE o.id = ?
+     49:             """,
+     50:             (order_id,),
+     51:         ).fetchone()
+
+MATCH 60: question placeholder
+     57:             """
+     58:             SELECT *
+     59:             FROM order_items
+>    60:             WHERE order_id = ?
+     61:             ORDER BY rowid ASC
+     62:             """,
+     63:             (order_id,),
+
+==============================================================================
+FILE: backend\app\routes\products.py
+HITS: 4
+==============================================================================
+
+MATCH 4: sqlite import
+      1: ﻿# Copyright © 2026 Andrew Wolverton. All Rights Reserved.
+      2: from __future__ import annotations
+      3: 
+>     4: import sqlite3
+      5: from flask import Blueprint, current_app, jsonify
+      6: 
+      7: products_bp = Blueprint("products", __name__)
+
+MATCH 12: sqlite row
+      9: 
+     10: def connect() -> sqlite3.Connection:
+     11:     con = sqlite3.connect(current_app.config["DB_PATH"])
+>    12:     con.row_factory = sqlite3.Row
+     13:     return con
+     14: 
+     15: 
+
+MATCH 21: question placeholder
+     18:     con = connect()
+     19:     try:
+     20:         store = con.execute(
+>    21:             "SELECT * FROM stores WHERE slug = ?",
+     22:             (slug,),
+     23:         ).fetchone()
+     24: 
+
+MATCH 32: question placeholder
+     29:             """
+     30:             SELECT id, store_id, sku, name, category, description, price_cents, stock, image_url
+     31:             FROM products
+>    32:             WHERE store_id = ?
+     33:             ORDER BY category, name
+     34:             """,
+     35:             (store["id"],),
+
+==============================================================================
+FILE: backend\app\routes\stores.py
+HITS: 7
+==============================================================================
+
+MATCH 48: question placeholder
+     45:             LEFT JOIN products p
+     46:                 ON p.store_slug = s.slug
+     47:                 AND p.is_active = 1
+>    48:             WHERE s.slug = ?
+     49:             GROUP BY s.id
+     50:             """,
+     51:             (slug,),
+
+MATCH 93: question placeholder
+     90:             """
+     91:             INSERT INTO stores
+     92:             (id, slug, name, owner_name, status, plan, currency, created_at, updated_at)
+>    93:             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+     94:             """,
+     95:             (store_id, slug, name, owner_name, status, plan, currency, created, created),
+     96:         )
+
+MATCH 99: question placeholder
+     97:         con.commit()
+     98: 
+>    99:         row = con.execute("SELECT * FROM stores WHERE id = ?", (store_id,)).fetchone()
+    100:     except Exception as exc:
+    101:         con.rollback()
+    102:         return jsonify({"ok": False, "error": "STORE_CREATE_FAILED", "message": str(exc)}), 400
+
+MATCH 120: question placeholder
+    117: 
+    118:     for field in allowed:
+    119:         if field in data:
+>   120:             updates.append(f"{field} = ?")
+    121:             values.append(str(data.get(field, "")).strip())
+    122: 
+    123:     if not updates:
+
+MATCH 126: question placeholder
+    124:         return jsonify({"ok": False, "error": "NO_FIELDS_TO_UPDATE"}), 400
+    125: 
+>   126:     updates.append("updated_at = ?")
+    127:     values.append(now_iso())
+    128:     values.append(slug)
+    129: 
+
+MATCH 132: question placeholder
+    130:     con = connect()
+    131:     try:
+>   132:         con.execute(f"UPDATE stores SET {', '.join(updates)} WHERE slug = ?", values)
+    133:         con.commit()
+    134: 
+    135:         row = con.execute("SELECT * FROM stores WHERE slug = ?", (slug,)).fetchone()
+
+MATCH 135: question placeholder
+    136:     finally:
+    137:         con.close()
+    138: 
+
+==============================================================================
+TOTAL SOURCE HITS: 129
