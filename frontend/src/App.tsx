@@ -2969,7 +2969,7 @@ function CustomerStorefront({
           </div>
         ) : (
           <small className="checkout-note">
-            Creates a real SQLite order and decrements stock.
+            Creates a real order in WOLF OS™ and updates live inventory.
           </small>
         )}
       </aside>
@@ -4183,6 +4183,7 @@ function Metric({ label, value }: { label: string; value: React.ReactNode }) {
 }
 
 export default App;
+
 
 
 
