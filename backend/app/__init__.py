@@ -1,6 +1,8 @@
 # Copyright © 2026 Andrew Wolverton. All Rights Reserved.
 from __future__ import annotations
 
+import hashlib
+
 from uuid import uuid4
 
 import os
@@ -117,6 +119,39 @@ def ensure_schema(app: Flask) -> None:
                 status TEXT,
                 created_at TEXT
             )
+            """
+        )
+
+
+        # CUSTOMER_LAUNCH_MANAGER_TENANT_FOUNDATION_V1
+        con.execute(
+            """
+            CREATE TABLE IF NOT EXISTS customer_accounts (
+                id TEXT PRIMARY KEY,
+                store_id TEXT NOT NULL,
+                email TEXT NOT NULL UNIQUE,
+                display_name TEXT NOT NULL DEFAULT '',
+                password_salt TEXT NOT NULL,
+                password_hash TEXT NOT NULL,
+                token_hash TEXT NOT NULL DEFAULT '',
+                active INTEGER NOT NULL DEFAULT 1,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )
+            """
+        )
+
+        con.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_customer_accounts_store_id
+            ON customer_accounts (store_id)
+            """
+        )
+
+        con.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_customer_accounts_token_hash
+            ON customer_accounts (token_hash)
             """
         )
 
@@ -672,6 +707,39 @@ def ensure_schema(app: Flask) -> None:
         con.close()
 
 
+
+
+# CUSTOMER_LAUNCH_MANAGER_TENANT_HELPERS_V1
+def customer_password_digest(password: str, salt: str) -> str:
+    return hashlib.pbkdf2_hmac(
+        "sha256",
+        password.encode("utf-8"),
+        salt.encode("utf-8"),
+        200_000,
+    ).hex()
+
+
+def customer_password_matches(password: str, salt: str, expected_hash: str) -> bool:
+    actual_hash = customer_password_digest(password, salt)
+    return secrets.compare_digest(actual_hash, str(expected_hash or ""))
+
+
+def customer_token_digest(token: str) -> str:
+    return hashlib.sha256(token.encode("utf-8")).hexdigest()
+
+
+def customer_store_slug(value: Any) -> str:
+    raw = str(value or "").strip().lower()
+    slug = "".join(
+        character if character.isalnum() else "-"
+        for character in raw
+    )
+    return "-".join(part for part in slug.split("-") if part)[:80]
+
+
+def customer_temporary_password() -> str:
+    return "WOLF-" + secrets.token_urlsafe(12)
+
 def owner_token() -> str:
     return owner_api_token().strip() or "wolf-owner-local-token"
 
@@ -707,6 +775,75 @@ def create_app() -> Flask:
     CORS(app, resources={r"/api/*": {"origins": cors_origins()}}, supports_credentials=False)
 
     ensure_schema(app)
+
+
+    # CUSTOMER_LAUNCH_MANAGER_CUSTOMER_AUTH_V1
+    def customer_owner_context() -> dict[str, Any] | None:
+        cached = request.environ.get("wolf.customer_owner_context")
+        if isinstance(cached, dict):
+            return cached
+
+        auth = request.headers.get("Authorization", "")
+        token = ""
+        if auth.lower().startswith("bearer "):
+            token = auth.split(" ", 1)[1].strip()
+
+        if not token:
+            return None
+
+        token_hash = customer_token_digest(token)
+        con = connect(app)
+
+        try:
+            row = con.execute(
+                """
+                SELECT
+                    ca.id AS account_id,
+                    ca.store_id,
+                    ca.email,
+                    ca.display_name,
+                    ca.active,
+                    s.slug AS store_slug,
+                    s.name AS store_name,
+                    s.brand,
+                    s.system,
+                    s.plan,
+                    s.status AS store_status
+                FROM customer_accounts AS ca
+                JOIN stores AS s
+                    ON s.id = ca.store_id
+                WHERE ca.token_hash = ?
+                  AND ca.active = 1
+                  AND LOWER(COALESCE(s.status, 'active')) = 'active'
+                LIMIT 1
+                """,
+                (token_hash,),
+            ).fetchone()
+        finally:
+            con.close()
+
+        if row is None:
+            return None
+
+        context = dict(row)
+        context["role"] = "customer_owner"
+        request.environ["wolf.customer_owner_context"] = context
+        return context
+
+    def require_customer_owner() -> tuple[bool, Any]:
+        context = customer_owner_context()
+        if context is not None:
+            return True, None
+
+        return False, (
+            jsonify(
+                {
+                    "ok": False,
+                    "error": "Unauthorized customer owner request.",
+                }
+            ),
+            401,
+        )
 
     @app.get("/")
     def root():
@@ -2335,6 +2472,853 @@ def create_app() -> Flask:
                 "system": SYSTEM,
             }
         )
+
+
+
+    # CUSTOMER_LAUNCH_MANAGER_ROUTES_V1
+    @app.route("/api/owner/customer-accounts", methods=["GET", "POST"])
+    def owner_customer_accounts():
+        ok, error = require_owner()
+        if not ok:
+            return error
+
+        con = connect(app)
+
+        try:
+            if request.method == "GET":
+                rows = con.execute(
+                    """
+                    SELECT
+                        ca.id AS account_id,
+                        ca.store_id,
+                        ca.email,
+                        ca.display_name,
+                        ca.active,
+                        ca.created_at,
+                        ca.updated_at,
+                        s.slug AS store_slug,
+                        s.name AS store_name,
+                        s.brand,
+                        s.system,
+                        s.plan,
+                        s.status AS store_status
+                    FROM customer_accounts AS ca
+                    JOIN stores AS s
+                        ON s.id = ca.store_id
+                    ORDER BY ca.created_at DESC
+                    LIMIT 250
+                    """
+                ).fetchall()
+
+                return jsonify(
+                    {
+                        "ok": True,
+                        "count": len(rows),
+                        "customer_accounts": [dict(row) for row in rows],
+                    }
+                )
+
+            payload = request.get_json(silent=True) or {}
+
+            business_name = str(
+                payload.get("business_name")
+                or payload.get("store_name")
+                or ""
+            ).strip()
+            store_slug = customer_store_slug(
+                payload.get("store_slug") or business_name
+            )
+            owner_name = str(
+                payload.get("owner_name")
+                or payload.get("display_name")
+                or business_name
+            ).strip()
+            owner_email = str(payload.get("owner_email") or "").strip().lower()
+            brand = str(payload.get("brand") or business_name).strip() or business_name
+            system_name = str(payload.get("system") or SYSTEM).strip() or SYSTEM
+            plan = str(payload.get("plan") or "starter").strip().lower() or "starter"
+            temporary_password = str(
+                payload.get("temporary_password")
+                or customer_temporary_password()
+            ).strip()
+
+            if not business_name:
+                return jsonify({"ok": False, "error": "Business name is required."}), 400
+
+            if not store_slug:
+                return jsonify({"ok": False, "error": "A valid store slug is required."}), 400
+
+            if not owner_email or "@" not in owner_email:
+                return jsonify({"ok": False, "error": "A valid owner email is required."}), 400
+
+            if len(temporary_password) < 8:
+                return jsonify(
+                    {
+                        "ok": False,
+                        "error": "Temporary password must contain at least 8 characters.",
+                    }
+                ), 400
+
+            duplicate_store = con.execute(
+                "SELECT id FROM stores WHERE LOWER(slug) = LOWER(?) LIMIT 1",
+                (store_slug,),
+            ).fetchone()
+
+            if duplicate_store is not None:
+                return jsonify(
+                    {
+                        "ok": False,
+                        "error": f"Store slug already exists: {store_slug}",
+                    }
+                ), 409
+
+            duplicate_email = con.execute(
+                "SELECT id FROM customer_accounts WHERE LOWER(email) = LOWER(?) LIMIT 1",
+                (owner_email,),
+            ).fetchone()
+
+            if duplicate_email is not None:
+                return jsonify(
+                    {
+                        "ok": False,
+                        "error": f"Customer owner email already exists: {owner_email}",
+                    }
+                ), 409
+
+            created_at = now_iso()
+            store_id = f"store-{store_slug}-{secrets.token_hex(3)}"
+            account_id = f"acct-{secrets.token_hex(8)}"
+            password_salt = secrets.token_hex(16)
+            password_hash = customer_password_digest(
+                temporary_password,
+                password_salt,
+            )
+
+            con.execute(
+                """
+                INSERT INTO stores (
+                    id,
+                    slug,
+                    name,
+                    brand,
+                    system,
+                    plan,
+                    status,
+                    created_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    store_id,
+                    store_slug,
+                    business_name,
+                    brand,
+                    system_name,
+                    plan,
+                    "active",
+                    created_at,
+                ),
+            )
+
+            con.execute(
+                """
+                INSERT INTO customer_accounts (
+                    id,
+                    store_id,
+                    email,
+                    display_name,
+                    password_salt,
+                    password_hash,
+                    token_hash,
+                    active,
+                    created_at,
+                    updated_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    account_id,
+                    store_id,
+                    owner_email,
+                    owner_name,
+                    password_salt,
+                    password_hash,
+                    "",
+                    1,
+                    created_at,
+                    created_at,
+                ),
+            )
+
+            con.commit()
+
+            return jsonify(
+                {
+                    "ok": True,
+                    "customer_account": {
+                        "account_id": account_id,
+                        "store_id": store_id,
+                        "store_slug": store_slug,
+                        "store_name": business_name,
+                        "owner_name": owner_name,
+                        "owner_email": owner_email,
+                        "plan": plan,
+                        "temporary_password": temporary_password,
+                        "storefront_path": f"/#store/{store_slug}",
+                        "owner_login_path": "/#customer-owner",
+                    },
+                    "security_note": (
+                        "The temporary password is returned once. "
+                        "Store it securely and deliver it privately."
+                    ),
+                }
+            ), 201
+        except Exception as exc:
+            con.rollback()
+            return jsonify(
+                {
+                    "ok": False,
+                    "error": (
+                        "Customer account operation failed: "
+                        f"{type(exc).__name__}: {exc}"
+                    ),
+                }
+            ), 500
+        finally:
+            con.close()
+
+    @app.post("/api/customer-owner/login")
+    def customer_owner_login():
+        payload = request.get_json(silent=True) or {}
+        owner_email = str(payload.get("email") or "").strip().lower()
+        password = str(payload.get("password") or "").strip()
+        store_slug = customer_store_slug(payload.get("store_slug") or "")
+
+        if not owner_email or not password:
+            return jsonify(
+                {
+                    "ok": False,
+                    "error": "Email and password are required.",
+                }
+            ), 400
+
+        con = connect(app)
+
+        try:
+            params: list[Any] = [owner_email]
+            sql = """
+                SELECT
+                    ca.*,
+                    s.slug AS store_slug,
+                    s.name AS store_name,
+                    s.brand,
+                    s.system,
+                    s.plan,
+                    s.status AS store_status
+                FROM customer_accounts AS ca
+                JOIN stores AS s
+                    ON s.id = ca.store_id
+                WHERE LOWER(ca.email) = LOWER(?)
+            """
+
+            if store_slug:
+                sql += " AND LOWER(s.slug) = LOWER(?)"
+                params.append(store_slug)
+
+            sql += " LIMIT 1"
+
+            account = con.execute(sql, tuple(params)).fetchone()
+
+            if account is None:
+                return jsonify({"ok": False, "error": "Invalid customer owner login."}), 401
+
+            account_data = dict(account)
+
+            if int(account_data.get("active") or 0) != 1:
+                return jsonify({"ok": False, "error": "Customer owner account is disabled."}), 403
+
+            if str(account_data.get("store_status") or "active").lower() != "active":
+                return jsonify({"ok": False, "error": "Customer store is not active."}), 403
+
+            if not customer_password_matches(
+                password,
+                str(account_data.get("password_salt") or ""),
+                str(account_data.get("password_hash") or ""),
+            ):
+                return jsonify({"ok": False, "error": "Invalid customer owner login."}), 401
+
+            token = "wolf_customer_" + secrets.token_urlsafe(32)
+            token_hash = customer_token_digest(token)
+            updated_at = now_iso()
+
+            con.execute(
+                """
+                UPDATE customer_accounts
+                SET token_hash = ?, updated_at = ?
+                WHERE id = ?
+                """,
+                (
+                    token_hash,
+                    updated_at,
+                    account_data["id"],
+                ),
+            )
+            con.commit()
+
+            return jsonify(
+                {
+                    "ok": True,
+                    "token": token,
+                    "role": "customer_owner",
+                    "owner": {
+                        "account_id": account_data["id"],
+                        "display_name": account_data.get("display_name") or "Store Owner",
+                        "email": account_data.get("email") or owner_email,
+                    },
+                    "store": {
+                        "id": account_data["store_id"],
+                        "slug": account_data["store_slug"],
+                        "name": account_data["store_name"],
+                        "brand": account_data.get("brand") or account_data["store_name"],
+                        "system": account_data.get("system") or SYSTEM,
+                        "plan": account_data.get("plan") or "starter",
+                    },
+                }
+            )
+        finally:
+            con.close()
+
+    @app.post("/api/customer-owner/logout")
+    def customer_owner_logout():
+        ok, error = require_customer_owner()
+        if not ok:
+            return error
+
+        context = customer_owner_context() or {}
+        con = connect(app)
+
+        try:
+            con.execute(
+                """
+                UPDATE customer_accounts
+                SET token_hash = '', updated_at = ?
+                WHERE id = ?
+                """,
+                (
+                    now_iso(),
+                    context.get("account_id"),
+                ),
+            )
+            con.commit()
+            return jsonify({"ok": True})
+        finally:
+            con.close()
+
+    @app.get("/api/customer-owner/session")
+    def customer_owner_session():
+        ok, error = require_customer_owner()
+        if not ok:
+            return error
+
+        context = customer_owner_context() or {}
+        return jsonify({"ok": True, "session": context})
+
+    @app.get("/api/customer-owner/store")
+    def customer_owner_store():
+        ok, error = require_customer_owner()
+        if not ok:
+            return error
+
+        context = customer_owner_context() or {}
+        return jsonify(
+            {
+                "ok": True,
+                "store": {
+                    "id": context.get("store_id"),
+                    "slug": context.get("store_slug"),
+                    "name": context.get("store_name"),
+                    "brand": context.get("brand"),
+                    "system": context.get("system"),
+                    "plan": context.get("plan"),
+                    "status": context.get("store_status"),
+                },
+            }
+        )
+
+    @app.get("/api/customer-owner/orders")
+    def customer_owner_orders():
+        ok, error = require_customer_owner()
+        if not ok:
+            return error
+
+        context = customer_owner_context() or {}
+        con = connect(app)
+
+        try:
+            rows = con.execute(
+                """
+                SELECT
+                    o.*,
+                    COALESCE(p.payment_plan, 'full') AS payment_plan,
+                    COALESCE(p.deposit_percent, 100) AS deposit_percent,
+                    COALESCE(p.amount_due_now_cents, o.total_cents) AS amount_due_now_cents,
+                    COALESCE(
+                        p.amount_paid_cents,
+                        CASE
+                            WHEN LOWER(COALESCE(o.payment_status, 'unpaid')) = 'paid'
+                            THEN o.total_cents
+                            ELSE 0
+                        END
+                    ) AS amount_paid_cents,
+                    COALESCE(
+                        p.balance_due_cents,
+                        CASE
+                            WHEN LOWER(COALESCE(o.payment_status, 'unpaid')) = 'paid'
+                            THEN 0
+                            ELSE o.total_cents
+                        END
+                    ) AS balance_due_cents,
+                    COALESCE(
+                        p.payment_terms,
+                        'The store owner provides accepted payment instructions directly.'
+                    ) AS payment_terms
+                FROM orders AS o
+                LEFT JOIN order_payment_plans AS p
+                    ON p.order_id = o.id
+                WHERE o.store_id = ?
+                ORDER BY o.created_at DESC
+                LIMIT 250
+                """,
+                (context.get("store_id"),),
+            ).fetchall()
+
+            return jsonify(
+                {
+                    "ok": True,
+                    "count": len(rows),
+                    "orders": [dict(row) for row in rows],
+                }
+            )
+        finally:
+            con.close()
+
+    @app.route("/api/customer-owner/products", methods=["GET", "POST"])
+    def customer_owner_products():
+        ok, error = require_customer_owner()
+        if not ok:
+            return error
+
+        context = customer_owner_context() or {}
+        store_id = str(context.get("store_id") or "")
+        store_slug = str(context.get("store_slug") or "")
+        con = connect(app)
+
+        try:
+            if request.method == "POST":
+                payload = request.get_json(silent=True) or {}
+                sku = str(payload.get("sku") or "").strip().upper()
+                name = str(payload.get("name") or "").strip()
+                category = str(payload.get("category") or "General").strip() or "General"
+                description = str(payload.get("description") or "").strip()
+                image_url = str(payload.get("image_url") or "").strip()
+
+                try:
+                    price_cents = int(payload.get("price_cents") or 0)
+                except (TypeError, ValueError):
+                    price_cents = 0
+
+                try:
+                    stock = int(payload.get("stock") or 0)
+                except (TypeError, ValueError):
+                    stock = 0
+
+                if not sku:
+                    return jsonify({"ok": False, "error": "SKU is required."}), 400
+
+                if not name:
+                    return jsonify({"ok": False, "error": "Product name is required."}), 400
+
+                if price_cents < 0 or stock < 0:
+                    return jsonify(
+                        {
+                            "ok": False,
+                            "error": "Price and stock cannot be negative.",
+                        }
+                    ), 400
+
+                duplicate = con.execute(
+                    """
+                    SELECT id
+                    FROM products
+                    WHERE store_id = ? AND sku = ?
+                    LIMIT 1
+                    """,
+                    (store_id, sku),
+                ).fetchone()
+
+                if duplicate is not None:
+                    return jsonify(
+                        {
+                            "ok": False,
+                            "error": f"SKU already exists in this store: {sku}",
+                        }
+                    ), 409
+
+                base_id = customer_store_slug(sku or name) or "product"
+                product_id = f"{store_slug}-{base_id}"
+
+                existing_id = con.execute(
+                    "SELECT id FROM products WHERE id = ? LIMIT 1",
+                    (product_id,),
+                ).fetchone()
+
+                if existing_id is not None:
+                    product_id = f"{product_id}-{secrets.token_hex(3)}"
+
+                created_at = now_iso()
+
+                con.execute(
+                    """
+                    INSERT INTO products (
+                        id,
+                        store_id,
+                        store_slug,
+                        sku,
+                        name,
+                        category,
+                        description,
+                        price_cents,
+                        stock,
+                        image_url,
+                        created_at,
+                        updated_at
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        product_id,
+                        store_id,
+                        store_slug,
+                        sku,
+                        name,
+                        category,
+                        description,
+                        price_cents,
+                        stock,
+                        image_url,
+                        created_at,
+                        created_at,
+                    ),
+                )
+                con.commit()
+
+                row = con.execute(
+                    """
+                    SELECT
+                        id,
+                        store_id,
+                        store_slug,
+                        sku,
+                        name,
+                        category,
+                        description,
+                        price_cents,
+                        stock,
+                        image_url,
+                        updated_at
+                    FROM products
+                    WHERE id = ?
+                    LIMIT 1
+                    """,
+                    (product_id,),
+                ).fetchone()
+
+                return jsonify(
+                    {
+                        "ok": True,
+                        "product": product_dict(row),
+                    }
+                ), 201
+
+            rows = con.execute(
+                """
+                SELECT
+                    id,
+                    store_id,
+                    store_slug,
+                    sku,
+                    name,
+                    category,
+                    description,
+                    price_cents,
+                    stock,
+                    image_url,
+                    updated_at
+                FROM products
+                WHERE store_id = ?
+                ORDER BY category, name
+                """,
+                (store_id,),
+            ).fetchall()
+
+            products = [product_dict(row) for row in rows]
+            return jsonify(
+                {
+                    "ok": True,
+                    "count": len(products),
+                    "products": products,
+                }
+            )
+        finally:
+            con.close()
+
+    @app.get("/api/customer-owner/payment-freedom")
+    def customer_owner_payment_freedom():
+        ok, error = require_customer_owner()
+        if not ok:
+            return error
+
+        context = customer_owner_context() or {}
+        con = connect(app)
+
+        try:
+            rows = con.execute(
+                """
+                SELECT
+                    r.*,
+                    o.store_id,
+                    o.store_slug,
+                    o.buyer_name,
+                    o.buyer_email,
+                    o.total_cents,
+                    o.created_at
+                FROM payment_freedom_records AS r
+                JOIN orders AS o
+                    ON o.id = r.order_id
+                WHERE o.store_id = ?
+                ORDER BY r.updated_at DESC
+                LIMIT 250
+                """,
+                (context.get("store_id"),),
+            ).fetchall()
+
+            return jsonify(
+                {
+                    "ok": True,
+                    "count": len(rows),
+                    "payment_records": [dict(row) for row in rows],
+                }
+            )
+        finally:
+            con.close()
+
+    @app.put("/api/customer-owner/payment-freedom/<order_id>")
+    def customer_owner_update_payment_freedom(order_id: str):
+        ok, error = require_customer_owner()
+        if not ok:
+            return error
+
+        context = customer_owner_context() or {}
+        payload = request.get_json(silent=True) or {}
+        payment_status = str(
+            payload.get("payment_status") or "unpaid"
+        ).strip().lower()
+        allowed_statuses = {
+            "unpaid",
+            "deposit_due",
+            "deposit_paid",
+            "partially_paid",
+            "paid",
+            "refunded",
+            "cancelled",
+        }
+
+        if payment_status not in allowed_statuses:
+            return jsonify(
+                {
+                    "ok": False,
+                    "error": "Unsupported payment status.",
+                }
+            ), 400
+
+        payment_method = str(payload.get("payment_method") or "manual").strip()[:80]
+        provider = str(payload.get("provider") or "owner_directed").strip()[:80]
+        payment_link = str(payload.get("payment_link") or "").strip()[:1000]
+        payment_reference = str(payload.get("payment_reference") or "").strip()[:250]
+        note = str(payload.get("note") or "").strip()[:2000]
+
+        con = connect(app)
+
+        try:
+            order = con.execute(
+                """
+                SELECT *
+                FROM orders
+                WHERE id = ? AND store_id = ?
+                LIMIT 1
+                """,
+                (
+                    order_id,
+                    context.get("store_id"),
+                ),
+            ).fetchone()
+
+            if order is None:
+                return jsonify({"ok": False, "error": "Order not found."}), 404
+
+            try:
+                amount_cents = int(
+                    payload.get("amount_cents")
+                    if payload.get("amount_cents") is not None
+                    else order["total_cents"]
+                )
+            except (TypeError, ValueError):
+                return jsonify(
+                    {
+                        "ok": False,
+                        "error": "amount_cents must be a whole number.",
+                    }
+                ), 400
+
+            amount_cents = max(0, amount_cents)
+
+            con.execute(
+                """
+                UPDATE orders
+                SET payment_status = ?
+                WHERE id = ? AND store_id = ?
+                """,
+                (
+                    payment_status,
+                    order_id,
+                    context.get("store_id"),
+                ),
+            )
+
+            existing = con.execute(
+                """
+                SELECT order_id
+                FROM payment_freedom_records
+                WHERE order_id = ?
+                LIMIT 1
+                """,
+                (order_id,),
+            ).fetchone()
+
+            if existing is None:
+                con.execute(
+                    """
+                    INSERT INTO payment_freedom_records (
+                        order_id,
+                        payment_status,
+                        payment_method,
+                        provider,
+                        payment_link,
+                        payment_reference,
+                        amount_cents,
+                        note,
+                        updated_at
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+                    """,
+                    (
+                        order_id,
+                        payment_status,
+                        payment_method,
+                        provider,
+                        payment_link,
+                        payment_reference,
+                        amount_cents,
+                        note,
+                    ),
+                )
+            else:
+                con.execute(
+                    """
+                    UPDATE payment_freedom_records
+                    SET
+                        payment_status = ?,
+                        payment_method = ?,
+                        provider = ?,
+                        payment_link = ?,
+                        payment_reference = ?,
+                        amount_cents = ?,
+                        note = ?,
+                        updated_at = CURRENT_TIMESTAMP
+                    WHERE order_id = ?
+                    """,
+                    (
+                        payment_status,
+                        payment_method,
+                        provider,
+                        payment_link,
+                        payment_reference,
+                        amount_cents,
+                        note,
+                        order_id,
+                    ),
+                )
+
+            total_cents = int(order["total_cents"] or 0)
+            amount_paid_cents = (
+                total_cents
+                if payment_status == "paid"
+                else amount_cents
+                if payment_status in {"deposit_paid", "partially_paid"}
+                else 0
+            )
+            balance_due_cents = max(0, total_cents - amount_paid_cents)
+
+            con.execute(
+                """
+                UPDATE order_payment_plans
+                SET
+                    amount_paid_cents = ?,
+                    balance_due_cents = ?,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE order_id = ?
+                """,
+                (
+                    amount_paid_cents,
+                    balance_due_cents,
+                    order_id,
+                ),
+            )
+
+            con.commit()
+
+            record = con.execute(
+                """
+                SELECT *
+                FROM payment_freedom_records
+                WHERE order_id = ?
+                LIMIT 1
+                """,
+                (order_id,),
+            ).fetchone()
+
+            return jsonify(
+                {
+                    "ok": True,
+                    "payment": dict(record),
+                    "payment_status": payment_status,
+                    "amount_paid_cents": amount_paid_cents,
+                    "balance_due_cents": balance_due_cents,
+                }
+            )
+        except Exception as exc:
+            con.rollback()
+            return jsonify(
+                {
+                    "ok": False,
+                    "error": (
+                        "Customer payment update failed: "
+                        f"{type(exc).__name__}: {exc}"
+                    ),
+                }
+            ), 500
+        finally:
+            con.close()
 
     @app.get("/api/owner/orders")
     def owner_orders():
