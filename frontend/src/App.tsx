@@ -1,4 +1,4 @@
-﻿// Copyright © 2026 Andrew Wolverton. All Rights Reserved.
+// Copyright © 2026 Andrew Wolverton. All Rights Reserved.
 
 import React, { useEffect, useMemo, useState } from "react";
 
@@ -146,6 +146,39 @@ type Order = {
   currency?: string;
   created_at?: string;
   item_count?: number;
+};
+
+
+type PaymentFreedomStatus =
+  | "unpaid"
+  | "pending"
+  | "deposit_due"
+  | "deposit_paid"
+  | "partially_paid"
+  | "paid"
+  | "refunded"
+  | "cancelled";
+
+type PaymentFreedomRecord = {
+  order_id: string;
+  payment_status: PaymentFreedomStatus | string;
+  payment_method: string;
+  provider: string;
+  payment_link: string;
+  payment_reference: string;
+  amount_cents: number;
+  note: string;
+  updated_at?: string;
+};
+
+type PaymentFreedomDraft = {
+  payment_status: PaymentFreedomStatus;
+  payment_method: string;
+  provider: string;
+  payment_link: string;
+  payment_reference: string;
+  amount_dollars: string;
+  note: string;
 };
 
 type SetupRequest = {
@@ -1400,6 +1433,65 @@ function App() {
     }
   }
 
+
+  // WOLF_OS_PAYMENT_FREEDOM_CENTER_V1
+  async function loadPaymentFreedomRecords(): Promise<PaymentFreedomRecord[]> {
+    if (!ownerToken) return [];
+
+    const payload = await apiJson<any>(
+      "/api/owner/payment-freedom",
+      { method: "GET" },
+      ownerToken
+    );
+
+    if (!payload?.ok) {
+      throw new Error(payload?.error || "Payment Freedom records could not be loaded.");
+    }
+
+    return Array.isArray(payload?.payments) ? payload.payments : [];
+  }
+
+  async function savePaymentFreedomRecord(
+    orderId: string,
+    draft: PaymentFreedomDraft
+  ): Promise<PaymentFreedomRecord> {
+    if (!ownerToken) throw new Error("Owner token required.");
+
+    const dollars = Number(
+      String(draft.amount_dollars || "0").replace(/[$,]/g, "").trim()
+    );
+
+    if (!Number.isFinite(dollars) || dollars < 0) {
+      throw new Error("Payment amount must be zero or greater.");
+    }
+
+    const payload = await apiJson<any>(
+      `/api/owner/orders/${encodeURIComponent(orderId)}/payment-status`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          payment_status: draft.payment_status,
+          payment_method: draft.payment_method.trim() || "manual",
+          provider: draft.provider.trim() || "owner_directed",
+          payment_link: draft.payment_link.trim(),
+          payment_reference: draft.payment_reference.trim(),
+          amount_cents: Math.round(dollars * 100),
+          note: draft.note.trim()
+        })
+      },
+      ownerToken
+    );
+
+    if (!payload?.ok || !payload?.payment) {
+      throw new Error(payload?.error || "Payment Freedom record could not be saved.");
+    }
+
+    setNotice(`PAYMENT FREEDOM SAVED · ${orderId}`);
+    await loadOwnerData(ownerToken);
+    return payload.payment as PaymentFreedomRecord;
+  }
+
   async function createOwnerProduct(form: ProductForm) {
     if (!ownerToken) {
       setError("Owner token required.");
@@ -1520,6 +1612,8 @@ function App() {
             onCreateProduct={createOwnerProduct}
             onUpdateStock={updateProductStock}
             onUpdateOrderPaymentStatus={updateOrderPaymentStatus}
+            onLoadPaymentFreedom={loadPaymentFreedomRecords}
+            onSavePaymentFreedom={savePaymentFreedomRecord}
           />
         ) : (
           <OwnerGate
@@ -3531,6 +3625,8 @@ function OwnerConsole({
   onCreateProduct,
   onUpdateStock,
   onUpdateOrderPaymentStatus,
+  onLoadPaymentFreedom,
+  onSavePaymentFreedom,
 }: {
   health: ApiHealth | null;
   stores: Store[];
@@ -3547,6 +3643,11 @@ function OwnerConsole({
     orderId: string,
     paymentStatus: "paid" | "unpaid"
   ) => Promise<void>;
+  onLoadPaymentFreedom: () => Promise<PaymentFreedomRecord[]>;
+  onSavePaymentFreedom: (
+    orderId: string,
+    draft: PaymentFreedomDraft
+  ) => Promise<PaymentFreedomRecord>;
 }) {
   const [form, setForm] = useState<ProductForm>({
     store_slug: "demo",
@@ -3558,6 +3659,94 @@ function OwnerConsole({
     stock: "",
     image_url: ""
   });
+
+  // WOLF_OS_PAYMENT_FREEDOM_CENTER_V1
+  const [paymentRecords, setPaymentRecords] = useState<PaymentFreedomRecord[]>([]);
+  const [paymentLoading, setPaymentLoading] = useState(false);
+  const [paymentSaving, setPaymentSaving] = useState(false);
+  const [paymentMessage, setPaymentMessage] = useState("");
+  const [selectedPaymentOrderId, setSelectedPaymentOrderId] = useState("");
+  const [paymentDraft, setPaymentDraft] = useState<PaymentFreedomDraft>({
+    payment_status: "unpaid",
+    payment_method: "manual",
+    provider: "owner_directed",
+    payment_link: "",
+    payment_reference: "",
+    amount_dollars: "",
+    note: ""
+  });
+
+  const selectedPaymentOrder =
+    orders.find((order) => String(order.id || "") === selectedPaymentOrderId) ||
+    orders.find((order) => Boolean(order.id)) ||
+    null;
+
+  const selectedPaymentRecord = paymentRecords.find(
+    (record) => record.order_id === selectedPaymentOrder?.id
+  ) || null;
+
+  const paidPaymentCount = paymentRecords.filter(
+    (record) => String(record.payment_status || "").trim().toLowerCase() === "paid"
+  ).length;
+
+  const openPaymentCount = paymentRecords.filter(
+    (record) => !["paid", "refunded", "cancelled"].includes(
+      String(record.payment_status || "").trim().toLowerCase()
+    )
+  ).length;
+
+  async function refreshPaymentFreedom() {
+    try {
+      setPaymentLoading(true);
+      setPaymentMessage("");
+      const records = await onLoadPaymentFreedom();
+      setPaymentRecords(records);
+      setPaymentMessage(
+        `${records.length} payment record${records.length === 1 ? "" : "s"} synchronized from PostgreSQL.`
+      );
+    } catch (error: any) {
+      setPaymentMessage(error?.message || "Payment Freedom records could not be loaded.");
+    } finally {
+      setPaymentLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    void refreshPaymentFreedom();
+  }, []);
+
+  useEffect(() => {
+    if (!selectedPaymentOrderId && orders.length && orders[0]?.id) {
+      setSelectedPaymentOrderId(String(orders[0].id));
+    }
+  }, [orders, selectedPaymentOrderId]);
+
+  useEffect(() => {
+    if (!selectedPaymentOrder?.id) return;
+
+    const record = paymentRecords.find(
+      (item) => item.order_id === selectedPaymentOrder.id
+    );
+
+    setPaymentDraft({
+      payment_status: (
+        record?.payment_status || selectedPaymentOrder.payment_status || "unpaid"
+      ) as PaymentFreedomStatus,
+      payment_method: record?.payment_method || "manual",
+      provider: record?.provider || "owner_directed",
+      payment_link: record?.payment_link || "",
+      payment_reference: record?.payment_reference || "",
+      amount_dollars: (
+        Number(record?.amount_cents ?? selectedPaymentOrder.total_cents ?? 0) / 100
+      ).toFixed(2),
+      note: record?.note || ""
+    });
+  }, [
+    selectedPaymentOrder?.id,
+    selectedPaymentOrder?.payment_status,
+    selectedPaymentOrder?.total_cents,
+    paymentRecords
+  ]);
 
   const inventoryValue = products.reduce((sum, product) => {
     return sum + Number(product.price_cents || 0) * Number(product.stock || 0);
@@ -3586,6 +3775,58 @@ function OwnerConsole({
 
   function setField(field: keyof ProductForm, value: string) {
     setForm((previous) => ({ ...previous, [field]: value }));
+  }
+
+
+  async function submitPaymentFreedom(event: React.FormEvent) {
+    event.preventDefault();
+
+    if (!selectedPaymentOrder?.id) {
+      setPaymentMessage("Select an order before saving payment details.");
+      return;
+    }
+
+    try {
+      setPaymentSaving(true);
+      setPaymentMessage("");
+      const record = await onSavePaymentFreedom(
+        selectedPaymentOrder.id,
+        paymentDraft
+      );
+      setPaymentRecords((previous) => [
+        record,
+        ...previous.filter((item) => item.order_id !== record.order_id)
+      ]);
+      setPaymentMessage(`Saved ${record.payment_status} payment details for ${record.order_id}.`);
+    } catch (error: any) {
+      setPaymentMessage(error?.message || "Payment Freedom details could not be saved.");
+    } finally {
+      setPaymentSaving(false);
+    }
+  }
+
+  async function copyPaymentLink() {
+    const link = paymentDraft.payment_link.trim();
+    if (!link) {
+      setPaymentMessage("Add a payment link before copying it.");
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(link);
+      setPaymentMessage("Payment link copied.");
+    } catch {
+      setPaymentMessage("Payment link could not be copied.");
+    }
+  }
+
+  function openPaymentLink() {
+    const link = paymentDraft.payment_link.trim();
+    if (!link) {
+      setPaymentMessage("Add a payment link before opening it.");
+      return;
+    }
+    window.open(link, "_blank", "noopener,noreferrer");
   }
 
   return (
@@ -3941,6 +4182,206 @@ Thanks for requesting setup help for ${
             </div>
           ) : (
             <p className="muted">No setup requests yet.</p>
+          )}
+        </div>
+
+        {/* WOLF_OS_PAYMENT_FREEDOM_CENTER_V1 */}
+        <div className="owner-panel wide payment-freedom-center">
+          <div className="panel-heading">
+            <div>
+              <p className="v3-kicker">Revenue Control</p>
+              <h2>Payment Freedom Center</h2>
+              <span className="muted">
+                Record deposits, partial payments, payment links, references,
+                providers, and owner notes.
+              </span>
+            </div>
+            <span className="v3-pill online">POSTGRESQL LIVE</span>
+          </div>
+
+          <div className="payment-freedom-metrics">
+            <div><span>Tracked</span><strong>{paymentRecords.length}</strong></div>
+            <div><span>Open</span><strong>{openPaymentCount}</strong></div>
+            <div><span>Paid</span><strong>{paidPaymentCount}</strong></div>
+          </div>
+
+          <form className="payment-freedom-form" onSubmit={submitPaymentFreedom}>
+            <div className="payment-freedom-grid">
+              <label>
+                <span>Order</span>
+                <select
+                  value={selectedPaymentOrder?.id || ""}
+                  onChange={(event) => setSelectedPaymentOrderId(event.target.value)}
+                >
+                  {orders.filter((order) => Boolean(order.id)).map((order) => (
+                    <option key={order.id} value={order.id}>
+                      {order.id} · {order.buyer_name || "Unknown buyer"} · {money(order.total_cents)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                <span>Status</span>
+                <select
+                  value={paymentDraft.payment_status}
+                  onChange={(event) => setPaymentDraft((previous) => ({
+                    ...previous,
+                    payment_status: event.target.value as PaymentFreedomStatus
+                  }))}
+                >
+                  <option value="unpaid">Unpaid</option>
+                  <option value="pending">Pending</option>
+                  <option value="deposit_due">Deposit due</option>
+                  <option value="deposit_paid">Deposit paid</option>
+                  <option value="partially_paid">Partially paid</option>
+                  <option value="paid">Paid</option>
+                  <option value="refunded">Refunded</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Payment method</span>
+                <select
+                  value={paymentDraft.payment_method}
+                  onChange={(event) => setPaymentDraft((previous) => ({
+                    ...previous,
+                    payment_method: event.target.value
+                  }))}
+                >
+                  <option value="manual">Owner directed</option>
+                  <option value="payment_link">Payment link</option>
+                  <option value="bank_transfer">Bank transfer</option>
+                  <option value="cash">Cash</option>
+                  <option value="check">Check</option>
+                  <option value="card_terminal">Card terminal</option>
+                  <option value="invoice">Invoice</option>
+                  <option value="other">Other</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Provider</span>
+                <input
+                  value={paymentDraft.provider}
+                  onChange={(event) => setPaymentDraft((previous) => ({
+                    ...previous,
+                    provider: event.target.value
+                  }))}
+                  placeholder="Clover, Stripe, PayPal, bank, cash"
+                />
+              </label>
+
+              <label>
+                <span>Amount recorded</span>
+                <input
+                  inputMode="decimal"
+                  value={paymentDraft.amount_dollars}
+                  onChange={(event) => setPaymentDraft((previous) => ({
+                    ...previous,
+                    amount_dollars: event.target.value
+                  }))}
+                  placeholder="0.00"
+                />
+              </label>
+
+              <label>
+                <span>Reference</span>
+                <input
+                  value={paymentDraft.payment_reference}
+                  onChange={(event) => setPaymentDraft((previous) => ({
+                    ...previous,
+                    payment_reference: event.target.value
+                  }))}
+                  placeholder="Receipt, check, invoice, transaction ID"
+                />
+              </label>
+
+              <label className="payment-freedom-span-two">
+                <span>Payment link</span>
+                <input
+                  type="url"
+                  value={paymentDraft.payment_link}
+                  onChange={(event) => setPaymentDraft((previous) => ({
+                    ...previous,
+                    payment_link: event.target.value
+                  }))}
+                  placeholder="https://..."
+                />
+              </label>
+
+              <label className="payment-freedom-span-two">
+                <span>Owner note</span>
+                <textarea
+                  rows={3}
+                  value={paymentDraft.note}
+                  onChange={(event) => setPaymentDraft((previous) => ({
+                    ...previous,
+                    note: event.target.value
+                  }))}
+                  placeholder="Deposit terms, follow-up date, or reconciliation note"
+                />
+              </label>
+            </div>
+
+            <div className="payment-freedom-actions">
+              <button
+                className="v3-button primary"
+                type="submit"
+                disabled={paymentSaving || !selectedPaymentOrder?.id}
+              >
+                {paymentSaving ? "Saving..." : "Save Payment Record"}
+              </button>
+              <button
+                className="v3-button secondary"
+                type="button"
+                onClick={() => void refreshPaymentFreedom()}
+                disabled={paymentLoading}
+              >
+                {paymentLoading ? "Syncing..." : "Refresh Records"}
+              </button>
+              <button className="v3-button secondary" type="button" onClick={copyPaymentLink}>
+                Copy Link
+              </button>
+              <button className="v3-button secondary" type="button" onClick={openPaymentLink}>
+                Open Link
+              </button>
+            </div>
+          </form>
+
+          {paymentMessage ? (
+            <div className="payment-freedom-message">{paymentMessage}</div>
+          ) : null}
+
+          {selectedPaymentOrder ? (
+            <div className="payment-freedom-selected">
+              <span>Selected order<strong>{selectedPaymentOrder.id}</strong></span>
+              <span>Buyer<strong>{selectedPaymentOrder.buyer_name || "Unknown buyer"}</strong></span>
+              <span>Order total<strong>{money(selectedPaymentOrder.total_cents)}</strong></span>
+              <span>Saved record<strong>{selectedPaymentRecord ? selectedPaymentRecord.payment_status : "Not recorded"}</strong></span>
+            </div>
+          ) : (
+            <div className="ghost-card">No order is available for payment tracking.</div>
+          )}
+
+          {paymentRecords.length ? (
+            <div className="payment-freedom-history">
+              {paymentRecords.slice(0, 8).map((record) => (
+                <div className="payment-freedom-history-row" key={record.order_id}>
+                  <div><strong>{record.order_id}</strong><span>{record.provider || "owner_directed"} · {record.payment_method || "manual"}</span></div>
+                  <div><strong>{money(record.amount_cents)}</strong><span>{record.payment_status}</span></div>
+                  <div><strong>{record.payment_reference || "No reference"}</strong><span>{record.updated_at || "Saved"}</span></div>
+                  {record.payment_link ? (
+                    <a className="owner-mini-link" href={record.payment_link} target="_blank" rel="noreferrer">OPEN</a>
+                  ) : (
+                    <span className="muted">NO LINK</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="ghost-card">No Payment Freedom records yet.</div>
           )}
         </div>
 

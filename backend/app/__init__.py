@@ -162,6 +162,23 @@ def ensure_schema(app: Flask) -> None:
             """
         )
 
+        # PAYMENT_FREEDOM_CHECKOUT_PLANS_V2
+        con.execute(
+            """
+            CREATE TABLE IF NOT EXISTS order_payment_plans (
+                order_id TEXT PRIMARY KEY,
+                payment_plan TEXT NOT NULL DEFAULT 'full',
+                deposit_percent INTEGER NOT NULL DEFAULT 100,
+                amount_due_now_cents INTEGER NOT NULL DEFAULT 0,
+                amount_paid_cents INTEGER NOT NULL DEFAULT 0,
+                balance_due_cents INTEGER NOT NULL DEFAULT 0,
+                payment_terms TEXT NOT NULL DEFAULT '',
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            )
+            """
+        )
+
         con.execute(
             """
             CREATE TABLE IF NOT EXISTS order_items (
@@ -1046,6 +1063,36 @@ def create_app() -> Flask:
         buyer = payload.get("buyer") or {}
         items = payload.get("items") or []
 
+        payment_request = payload.get("payment_request") or {}
+
+        if not isinstance(payment_request, dict):
+            return jsonify(
+                {
+                    "ok": False,
+                    "error": "payment_request must be a JSON object.",
+                }
+            ), 400
+
+        payment_plan = str(
+            payment_request.get("plan") or "full"
+        ).strip().lower()
+
+        allowed_payment_plans = {
+            "full",
+            "deposit",
+            "custom",
+        }
+
+        if payment_plan not in allowed_payment_plans:
+            return jsonify(
+                {
+                    "ok": False,
+                    "error": (
+                        "Payment plan must be full, deposit, or custom."
+                    ),
+                }
+            ), 400
+
         buyer_name = str(buyer.get("name") or "").strip()
         buyer_email = str(buyer.get("email") or "").strip()
         buyer_phone = str(buyer.get("phone") or "").strip()
@@ -1133,6 +1180,35 @@ def create_app() -> Flask:
 
             tax_cents = round(subtotal_cents * tax_bps / 10000)
             total_cents = max(0, subtotal_cents + tax_cents + shipping_cents - discount_cents)
+            if payment_plan == "deposit":
+                deposit_percent = 50
+                amount_due_now_cents = round(
+                    total_cents * deposit_percent / 100
+                )
+                payment_terms = (
+                    "50% deposit requested now. "
+                    "Andrew provides accepted payment instructions directly. "
+                    "The remaining balance is due under the agreed delivery terms."
+                )
+            elif payment_plan == "custom":
+                deposit_percent = 0
+                amount_due_now_cents = 0
+                payment_terms = (
+                    "Custom payment plan requested. "
+                    "Andrew will confirm the schedule and accepted payment method directly."
+                )
+            else:
+                payment_plan = "full"
+                deposit_percent = 100
+                amount_due_now_cents = total_cents
+                payment_terms = (
+                    "Pay in full. "
+                    "Andrew provides accepted payment instructions directly."
+                )
+
+            amount_paid_cents = 0
+            balance_due_cents = total_cents
+
             order_id = "ORD-" + secrets.token_hex(5).upper()
             created_at = now_iso()
 
@@ -1162,6 +1238,34 @@ def create_app() -> Flask:
                     payment_mode,
                     "unpaid",
                     "created",
+                    created_at,
+                ),
+            )
+
+            con.execute(
+                """
+                INSERT INTO order_payment_plans (
+                    order_id,
+                    payment_plan,
+                    deposit_percent,
+                    amount_due_now_cents,
+                    amount_paid_cents,
+                    balance_due_cents,
+                    payment_terms,
+                    created_at,
+                    updated_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    order_id,
+                    payment_plan,
+                    deposit_percent,
+                    amount_due_now_cents,
+                    amount_paid_cents,
+                    balance_due_cents,
+                    payment_terms,
+                    created_at,
                     created_at,
                 ),
             )
@@ -1207,6 +1311,14 @@ def create_app() -> Flask:
                         "total_cents": total_cents,
                         "total_display": money(total_cents),
                         "currency": currency,
+                        "payment_mode": payment_mode,
+                        "payment_status": "unpaid",
+                        "payment_plan": payment_plan,
+                        "deposit_percent": deposit_percent,
+                        "amount_due_now_cents": amount_due_now_cents,
+                        "amount_paid_cents": amount_paid_cents,
+                        "balance_due_cents": balance_due_cents,
+                        "payment_terms": payment_terms,
                         "status": "created",
                         "created_at": created_at,
                     },
@@ -1214,6 +1326,12 @@ def create_app() -> Flask:
                     "payment": {
                         "mode": payment_mode,
                         "status": "unpaid",
+                        "plan": payment_plan,
+                        "deposit_percent": deposit_percent,
+                        "amount_due_now_cents": amount_due_now_cents,
+                        "amount_paid_cents": amount_paid_cents,
+                        "balance_due_cents": balance_due_cents,
+                        "terms": payment_terms,
                         "instructions": instructions,
                     },
                 }
@@ -2228,9 +2346,38 @@ def create_app() -> Flask:
         try:
             rows = con.execute(
                 """
-                SELECT *
-                FROM orders
-                ORDER BY created_at DESC
+                SELECT
+                    o.*,
+                    COALESCE(p.payment_plan, 'full') AS payment_plan,
+                    COALESCE(p.deposit_percent, 100) AS deposit_percent,
+                    COALESCE(
+                        p.amount_due_now_cents,
+                        o.total_cents
+                    ) AS amount_due_now_cents,
+                    COALESCE(
+                        p.amount_paid_cents,
+                        CASE
+                            WHEN LOWER(COALESCE(o.payment_status, 'unpaid')) = 'paid'
+                            THEN o.total_cents
+                            ELSE 0
+                        END
+                    ) AS amount_paid_cents,
+                    COALESCE(
+                        p.balance_due_cents,
+                        CASE
+                            WHEN LOWER(COALESCE(o.payment_status, 'unpaid')) = 'paid'
+                            THEN 0
+                            ELSE o.total_cents
+                        END
+                    ) AS balance_due_cents,
+                    COALESCE(
+                        p.payment_terms,
+                        'Andrew provides accepted payment instructions directly.'
+                    ) AS payment_terms
+                FROM orders AS o
+                LEFT JOIN order_payment_plans AS p
+                    ON p.order_id = o.id
+                ORDER BY o.created_at DESC
                 LIMIT 100
                 """
             ).fetchall()
@@ -2521,6 +2668,75 @@ def create_app() -> Flask:
                     (
                         payment_status,
                         order_id,
+                    ),
+                )
+
+            # PAYMENT_FREEDOM_PLAN_SYNC_V2
+            total_cents = int(order["total_cents"] or 0)
+
+            if payment_status == "paid":
+                plan_amount_paid_cents = total_cents
+                plan_balance_due_cents = 0
+            else:
+                plan_amount_paid_cents = 0
+                plan_balance_due_cents = total_cents
+
+            existing_plan = con.execute(
+                """
+                SELECT order_id
+                FROM order_payment_plans
+                WHERE order_id = ?
+                LIMIT 1
+                """,
+                (order_id,),
+            ).fetchone()
+
+            if existing_plan:
+                con.execute(
+                    """
+                    UPDATE order_payment_plans
+                    SET amount_paid_cents = ?,
+                        balance_due_cents = ?,
+                        updated_at = ?
+                    WHERE order_id = ?
+                    """,
+                    (
+                        plan_amount_paid_cents,
+                        plan_balance_due_cents,
+                        now_iso(),
+                        order_id,
+                    ),
+                )
+            else:
+                timestamp = now_iso()
+                con.execute(
+                    """
+                    INSERT INTO order_payment_plans (
+                        order_id,
+                        payment_plan,
+                        deposit_percent,
+                        amount_due_now_cents,
+                        amount_paid_cents,
+                        balance_due_cents,
+                        payment_terms,
+                        created_at,
+                        updated_at
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        order_id,
+                        "full",
+                        100,
+                        total_cents,
+                        plan_amount_paid_cents,
+                        plan_balance_due_cents,
+                        (
+                            "Andrew provides accepted payment "
+                            "instructions directly."
+                        ),
+                        timestamp,
+                        timestamp,
                     ),
                 )
 

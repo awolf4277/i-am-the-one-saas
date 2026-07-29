@@ -1,4 +1,4 @@
-﻿/* Copyright © 2026 Andrew Wolverton. All Rights Reserved. */
+/* Copyright © 2026 Andrew Wolverton. All Rights Reserved. */
 /* I AM THE ONE™ / WOLF OS™ â€” Gold + Silver v3 SaaS Skin */
 
 :root {
@@ -4737,5 +4737,173 @@ html.blacklight-mode .premium-cta-box {
 
   .live-cockpit-motion-indicator span {
     animation: none;
+  }
+}
+
+/* WOLF_OS_PAYMENT_FREEDOM_CENTER_V1 */
+.payment-freedom-center {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(70, 255, 164, 0.22);
+  background:
+    radial-gradient(circle at 88% 4%, rgba(70, 255, 164, 0.08), transparent 32%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.025));
+}
+
+.payment-freedom-metrics,
+.payment-freedom-selected {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.payment-freedom-selected {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.payment-freedom-metrics > div,
+.payment-freedom-selected > span {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.85rem;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.payment-freedom-metrics span,
+.payment-freedom-selected span {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.payment-freedom-form {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.payment-freedom-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.payment-freedom-grid label {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.payment-freedom-grid label > span {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.payment-freedom-grid input,
+.payment-freedom-grid select,
+.payment-freedom-grid textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 0.75rem;
+  padding: 0.72rem 0.8rem;
+  color: inherit;
+  background: rgba(0, 0, 0, 0.25);
+  font: inherit;
+}
+
+.payment-freedom-grid textarea {
+  resize: vertical;
+}
+
+.payment-freedom-grid input:focus,
+.payment-freedom-grid select:focus,
+.payment-freedom-grid textarea:focus {
+  outline: none;
+  border-color: rgba(70, 255, 164, 0.5);
+  box-shadow: 0 0 0 3px rgba(70, 255, 164, 0.08);
+}
+
+.payment-freedom-span-two {
+  grid-column: span 2;
+}
+
+.payment-freedom-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.payment-freedom-message {
+  margin-top: 0.9rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid rgba(96, 165, 250, 0.25);
+  border-radius: 0.75rem;
+  color: #dbeafe;
+  background: rgba(59, 130, 246, 0.09);
+}
+
+.payment-freedom-history {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 1rem;
+}
+
+.payment-freedom-history-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 0.8rem;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.payment-freedom-history-row > div {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.payment-freedom-history-row strong,
+.payment-freedom-history-row span,
+.payment-freedom-selected strong {
+  overflow-wrap: anywhere;
+}
+
+.payment-freedom-history-row span {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 0.72rem;
+}
+
+@media (max-width: 900px) {
+  .payment-freedom-selected,
+  .payment-freedom-history-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .payment-freedom-grid,
+  .payment-freedom-metrics,
+  .payment-freedom-selected,
+  .payment-freedom-history-row {
+    grid-template-columns: 1fr;
+  }
+
+  .payment-freedom-span-two {
+    grid-column: auto;
+  }
+
+  .payment-freedom-actions .v3-button {
+    width: 100%;
   }
 }
