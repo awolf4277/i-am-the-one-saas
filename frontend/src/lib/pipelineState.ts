@@ -290,7 +290,7 @@ export function useUnifiedPipeline(
     pipelineStatus,
     setPipelineStatus,
   ] = useState(
-    "Connecting to unified SQLite pipeline..."
+    "Connecting to unified PostgreSQL pipeline..."
   );
 
   const [
@@ -311,7 +311,7 @@ export function useUnifiedPipeline(
         setPipelineReady(true);
 
         setPipelineStatus(
-          `${Object.keys(next).length} deals synchronized from SQLite.`
+          `${Object.keys(next).length} deals synchronized from PostgreSQL.`
         );
 
         return next;
@@ -347,7 +347,7 @@ export function useUnifiedPipeline(
         setPipelineReady(true);
 
         setPipelineStatus(
-          `${Object.keys(detail.pipeline).length} deals synchronized from SQLite.`
+          `${Object.keys(detail.pipeline).length} deals synchronized from PostgreSQL.`
         );
 
         return;

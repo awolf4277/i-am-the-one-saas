@@ -2238,6 +2238,59 @@ def create_app() -> Flask:
         finally:
             con.close()
 
+    # PAYMENT_FREEDOM_BACKEND_V1
+    def ensure_payment_freedom_table(con):
+        con.execute(
+            """
+            CREATE TABLE IF NOT EXISTS payment_freedom_records (
+                order_id TEXT PRIMARY KEY,
+                payment_status TEXT NOT NULL DEFAULT 'unpaid',
+                payment_method TEXT NOT NULL DEFAULT 'manual',
+                provider TEXT NOT NULL DEFAULT 'owner_directed',
+                payment_link TEXT NOT NULL DEFAULT '',
+                payment_reference TEXT NOT NULL DEFAULT '',
+                amount_cents INTEGER NOT NULL DEFAULT 0,
+                note TEXT NOT NULL DEFAULT '',
+                updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+            )
+            """
+        )
+        con.commit()
+
+    @app.get("/api/owner/payment-freedom")
+    def owner_payment_freedom():
+        ok, error = require_owner()
+
+        if not ok:
+            return error
+
+        con = connect(app)
+
+        try:
+            ensure_payment_freedom_table(con)
+
+            rows = con.execute(
+                """
+                SELECT *
+                FROM payment_freedom_records
+                ORDER BY updated_at DESC
+                LIMIT 200
+                """
+            ).fetchall()
+
+            return jsonify(
+                {
+                    "ok": True,
+                    "count": len(rows),
+                    "payments": [
+                        dict(row)
+                        for row in rows
+                    ],
+                }
+            )
+        finally:
+            con.close()
+
     @app.put("/api/owner/orders/<order_id>/payment-status")
     def owner_update_order_payment_status(
         order_id: str
@@ -2251,23 +2304,12 @@ def create_app() -> Flask:
             silent=True
         )
 
-        if payload is None:
-            return jsonify(
-                {
-                    "ok": False,
-                    "error": (
-                        "Request body must contain "
-                        "valid JSON."
-                    ),
-                }
-            ), 400
-
         if not isinstance(payload, dict):
             return jsonify(
                 {
                     "ok": False,
                     "error": (
-                        "Payment status payload must "
+                        "Request body must "
                         "be a JSON object."
                     ),
                 }
@@ -2289,8 +2331,14 @@ def create_app() -> Flask:
         ).strip().lower()
 
         allowed_statuses = {
-            "paid",
             "unpaid",
+            "pending",
+            "deposit_due",
+            "deposit_paid",
+            "partially_paid",
+            "paid",
+            "refunded",
+            "cancelled",
         }
 
         if payment_status not in allowed_statuses:
@@ -2298,8 +2346,11 @@ def create_app() -> Flask:
                 {
                     "ok": False,
                     "error": (
-                        "payment_status must be "
-                        "paid or unpaid."
+                        "payment_status must be one of: "
+                        + ", ".join(
+                            sorted(allowed_statuses)
+                        )
+                        + "."
                     ),
                 }
             ), 400
@@ -2307,6 +2358,8 @@ def create_app() -> Flask:
         con = connect(app)
 
         try:
+            ensure_payment_freedom_table(con)
+
             order = con.execute(
                 """
                 SELECT *
@@ -2317,13 +2370,141 @@ def create_app() -> Flask:
                 (order_id,),
             ).fetchone()
 
-            if not order:
+            if order is None:
                 return jsonify(
                     {
                         "ok": False,
                         "error": "Order not found.",
                     }
                 ), 404
+
+            existing = con.execute(
+                """
+                SELECT *
+                FROM payment_freedom_records
+                WHERE order_id = ?
+                LIMIT 1
+                """,
+                (order_id,),
+            ).fetchone()
+
+            existing_data = (
+                dict(existing)
+                if existing is not None
+                else {}
+            )
+
+            def payment_text(
+                key: str,
+                default: str,
+                maximum: int
+            ) -> str:
+                value = str(
+                    payload.get(
+                        key,
+                        existing_data.get(
+                            key,
+                            default
+                        )
+                    )
+                    or ""
+                ).strip()
+
+                if len(value) > maximum:
+                    raise ValueError(
+                        f"{key} must be "
+                        f"{maximum} characters or fewer."
+                    )
+
+                return value
+
+            try:
+                payment_method = payment_text(
+                    "payment_method",
+                    "manual",
+                    120
+                )
+                provider = payment_text(
+                    "provider",
+                    "owner_directed",
+                    120
+                )
+                payment_link = payment_text(
+                    "payment_link",
+                    "",
+                    1000
+                )
+                payment_reference = payment_text(
+                    "payment_reference",
+                    "",
+                    160
+                )
+                note = payment_text(
+                    "note",
+                    "",
+                    1000
+                )
+            except ValueError as exc:
+                return jsonify(
+                    {
+                        "ok": False,
+                        "error": str(exc),
+                    }
+                ), 400
+
+            if (
+                payment_link
+                and not payment_link.lower().startswith(
+                    ("https://", "http://")
+                )
+            ):
+                return jsonify(
+                    {
+                        "ok": False,
+                        "error": (
+                            "payment_link must start with "
+                            "http:// or https://."
+                        ),
+                    }
+                ), 400
+
+            default_amount = (
+                existing_data.get("amount_cents")
+                if existing_data
+                else order["total_cents"]
+            )
+
+            try:
+                amount_cents = int(
+                    payload.get(
+                        "amount_cents",
+                        default_amount or 0
+                    )
+                )
+            except (
+                TypeError,
+                ValueError
+            ):
+                return jsonify(
+                    {
+                        "ok": False,
+                        "error": (
+                            "amount_cents must be "
+                            "a whole number."
+                        ),
+                    }
+                ), 400
+
+            if amount_cents < 0:
+                return jsonify(
+                    {
+                        "ok": False,
+                        "error": (
+                            "amount_cents cannot "
+                            "be negative."
+                        ),
+                    }
+                ), 400
 
             previous_status = str(
                 order["payment_status"]
@@ -2343,13 +2524,60 @@ def create_app() -> Flask:
                     ),
                 )
 
-                con.commit()
+            con.execute(
+                """
+                INSERT INTO payment_freedom_records (
+                    order_id,
+                    payment_status,
+                    payment_method,
+                    provider,
+                    payment_link,
+                    payment_reference,
+                    amount_cents,
+                    note,
+                    updated_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+                ON CONFLICT(order_id)
+                DO UPDATE SET
+                    payment_status = excluded.payment_status,
+                    payment_method = excluded.payment_method,
+                    provider = excluded.provider,
+                    payment_link = excluded.payment_link,
+                    payment_reference = excluded.payment_reference,
+                    amount_cents = excluded.amount_cents,
+                    note = excluded.note,
+                    updated_at = CURRENT_TIMESTAMP
+                """,
+                (
+                    order_id,
+                    payment_status,
+                    payment_method,
+                    provider,
+                    payment_link,
+                    payment_reference,
+                    amount_cents,
+                    note,
+                ),
+            )
+
+            con.commit()
 
             updated_order = con.execute(
                 """
                 SELECT *
                 FROM orders
                 WHERE id = ?
+                LIMIT 1
+                """,
+                (order_id,),
+            ).fetchone()
+
+            payment_record = con.execute(
+                """
+                SELECT *
+                FROM payment_freedom_records
+                WHERE order_id = ?
                 LIMIT 1
                 """,
                 (order_id,),
@@ -2371,9 +2599,11 @@ def create_app() -> Flask:
                     "order": dict(
                         updated_order
                     ),
+                    "payment": dict(
+                        payment_record
+                    ),
                 }
             )
-
         finally:
             con.close()
 

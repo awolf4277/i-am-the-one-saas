@@ -172,7 +172,7 @@ export default function DealActivityTimeline() {
       setActivities(nextActivities);
 
       setStatus(
-        `${nextActivities.length} persistent Deal Desk activities loaded from SQLite.`
+        `${nextActivities.length} persistent Deal Desk activities loaded from PostgreSQL.`
       );
     } catch (error) {
       setStatus(
@@ -214,7 +214,7 @@ export default function DealActivityTimeline() {
           <h2>Deal Activity Audit Trail</h2>
 
           <p>
-            Timestamped SQLite history for pipeline
+            Timestamped PostgreSQL history for pipeline
             stage movement, value changes, and next
             actions.
           </p>

@@ -844,7 +844,7 @@ export default function PriorityEngine({
 
         setStatus(
           isClosing
-            ? `${target.lead.business} deposit request was logged in SQLite. WOLF OS moved to the next actionable buyer while payment is pending.`
+            ? `${target.lead.business} deposit request was logged in PostgreSQL. WOLF OS moved to the next actionable buyer while payment is pending.`
             : `${target.lead.business} action completed. Deal advanced from ${target.deal.stage} to ${nextStage}, and the attack queue was recalculated.`
         );
       } catch (error) {
@@ -1170,7 +1170,7 @@ export default function PriorityEngine({
                 <p>
                   Execute the recommended move,
                   contact the buyer, and log the
-                  completed action into SQLite.
+                  completed action into PostgreSQL.
                 </p>
               </div>
 
@@ -1283,7 +1283,7 @@ export default function PriorityEngine({
 
             <p className="revenue-action-footnote">
               Completion is persisted through the
-              unified SQLite pipeline and immediately
+              unified PostgreSQL pipeline and immediately
               refreshes the Priority Engine, Deal Desk,
               Revenue Engine, and activity timeline.
             </p>

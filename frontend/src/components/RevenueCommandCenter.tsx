@@ -127,7 +127,7 @@ export default function RevenueCommandCenter({
 
   const [status, setStatus] =
     useState(
-      "Revenue Engine connected to unified SQLite pipeline state and live order payment status."
+      "Revenue Engine connected to unified PostgreSQL pipeline state and live order payment status."
     );
 
   const [
@@ -251,7 +251,7 @@ export default function RevenueCommandCenter({
           `Cash goal remaining: ${money(remainingRevenue)}`,
           `Average deal target: ${money(averageDeal)}`,
           `Deals still needed: ${dealsNeeded}`,
-          `Live SQLite pipeline: ${money(pipelineValue)}`,
+          `Live PostgreSQL pipeline: ${money(pipelineValue)}`,
           `Selected offer: ${selectedOffer.name} — ${money(selectedOffer.price)}`,
           "",
           "TONIGHT'S ACTIONS",
@@ -398,7 +398,7 @@ export default function RevenueCommandCenter({
 
           <p>
             Live revenue truth calculated
-            from SQLite pipeline state and
+            from PostgreSQL pipeline state and
             real order payment status.
           </p>
         </div>
@@ -424,7 +424,7 @@ export default function RevenueCommandCenter({
             {closedDeals === 1
               ? ""
               : "s"}{" "}
-            in the unified SQLite pipeline
+            in the unified PostgreSQL pipeline
           </small>
         </article>
 
@@ -493,7 +493,7 @@ export default function RevenueCommandCenter({
             </div>
 
             <b>
-              SQLITE LIVE
+              POSTGRESQL LIVE
             </b>
           </div>
 
@@ -568,7 +568,7 @@ export default function RevenueCommandCenter({
             </label>
 
             <label>
-              Live pipeline from SQLite
+              Live pipeline from PostgreSQL
 
               <input
                 type="number"

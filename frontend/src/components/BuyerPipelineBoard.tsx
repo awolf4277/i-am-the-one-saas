@@ -369,7 +369,7 @@ export default function BuyerPipelineBoard({
         await refreshPipeline();
 
         setStatus(
-          `${missing.length} new buyer deal${missing.length === 1 ? "" : "s"} added to SQLite.`
+          `${missing.length} new buyer deal${missing.length === 1 ? "" : "s"} added to PostgreSQL.`
         );
 
       } catch (error) {
@@ -476,7 +476,7 @@ export default function BuyerPipelineBoard({
       deal: PipelineState
     ) => {
       setStatus(
-        "Saving deal to SQLite..."
+        "Saving deal to PostgreSQL..."
       );
 
       try {
@@ -655,7 +655,7 @@ export default function BuyerPipelineBoard({
           </h2>
 
           <p>
-            SQLite is the single source
+            PostgreSQL is the single source
             of truth for every WOLF OS
             sales system.
           </p>
@@ -669,7 +669,7 @@ export default function BuyerPipelineBoard({
             ? ""
             : "S"}
 
-          {" · "}SQLITE AUTHORITY
+          {" · "}POSTGRESQL AUTHORITY
         </div>
       </header>
 
