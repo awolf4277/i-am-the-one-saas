@@ -1037,35 +1037,6 @@ def create_app() -> Flask:
                 ),
             )
 
-            for (
-                activity_type,
-                old_value,
-                new_value,
-                summary,
-            ) in activity_items:
-                con.execute(
-                    """
-                    INSERT INTO pipeline_activity (
-                        id,
-                        lead_id,
-                        activity_type,
-                        old_value,
-                        new_value,
-                        summary,
-                        created_at
-                    )
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                    """,
-                    (
-                        new_id("ACT"),
-                        lead_id,
-                        activity_type,
-                        old_value,
-                        new_value,
-                        summary,
-                        updated_at,
-                    ),
-                )
 
             con.commit()
 

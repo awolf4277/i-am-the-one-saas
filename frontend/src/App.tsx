@@ -1158,6 +1158,10 @@ function App() {
     setLoadState("booting");
     setError("");
 
+    // Clear the previous store while another tenant loads.
+    setProducts([]);
+    setSelectedIndex(0);
+
     try {
       const [healthData, storesData, productData] = await Promise.all([
         apiJson<ApiHealth>("/api/health").catch(() => null),
@@ -1654,7 +1658,33 @@ function App() {
   }
 
   return (
-    <main className="v3-app">
+    <main
+      className={[
+        "v3-app",
+        isStore && storeSlug !== "demo"
+          ? "tenant-storefront-mode"
+          : "",
+        isStore &&
+        storeSlug !== "demo" &&
+        loadState === "booting"
+          ? "tenant-storefront-loading"
+          : "",
+        isStore &&
+        storeSlug !== "demo" &&
+        loadState === "ready" &&
+        products.length === 0
+          ? "tenant-storefront-empty"
+          : "",
+        isStore &&
+        storeSlug !== "demo" &&
+        loadState === "error"
+          ? "tenant-storefront-unavailable"
+          : ""
+      ]
+        .filter(Boolean)
+        .join(" ")}
+      data-store-slug={storeSlug}
+    >
 
       {showIgnition ? (
         <WolfIgnitionSequence onComplete={completeIgnition} />
@@ -5130,15 +5160,410 @@ function Metric({ label, value }: { label: string; value: React.ReactNode }) {
   );
 }
 
-export default App;
+// WOLF_OS_CUSTOMER_OWNER_PORTAL_V6
+type CustomerPortalStore = {
+  id?: string;
+  slug?: string;
+  name?: string;
+  brand?: string;
+  system?: string;
+  plan?: string;
+  status?: string;
+};
 
+type CustomerPortalProduct = {
+  id: string;
+  sku?: string;
+  name?: string;
+  category?: string;
+  price_cents?: number;
+  stock?: number;
+};
 
+type CustomerPortalOrder = {
+  id: string;
+  buyer_name?: string;
+  buyer_email?: string;
+  total_cents?: number;
+  payment_status?: string;
+  amount_paid_cents?: number;
+  balance_due_cents?: number;
+  created_at?: string;
+};
 
+type CustomerPortalPayment = {
+  order_id?: string;
+  buyer_name?: string;
+  total_cents?: number;
+  payment_status?: string;
+  amount_paid_cents?: number;
+  balance_due_cents?: number;
+};
 
+const CUSTOMER_PORTAL_TOKEN_KEY = "wolf_customer_owner_token_v1";
 
+function customerPortalList<T>(payload: any, ...keys: string[]): T[] {
+  for (const key of keys) {
+    if (Array.isArray(payload?.[key])) return payload[key] as T[];
+  }
+  return Array.isArray(payload) ? (payload as T[]) : [];
+}
 
+function CustomerOwnerPortal() {
+  const [token, setToken] = useState(
+    () => window.localStorage.getItem(CUSTOMER_PORTAL_TOKEN_KEY) || ""
+  );
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [storeSlug, setStoreSlug] = useState("");
+  const [store, setStore] = useState<CustomerPortalStore | null>(null);
+  const [orders, setOrders] = useState<CustomerPortalOrder[]>([]);
+  const [products, setProducts] = useState<CustomerPortalProduct[]>([]);
+  const [payments, setPayments] = useState<CustomerPortalPayment[]>([]);
+  const [loading, setLoading] = useState(Boolean(token));
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
+  const portalFetch = async (
+    path: string,
+    options: RequestInit = {},
+    activeToken = token
+  ) => {
+    const response = await fetch(apiUrl(path), {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...(activeToken ? { Authorization: `Bearer ${activeToken}` } : {}),
+        ...(options.headers || {})
+      }
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(
+        String(data?.error || data?.message || `Request failed (${response.status})`)
+      );
+    }
+    return data;
+  };
 
+  const loadPortal = async (activeToken = token) => {
+    if (!activeToken) return;
+    setLoading(true);
+    setError("");
+    try {
+      const [storeData, orderData, productData, paymentData] = await Promise.all([
+        portalFetch("/api/customer-owner/store", {}, activeToken),
+        portalFetch("/api/customer-owner/orders", {}, activeToken),
+        portalFetch("/api/customer-owner/products", {}, activeToken),
+        portalFetch("/api/customer-owner/payment-freedom", {}, activeToken)
+      ]);
+      setStore(storeData?.store || null);
+      setOrders(customerPortalList<CustomerPortalOrder>(orderData, "orders", "items"));
+      setProducts(customerPortalList<CustomerPortalProduct>(productData, "products", "items"));
+      setPayments(
+        customerPortalList<CustomerPortalPayment>(
+          paymentData,
+          "records",
+          "payments",
+          "payment_freedom",
+          "items"
+        )
+      );
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Unable to load portal.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
+    if (token) void loadPortal(token);
+  }, [token]);
 
+  const login = async (event: any) => {
+    event.preventDefault();
+    setLoading(true);
+    setError("");
+    setMessage("");
+    try {
+      const data = await portalFetch(
+        "/api/customer-owner/login",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            email: email.trim(),
+            password,
+            store_slug: storeSlug.trim()
+          })
+        },
+        ""
+      );
+      const nextToken = String(
+        data?.token ||
+        data?.customer_token ||
+        data?.access_token ||
+        data?.session_token ||
+        ""
+      );
+      if (!nextToken) throw new Error("Login did not return a customer token.");
+      window.localStorage.setItem(CUSTOMER_PORTAL_TOKEN_KEY, nextToken);
+      setToken(nextToken);
+      setMessage("Customer portal unlocked.");
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Login failed.");
+      setLoading(false);
+    }
+  };
 
+  const logout = async () => {
+    try {
+      if (token) {
+        await portalFetch("/api/customer-owner/logout", { method: "POST" }, token);
+      }
+    } catch {
+      // Clear the browser session even when the server token already expired.
+    }
+    window.localStorage.removeItem(CUSTOMER_PORTAL_TOKEN_KEY);
+    setToken("");
+    setStore(null);
+    setOrders([]);
+    setProducts([]);
+    setPayments([]);
+    setError("");
+    setMessage("Logged out.");
+  };
+
+  const updatePayment = async (orderId: string, status: string) => {
+    if (!orderId) return;
+    setError("");
+    setMessage("");
+    try {
+      await portalFetch(
+        `/api/customer-owner/payment-freedom/${encodeURIComponent(orderId)}`,
+        { method: "PUT", body: JSON.stringify({ payment_status: status }) }
+      );
+      setMessage(`Payment status updated for ${orderId}.`);
+      await loadPortal();
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Payment update failed.");
+    }
+  };
+
+  if (!token) {
+    return (
+      <main className="customer-portal-shell customer-portal-login-shell">
+        <section className="customer-portal-login-card">
+          <span className="customer-portal-kicker">PRIVATE BUSINESS ACCESS</span>
+          <h1>Customer Owner Portal</h1>
+          <p>
+            Sign in to see only your storefront, inventory, orders, and
+            Payment Freedom records.
+          </p>
+          <form className="customer-portal-login-form" onSubmit={login}>
+            <label>
+              Owner email
+              <input
+                type="email"
+                value={email}
+                onChange={(event: any) => setEmail(event.target.value)}
+                autoComplete="username"
+                required
+              />
+            </label>
+            <label>
+              Password
+              <input
+                type="password"
+                value={password}
+                onChange={(event: any) => setPassword(event.target.value)}
+                autoComplete="current-password"
+                required
+              />
+            </label>
+            <label>
+              Store slug
+              <input
+                value={storeSlug}
+                onChange={(event: any) => setStoreSlug(event.target.value)}
+                placeholder="Optional when email is unique"
+              />
+            </label>
+            <button type="submit" disabled={loading}>
+              {loading ? "Unlocking..." : "Unlock Business Portal"}
+            </button>
+          </form>
+          {error ? <div className="customer-portal-alert error">{error}</div> : null}
+          {message ? <div className="customer-portal-alert success">{message}</div> : null}
+          <a className="customer-portal-back" href="/#">Return to I AM THE ONE™</a>
+        </section>
+      </main>
+    );
+  }
+
+  const totalValue = orders.reduce(
+    (sum, order) => sum + Number(order.total_cents || 0),
+    0
+  );
+  const balanceDue = orders.reduce(
+    (sum, order) => sum + Number(order.balance_due_cents || 0),
+    0
+  );
+  const lowStock = products.filter((product) => Number(product.stock || 0) <= 3).length;
+  const storefront = `/#store/${store?.slug || "demo"}`;
+
+  return (
+    <main className="customer-portal-shell">
+      <header className="customer-portal-header">
+        <div>
+          <span className="customer-portal-kicker">TENANT-SAFE BUSINESS COMMAND</span>
+          <h1>{store?.name || store?.brand || "Customer Owner Portal"}</h1>
+          <p>
+            {store?.system || "WOLF OS™"} · {store?.plan || "Active plan"} ·{" "}
+            {store?.status || "active"}
+          </p>
+        </div>
+        <div className="customer-portal-actions">
+          <a href={storefront}>Open Storefront</a>
+          <button type="button" onClick={() => void loadPortal()}>Refresh</button>
+          <button type="button" className="danger" onClick={() => void logout()}>
+            Log Out
+          </button>
+        </div>
+      </header>
+
+      {error ? <div className="customer-portal-alert error">{error}</div> : null}
+      {message ? <div className="customer-portal-alert success">{message}</div> : null}
+      {loading ? <div className="customer-portal-alert">Loading business data...</div> : null}
+
+      <section className="customer-portal-metrics">
+        <article><span>Products</span><strong>{products.length}</strong></article>
+        <article><span>Orders</span><strong>{orders.length}</strong></article>
+        <article><span>Order Value</span><strong>{money(totalValue)}</strong></article>
+        <article><span>Balance Due</span><strong>{money(balanceDue)}</strong></article>
+        <article><span>Low Stock</span><strong>{lowStock}</strong></article>
+      </section>
+
+      <section className="customer-portal-grid">
+        <article className="customer-portal-panel">
+          <div className="customer-portal-panel-title">
+            <div><span>LIVE INVENTORY</span><h2>Your Products</h2></div>
+            <strong>{products.length}</strong>
+          </div>
+          <div className="customer-portal-list">
+            {products.length ? products.map((product) => (
+              <div className="customer-portal-row" key={product.id}>
+                <div>
+                  <strong>{product.name || "Unnamed product"}</strong>
+                  <small>{product.sku || "NO-SKU"} · {product.category || "General"}</small>
+                </div>
+                <div className="customer-portal-values">
+                  <strong>{money(product.price_cents)}</strong>
+                  <small>{Number(product.stock || 0)} in stock</small>
+                </div>
+              </div>
+            )) : <p>No products yet.</p>}
+          </div>
+        </article>
+
+        <article className="customer-portal-panel">
+          <div className="customer-portal-panel-title">
+            <div><span>BUYER ACTIVITY</span><h2>Your Orders</h2></div>
+            <strong>{orders.length}</strong>
+          </div>
+          <div className="customer-portal-list">
+            {orders.length ? orders.map((order) => (
+              <div className="customer-portal-row" key={order.id}>
+                <div>
+                  <strong>{order.id}</strong>
+                  <small>{order.buyer_name || "Buyer"} · {order.buyer_email || ""}</small>
+                </div>
+                <div className="customer-portal-values">
+                  <strong>{money(order.total_cents)}</strong>
+                  <small>{order.payment_status || "unpaid"}</small>
+                </div>
+              </div>
+            )) : <p>No orders yet.</p>}
+          </div>
+        </article>
+      </section>
+
+      <section className="customer-portal-panel">
+        <div className="customer-portal-panel-title">
+          <div><span>PAYMENT FREEDOM</span><h2>Payment Records</h2></div>
+          <strong>{payments.length}</strong>
+        </div>
+        <div className="customer-portal-list">
+          {payments.length ? payments.map((payment, index) => {
+            const orderId = String(payment.order_id || "");
+            return (
+              <div className="customer-portal-payment-row" key={`${orderId}-${index}`}>
+                <div>
+                  <strong>{orderId || "Order"}</strong>
+                  <small>{payment.buyer_name || "Buyer"} · {money(payment.total_cents)}</small>
+                </div>
+                <div className="customer-portal-values">
+                  <small>Paid {money(payment.amount_paid_cents)}</small>
+                  <small>Due {money(payment.balance_due_cents)}</small>
+                </div>
+                <select
+                  value={payment.payment_status || "unpaid"}
+                  onChange={(event: any) => void updatePayment(orderId, event.target.value)}
+                  disabled={!orderId}
+                >
+                  <option value="unpaid">Unpaid</option>
+                  <option value="deposit_due">Deposit due</option>
+                  <option value="deposit_paid">Deposit paid</option>
+                  <option value="partially_paid">Partially paid</option>
+                  <option value="paid">Paid</option>
+                  <option value="refunded">Refunded</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+            );
+          }) : <p>No Payment Freedom records yet.</p>}
+        </div>
+      </section>
+
+      <footer className="customer-portal-footer">
+        <span>{store?.brand || "I AM THE ONE™"}</span>
+        <span>Private customer account · tenant isolated</span>
+      </footer>
+    </main>
+  );
+}
+
+function CustomerPortalRouter() {
+  const readCustomerPortalRoute = () => {
+    const rawRoute = window.location.hash
+      ? window.location.hash.replace(/^#/, "")
+      : window.location.pathname;
+
+    return rawRoute.startsWith("/") ? rawRoute : `/${rawRoute}`;
+  };
+
+  const [customerPortalRoute, setCustomerPortalRoute] = useState(
+    readCustomerPortalRoute
+  );
+
+  useEffect(() => {
+    const syncCustomerPortalRoute = () => {
+      setCustomerPortalRoute(readCustomerPortalRoute());
+    };
+
+    window.addEventListener("hashchange", syncCustomerPortalRoute);
+    window.addEventListener("popstate", syncCustomerPortalRoute);
+
+    return () => {
+      window.removeEventListener("hashchange", syncCustomerPortalRoute);
+      window.removeEventListener("popstate", syncCustomerPortalRoute);
+    };
+  }, []);
+
+  if (customerPortalRoute.startsWith("/customer-owner")) {
+    return <CustomerOwnerPortal />;
+  }
+
+  return <App />;
+}
+
+export default CustomerPortalRouter;
