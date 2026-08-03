@@ -181,6 +181,44 @@ type PaymentFreedomDraft = {
   note: string;
 };
 
+
+type CustomerLaunchPlan = "starter" | "pro" | "custom";
+
+type CustomerAccount = {
+  account_id: string;
+  store_id: string;
+  store_slug: string;
+  store_name: string;
+  owner_name?: string;
+  display_name?: string;
+  owner_email?: string;
+  email?: string;
+  brand?: string;
+  system?: string;
+  plan?: string;
+  active?: number | boolean;
+  store_status?: string;
+  created_at?: string;
+  updated_at?: string;
+};
+
+type CustomerLaunchDraft = {
+  business_name: string;
+  store_slug: string;
+  owner_name: string;
+  owner_email: string;
+  brand: string;
+  system: string;
+  plan: CustomerLaunchPlan;
+  temporary_password: string;
+};
+
+type CustomerLaunchResult = CustomerAccount & {
+  temporary_password: string;
+  storefront_path: string;
+  owner_login_path: string;
+};
+
 type SetupRequest = {
   id?: string;
   name?: string;
@@ -1120,6 +1158,10 @@ function App() {
     setLoadState("booting");
     setError("");
 
+    // Clear the previous store while another tenant loads.
+    setProducts([]);
+    setSelectedIndex(0);
+
     try {
       const [healthData, storesData, productData] = await Promise.all([
         apiJson<ApiHealth>("/api/health").catch(() => null),
@@ -1492,6 +1534,61 @@ function App() {
     return payload.payment as PaymentFreedomRecord;
   }
 
+
+  // WOLF_OS_CUSTOMER_LAUNCH_MANAGER_UI_V1
+  async function loadCustomerAccounts(): Promise<CustomerAccount[]> {
+    if (!ownerToken) return [];
+
+    const payload = await apiJson<any>(
+      "/api/owner/customer-accounts",
+      { method: "GET" },
+      ownerToken
+    );
+
+    if (!payload?.ok) {
+      throw new Error(payload?.error || "Customer accounts could not be loaded.");
+    }
+
+    return Array.isArray(payload?.customer_accounts)
+      ? payload.customer_accounts
+      : [];
+  }
+
+  async function createCustomerAccount(
+    draft: CustomerLaunchDraft
+  ): Promise<CustomerLaunchResult> {
+    if (!ownerToken) throw new Error("Owner token required.");
+
+    const payload = await apiJson<any>(
+      "/api/owner/customer-accounts",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          business_name: draft.business_name.trim(),
+          store_slug: draft.store_slug.trim(),
+          owner_name: draft.owner_name.trim(),
+          owner_email: draft.owner_email.trim(),
+          brand: draft.brand.trim(),
+          system: draft.system.trim() || "WOLF OS™",
+          plan: draft.plan,
+          temporary_password: draft.temporary_password.trim()
+        })
+      },
+      ownerToken
+    );
+
+    if (!payload?.ok || !payload?.customer_account) {
+      throw new Error(payload?.error || "Customer store could not be created.");
+    }
+
+    setNotice(
+      `CUSTOMER STORE CREATED · ${payload.customer_account.store_slug}`
+    );
+
+    return payload.customer_account as CustomerLaunchResult;
+  }
+
   async function createOwnerProduct(form: ProductForm) {
     if (!ownerToken) {
       setError("Owner token required.");
@@ -1561,7 +1658,33 @@ function App() {
   }
 
   return (
-    <main className="v3-app">
+    <main
+      className={[
+        "v3-app",
+        isStore && storeSlug !== "demo"
+          ? "tenant-storefront-mode"
+          : "",
+        isStore &&
+        storeSlug !== "demo" &&
+        loadState === "booting"
+          ? "tenant-storefront-loading"
+          : "",
+        isStore &&
+        storeSlug !== "demo" &&
+        loadState === "ready" &&
+        products.length === 0
+          ? "tenant-storefront-empty"
+          : "",
+        isStore &&
+        storeSlug !== "demo" &&
+        loadState === "error"
+          ? "tenant-storefront-unavailable"
+          : ""
+      ]
+        .filter(Boolean)
+        .join(" ")}
+      data-store-slug={storeSlug}
+    >
 
       {showIgnition ? (
         <WolfIgnitionSequence onComplete={completeIgnition} />
@@ -1614,6 +1737,8 @@ function App() {
             onUpdateOrderPaymentStatus={updateOrderPaymentStatus}
             onLoadPaymentFreedom={loadPaymentFreedomRecords}
             onSavePaymentFreedom={savePaymentFreedomRecord}
+            onLoadCustomerAccounts={loadCustomerAccounts}
+            onCreateCustomerAccount={createCustomerAccount}
           />
         ) : (
           <OwnerGate
@@ -3627,6 +3752,8 @@ function OwnerConsole({
   onUpdateOrderPaymentStatus,
   onLoadPaymentFreedom,
   onSavePaymentFreedom,
+  onLoadCustomerAccounts,
+  onCreateCustomerAccount,
 }: {
   health: ApiHealth | null;
   stores: Store[];
@@ -3648,6 +3775,10 @@ function OwnerConsole({
     orderId: string,
     draft: PaymentFreedomDraft
   ) => Promise<PaymentFreedomRecord>;
+  onLoadCustomerAccounts: () => Promise<CustomerAccount[]>;
+  onCreateCustomerAccount: (
+    draft: CustomerLaunchDraft
+  ) => Promise<CustomerLaunchResult>;
 }) {
   const [form, setForm] = useState<ProductForm>({
     store_slug: "demo",
@@ -3659,6 +3790,54 @@ function OwnerConsole({
     stock: "",
     image_url: ""
   });
+
+  // WOLF_OS_CUSTOMER_LAUNCH_MANAGER_UI_V1
+  const [customerAccounts, setCustomerAccounts] = useState<CustomerAccount[]>([]);
+  const [customerLaunchLoading, setCustomerLaunchLoading] = useState(false);
+  const [customerLaunchMessage, setCustomerLaunchMessage] = useState("");
+  const [customerLaunchResult, setCustomerLaunchResult] = useState<CustomerLaunchResult | null>(null);
+  const [customerLaunchDraft, setCustomerLaunchDraft] = useState<CustomerLaunchDraft>({
+    business_name: "",
+    store_slug: "",
+    owner_name: "",
+    owner_email: "",
+    brand: "",
+    system: "WOLF OS™",
+    plan: "starter",
+    temporary_password: ""
+  });
+
+  const activeCustomerCount = customerAccounts.filter((account) => {
+    const accountActive = account.active === undefined || Boolean(Number(account.active));
+    const storeActive = String(account.store_status || "active").toLowerCase() === "active";
+    return accountActive && storeActive;
+  }).length;
+
+  const proCustomerCount = customerAccounts.filter(
+    (account) => String(account.plan || "").toLowerCase() === "pro"
+  ).length;
+
+  async function refreshCustomerAccounts() {
+    try {
+      setCustomerLaunchLoading(true);
+      setCustomerLaunchMessage("");
+      const accounts = await onLoadCustomerAccounts();
+      setCustomerAccounts(accounts);
+      setCustomerLaunchMessage(
+        `${accounts.length} customer account${accounts.length === 1 ? "" : "s"} synchronized.`
+      );
+    } catch (error: any) {
+      setCustomerLaunchMessage(
+        error?.message || "Customer accounts could not be loaded."
+      );
+    } finally {
+      setCustomerLaunchLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    void refreshCustomerAccounts();
+  }, []);
 
   // WOLF_OS_PAYMENT_FREEDOM_CENTER_V1
   const [paymentRecords, setPaymentRecords] = useState<PaymentFreedomRecord[]>([]);
@@ -3777,6 +3956,127 @@ function OwnerConsole({
     setForm((previous) => ({ ...previous, [field]: value }));
   }
 
+
+
+  function customerLaunchSlug(value: string) {
+    return value
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 80);
+  }
+
+  function setCustomerLaunchField(
+    field: keyof CustomerLaunchDraft,
+    value: string
+  ) {
+    setCustomerLaunchDraft((previous) => {
+      const next = { ...previous, [field]: value } as CustomerLaunchDraft;
+
+      if (field === "business_name") {
+        const previousAutomaticSlug = customerLaunchSlug(previous.business_name);
+        if (!previous.store_slug || previous.store_slug === previousAutomaticSlug) {
+          next.store_slug = customerLaunchSlug(value);
+        }
+
+        if (!previous.owner_name || previous.owner_name === previous.business_name) {
+          next.owner_name = value;
+        }
+
+        if (!previous.brand || previous.brand === previous.business_name) {
+          next.brand = value;
+        }
+      }
+
+      if (field === "store_slug") {
+        next.store_slug = customerLaunchSlug(value);
+      }
+
+      return next;
+    });
+  }
+
+  async function submitCustomerLaunch(event: React.FormEvent) {
+    event.preventDefault();
+
+    if (!customerLaunchDraft.business_name.trim()) {
+      setCustomerLaunchMessage("Business name is required.");
+      return;
+    }
+
+    if (!customerLaunchDraft.owner_email.trim()) {
+      setCustomerLaunchMessage("Owner email is required.");
+      return;
+    }
+
+    try {
+      setCustomerLaunchLoading(true);
+      setCustomerLaunchMessage("");
+      const result = await onCreateCustomerAccount(customerLaunchDraft);
+      setCustomerLaunchResult(result);
+      setCustomerAccounts((previous) => [
+        result,
+        ...previous.filter((account) => account.account_id !== result.account_id)
+      ]);
+      setCustomerLaunchMessage(
+        `${result.store_name} is isolated and ready for product setup.`
+      );
+      setCustomerLaunchDraft({
+        business_name: "",
+        store_slug: "",
+        owner_name: "",
+        owner_email: "",
+        brand: "",
+        system: "WOLF OS™",
+        plan: "starter",
+        temporary_password: ""
+      });
+    } catch (error: any) {
+      setCustomerLaunchMessage(
+        error?.message || "Customer store could not be created."
+      );
+    } finally {
+      setCustomerLaunchLoading(false);
+    }
+  }
+
+  async function copyCustomerLaunchValue(value: string, label: string) {
+    if (!value) {
+      setCustomerLaunchMessage(`${label} is not available.`);
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(value);
+      setCustomerLaunchMessage(`${label} copied.`);
+    } catch {
+      setCustomerLaunchMessage(`${label} could not be copied.`);
+    }
+  }
+
+  async function copyCustomerHandoff() {
+    if (!customerLaunchResult) {
+      setCustomerLaunchMessage("Create a customer store before copying a handoff.");
+      return;
+    }
+
+    const storefrontUrl = `${window.location.origin}${customerLaunchResult.storefront_path}`;
+    const portalUrl = `${window.location.origin}${customerLaunchResult.owner_login_path}`;
+    const handoff = [
+      `Your ${customerLaunchResult.store_name} storefront has been created.`,
+      "",
+      `Customer storefront: ${storefrontUrl}`,
+      `Customer owner portal: ${portalUrl}`,
+      `Owner email: ${customerLaunchResult.owner_email || customerLaunchResult.email || ""}`,
+      `Temporary password: ${customerLaunchResult.temporary_password}`,
+      "",
+      "Keep the owner portal and temporary password private.",
+      "The customer owner portal screen must be installed and verified before final delivery."
+    ].join("\n");
+
+    await copyCustomerLaunchValue(handoff, "Customer handoff draft");
+  }
 
   async function submitPaymentFreedom(event: React.FormEvent) {
     event.preventDefault();
@@ -4182,6 +4482,243 @@ Thanks for requesting setup help for ${
             </div>
           ) : (
             <p className="muted">No setup requests yet.</p>
+          )}
+        </div>
+
+        {/* WOLF_OS_CUSTOMER_LAUNCH_MANAGER_UI_V1 */}
+        <div className="owner-panel wide customer-launch-manager">
+          <div className="panel-heading">
+            <div>
+              <p className="v3-kicker">Production Onboarding</p>
+              <h2>Customer Launch Manager</h2>
+              <span className="muted">
+                Create an isolated customer store, private owner account,
+                temporary password, and delivery package from one form.
+              </span>
+            </div>
+            <span className="v3-pill online">TENANT SAFE</span>
+          </div>
+
+          <div className="customer-launch-metrics">
+            <div><span>Customers</span><strong>{customerAccounts.length}</strong></div>
+            <div><span>Active</span><strong>{activeCustomerCount}</strong></div>
+            <div><span>Pro Plans</span><strong>{proCustomerCount}</strong></div>
+          </div>
+
+          <form className="customer-launch-form" onSubmit={submitCustomerLaunch}>
+            <div className="customer-launch-grid">
+              <label>
+                <span>Business name</span>
+                <input
+                  value={customerLaunchDraft.business_name}
+                  onChange={(event) => setCustomerLaunchField("business_name", event.target.value)}
+                  placeholder="Blue Ridge Apparel"
+                  required
+                />
+              </label>
+
+              <label>
+                <span>Store slug</span>
+                <input
+                  value={customerLaunchDraft.store_slug}
+                  onChange={(event) => setCustomerLaunchField("store_slug", event.target.value)}
+                  placeholder="blue-ridge-apparel"
+                  required
+                />
+              </label>
+
+              <label>
+                <span>Owner name</span>
+                <input
+                  value={customerLaunchDraft.owner_name}
+                  onChange={(event) => setCustomerLaunchField("owner_name", event.target.value)}
+                  placeholder="Taylor Reed"
+                  required
+                />
+              </label>
+
+              <label>
+                <span>Owner email</span>
+                <input
+                  type="email"
+                  value={customerLaunchDraft.owner_email}
+                  onChange={(event) => setCustomerLaunchField("owner_email", event.target.value)}
+                  placeholder="owner@example.com"
+                  required
+                />
+              </label>
+
+              <label>
+                <span>Customer brand</span>
+                <input
+                  value={customerLaunchDraft.brand}
+                  onChange={(event) => setCustomerLaunchField("brand", event.target.value)}
+                  placeholder="Business brand"
+                />
+              </label>
+
+              <label>
+                <span>System name</span>
+                <input
+                  value={customerLaunchDraft.system}
+                  onChange={(event) => setCustomerLaunchField("system", event.target.value)}
+                  placeholder="WOLF OS™"
+                />
+              </label>
+
+              <label>
+                <span>Package</span>
+                <select
+                  value={customerLaunchDraft.plan}
+                  onChange={(event) => setCustomerLaunchField(
+                    "plan",
+                    event.target.value as CustomerLaunchPlan
+                  )}
+                >
+                  <option value="starter">Starter Storefront</option>
+                  <option value="pro">Pro Storefront + Dashboard</option>
+                  <option value="custom">Custom SaaS Buildout</option>
+                </select>
+              </label>
+
+              <label>
+                <span>Temporary password</span>
+                <input
+                  value={customerLaunchDraft.temporary_password}
+                  onChange={(event) => setCustomerLaunchField("temporary_password", event.target.value)}
+                  placeholder="Leave blank to generate securely"
+                  autoComplete="new-password"
+                />
+              </label>
+            </div>
+
+            <div className="customer-launch-actions">
+              <button
+                className="v3-button primary"
+                type="submit"
+                disabled={customerLaunchLoading}
+              >
+                {customerLaunchLoading ? "Creating..." : "Create Customer Store"}
+              </button>
+              <button
+                className="v3-button secondary"
+                type="button"
+                onClick={() => void refreshCustomerAccounts()}
+                disabled={customerLaunchLoading}
+              >
+                Refresh Customers
+              </button>
+            </div>
+          </form>
+
+          {customerLaunchMessage ? (
+            <div className="customer-launch-message">{customerLaunchMessage}</div>
+          ) : null}
+
+          {customerLaunchResult ? (
+            <div className="customer-launch-result">
+              <div className="customer-launch-result-heading">
+                <div>
+                  <span>Launch package created</span>
+                  <strong>{customerLaunchResult.store_name}</strong>
+                </div>
+                <span className="v3-pill online">ACCOUNT READY</span>
+              </div>
+
+              <div className="customer-launch-result-grid">
+                <span>
+                  Storefront
+                  <strong>{customerLaunchResult.storefront_path}</strong>
+                </span>
+                <span>
+                  Owner email
+                  <strong>{customerLaunchResult.owner_email || customerLaunchResult.email}</strong>
+                </span>
+                <span>
+                  Temporary password
+                  <strong>{customerLaunchResult.temporary_password}</strong>
+                </span>
+                <span>
+                  Owner portal route
+                  <strong>{customerLaunchResult.owner_login_path}</strong>
+                </span>
+              </div>
+
+              <div className="customer-launch-actions">
+                <a
+                  className="v3-button primary"
+                  href={customerLaunchResult.storefront_path}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Open Storefront
+                </a>
+                <button
+                  className="v3-button secondary"
+                  type="button"
+                  onClick={() => void copyCustomerLaunchValue(
+                    `${window.location.origin}${customerLaunchResult.storefront_path}`,
+                    "Storefront link"
+                  )}
+                >
+                  Copy Store Link
+                </button>
+                <button
+                  className="v3-button secondary"
+                  type="button"
+                  onClick={() => void copyCustomerLaunchValue(
+                    customerLaunchResult.temporary_password,
+                    "Temporary password"
+                  )}
+                >
+                  Copy Password
+                </button>
+                <button
+                  className="v3-button secondary"
+                  type="button"
+                  onClick={() => void copyCustomerHandoff()}
+                >
+                  Copy Handoff Draft
+                </button>
+              </div>
+
+              <div className="customer-launch-warning">
+                The isolated store and account are active. The customer-facing owner
+                portal screen is the next protected build, so do not deliver the owner
+                portal link until that screen passes testing.
+              </div>
+            </div>
+          ) : null}
+
+          {customerAccounts.length ? (
+            <div className="customer-launch-list">
+              {customerAccounts.slice(0, 12).map((account) => (
+                <div className="customer-launch-row" key={account.account_id}>
+                  <div>
+                    <strong>{account.store_name || account.store_slug}</strong>
+                    <span>{account.store_slug} · {account.plan || "starter"}</span>
+                  </div>
+                  <div>
+                    <strong>{account.display_name || account.owner_name || "Store Owner"}</strong>
+                    <span>{account.email || account.owner_email || "No email"}</span>
+                  </div>
+                  <div>
+                    <strong>{String(account.store_status || "active").toUpperCase()}</strong>
+                    <span>{account.store_id}</span>
+                  </div>
+                  <a
+                    className="owner-mini-link"
+                    href={`/#store/${account.store_slug}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    OPEN STORE
+                  </a>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="ghost-card">No customer stores have been launched yet.</div>
           )}
         </div>
 
@@ -4623,15 +5160,411 @@ function Metric({ label, value }: { label: string; value: React.ReactNode }) {
   );
 }
 
-export default App;
+// WOLF_OS_CUSTOMER_OWNER_PORTAL_V6
+type CustomerPortalStore = {
+  id?: string;
+  slug?: string;
+  name?: string;
+  brand?: string;
+  system?: string;
+  plan?: string;
+  status?: string;
+};
 
+type CustomerPortalProduct = {
+  id: string;
+  sku?: string;
+  name?: string;
+  category?: string;
+  price_cents?: number;
+  stock?: number;
+};
 
+type CustomerPortalOrder = {
+  id: string;
+  buyer_name?: string;
+  buyer_email?: string;
+  total_cents?: number;
+  payment_status?: string;
+  amount_paid_cents?: number;
+  balance_due_cents?: number;
+  created_at?: string;
+};
 
+type CustomerPortalPayment = {
+  order_id?: string;
+  buyer_name?: string;
+  total_cents?: number;
+  payment_status?: string;
+  amount_paid_cents?: number;
+  balance_due_cents?: number;
+};
 
+const CUSTOMER_PORTAL_TOKEN_KEY = "wolf_customer_owner_token_v1";
 
+function customerPortalList<T>(payload: any, ...keys: string[]): T[] {
+  for (const key of keys) {
+    if (Array.isArray(payload?.[key])) return payload[key] as T[];
+  }
+  return Array.isArray(payload) ? (payload as T[]) : [];
+}
 
+function CustomerOwnerPortal() {
+  const [token, setToken] = useState(
+    () => window.localStorage.getItem(CUSTOMER_PORTAL_TOKEN_KEY) || ""
+  );
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [storeSlug, setStoreSlug] = useState("");
+  const [store, setStore] = useState<CustomerPortalStore | null>(null);
+  const [orders, setOrders] = useState<CustomerPortalOrder[]>([]);
+  const [products, setProducts] = useState<CustomerPortalProduct[]>([]);
+  const [payments, setPayments] = useState<CustomerPortalPayment[]>([]);
+  const [loading, setLoading] = useState(Boolean(token));
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
+  const portalFetch = async (
+    path: string,
+    options: RequestInit = {},
+    activeToken = token
+  ) => {
+    const response = await fetch(apiUrl(path), {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...(activeToken ? { Authorization: `Bearer ${activeToken}` } : {}),
+        ...(options.headers || {})
+      }
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(
+        String(data?.error || data?.message || `Request failed (${response.status})`)
+      );
+    }
+    return data;
+  };
 
+  const loadPortal = async (activeToken = token) => {
+    if (!activeToken) return;
+    setLoading(true);
+    setError("");
+    try {
+      const [storeData, orderData, productData, paymentData] = await Promise.all([
+        portalFetch("/api/customer-owner/store", {}, activeToken),
+        portalFetch("/api/customer-owner/orders", {}, activeToken),
+        portalFetch("/api/customer-owner/products", {}, activeToken),
+        portalFetch("/api/customer-owner/payment-freedom", {}, activeToken)
+      ]);
+      setStore(storeData?.store || null);
+      setOrders(customerPortalList<CustomerPortalOrder>(orderData, "orders", "items"));
+      setProducts(customerPortalList<CustomerPortalProduct>(productData, "products", "items"));
+      setPayments(
+        customerPortalList<CustomerPortalPayment>(
+          paymentData,
+          "records",
+          "payment_records",
+          "payments",
+          "payment_freedom",
+          "items"
+        )
+      );
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Unable to load portal.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
+    if (token) void loadPortal(token);
+  }, [token]);
 
+  const login = async (event: any) => {
+    event.preventDefault();
+    setLoading(true);
+    setError("");
+    setMessage("");
+    try {
+      const data = await portalFetch(
+        "/api/customer-owner/login",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            email: email.trim(),
+            password,
+            store_slug: storeSlug.trim()
+          })
+        },
+        ""
+      );
+      const nextToken = String(
+        data?.token ||
+        data?.customer_token ||
+        data?.access_token ||
+        data?.session_token ||
+        ""
+      );
+      if (!nextToken) throw new Error("Login did not return a customer token.");
+      window.localStorage.setItem(CUSTOMER_PORTAL_TOKEN_KEY, nextToken);
+      setToken(nextToken);
+      setMessage("Customer portal unlocked.");
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Login failed.");
+      setLoading(false);
+    }
+  };
 
+  const logout = async () => {
+    try {
+      if (token) {
+        await portalFetch("/api/customer-owner/logout", { method: "POST" }, token);
+      }
+    } catch {
+      // Clear the browser session even when the server token already expired.
+    }
+    window.localStorage.removeItem(CUSTOMER_PORTAL_TOKEN_KEY);
+    setToken("");
+    setStore(null);
+    setOrders([]);
+    setProducts([]);
+    setPayments([]);
+    setError("");
+    setMessage("Logged out.");
+  };
+
+  const updatePayment = async (orderId: string, status: string) => {
+    if (!orderId) return;
+    setError("");
+    setMessage("");
+    try {
+      await portalFetch(
+        `/api/customer-owner/payment-freedom/${encodeURIComponent(orderId)}`,
+        { method: "PUT", body: JSON.stringify({ payment_status: status }) }
+      );
+      setMessage(`Payment status updated for ${orderId}.`);
+      await loadPortal();
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Payment update failed.");
+    }
+  };
+
+  if (!token) {
+    return (
+      <main className="customer-portal-shell customer-portal-login-shell">
+        <section className="customer-portal-login-card">
+          <span className="customer-portal-kicker">PRIVATE BUSINESS ACCESS</span>
+          <h1>Customer Owner Portal</h1>
+          <p>
+            Sign in to see only your storefront, inventory, orders, and
+            Payment Freedom records.
+          </p>
+          <form className="customer-portal-login-form" onSubmit={login}>
+            <label>
+              Owner email
+              <input
+                type="email"
+                value={email}
+                onChange={(event: any) => setEmail(event.target.value)}
+                autoComplete="username"
+                required
+              />
+            </label>
+            <label>
+              Password
+              <input
+                type="password"
+                value={password}
+                onChange={(event: any) => setPassword(event.target.value)}
+                autoComplete="current-password"
+                required
+              />
+            </label>
+            <label>
+              Store slug
+              <input
+                value={storeSlug}
+                onChange={(event: any) => setStoreSlug(event.target.value)}
+                placeholder="Optional when email is unique"
+              />
+            </label>
+            <button type="submit" disabled={loading}>
+              {loading ? "Unlocking..." : "Unlock Business Portal"}
+            </button>
+          </form>
+          {error ? <div className="customer-portal-alert error">{error}</div> : null}
+          {message ? <div className="customer-portal-alert success">{message}</div> : null}
+          <a className="customer-portal-back" href="/#">Return to I AM THE ONE™</a>
+        </section>
+      </main>
+    );
+  }
+
+  const totalValue = orders.reduce(
+    (sum, order) => sum + Number(order.total_cents || 0),
+    0
+  );
+  const balanceDue = orders.reduce(
+    (sum, order) => sum + Number(order.balance_due_cents || 0),
+    0
+  );
+  const lowStock = products.filter((product) => Number(product.stock || 0) <= 3).length;
+  const storefront = `/#store/${store?.slug || "demo"}`;
+
+  return (
+    <main className="customer-portal-shell">
+      <header className="customer-portal-header">
+        <div>
+          <span className="customer-portal-kicker">TENANT-SAFE BUSINESS COMMAND</span>
+          <h1>{store?.name || store?.brand || "Customer Owner Portal"}</h1>
+          <p>
+            {store?.system || "WOLF OS™"} · {store?.plan || "Active plan"} ·{" "}
+            {store?.status || "active"}
+          </p>
+        </div>
+        <div className="customer-portal-actions">
+          <a href={storefront}>Open Storefront</a>
+          <button type="button" onClick={() => void loadPortal()}>Refresh</button>
+          <button type="button" className="danger" onClick={() => void logout()}>
+            Log Out
+          </button>
+        </div>
+      </header>
+
+      {error ? <div className="customer-portal-alert error">{error}</div> : null}
+      {message ? <div className="customer-portal-alert success">{message}</div> : null}
+      {loading ? <div className="customer-portal-alert">Loading business data...</div> : null}
+
+      <section className="customer-portal-metrics">
+        <article><span>Products</span><strong>{products.length}</strong></article>
+        <article><span>Orders</span><strong>{orders.length}</strong></article>
+        <article><span>Order Value</span><strong>{money(totalValue)}</strong></article>
+        <article><span>Balance Due</span><strong>{money(balanceDue)}</strong></article>
+        <article><span>Low Stock</span><strong>{lowStock}</strong></article>
+      </section>
+
+      <section className="customer-portal-grid">
+        <article className="customer-portal-panel">
+          <div className="customer-portal-panel-title">
+            <div><span>LIVE INVENTORY</span><h2>Your Products</h2></div>
+            <strong>{products.length}</strong>
+          </div>
+          <div className="customer-portal-list">
+            {products.length ? products.map((product) => (
+              <div className="customer-portal-row" key={product.id}>
+                <div>
+                  <strong>{product.name || "Unnamed product"}</strong>
+                  <small>{product.sku || "NO-SKU"} · {product.category || "General"}</small>
+                </div>
+                <div className="customer-portal-values">
+                  <strong>{money(product.price_cents)}</strong>
+                  <small>{Number(product.stock || 0)} in stock</small>
+                </div>
+              </div>
+            )) : <p>No products yet.</p>}
+          </div>
+        </article>
+
+        <article className="customer-portal-panel">
+          <div className="customer-portal-panel-title">
+            <div><span>BUYER ACTIVITY</span><h2>Your Orders</h2></div>
+            <strong>{orders.length}</strong>
+          </div>
+          <div className="customer-portal-list">
+            {orders.length ? orders.map((order) => (
+              <div className="customer-portal-row" key={order.id}>
+                <div>
+                  <strong>{order.id}</strong>
+                  <small>{order.buyer_name || "Buyer"} · {order.buyer_email || ""}</small>
+                </div>
+                <div className="customer-portal-values">
+                  <strong>{money(order.total_cents)}</strong>
+                  <small>{order.payment_status || "unpaid"}</small>
+                </div>
+              </div>
+            )) : <p>No orders yet.</p>}
+          </div>
+        </article>
+      </section>
+
+      <section className="customer-portal-panel">
+        <div className="customer-portal-panel-title">
+          <div><span>PAYMENT FREEDOM</span><h2>Payment Records</h2></div>
+          <strong>{payments.length}</strong>
+        </div>
+        <div className="customer-portal-list">
+          {payments.length ? payments.map((payment, index) => {
+            const orderId = String(payment.order_id || "");
+            return (
+              <div className="customer-portal-payment-row" key={`${orderId}-${index}`}>
+                <div>
+                  <strong>{orderId || "Order"}</strong>
+                  <small>{payment.buyer_name || "Buyer"} · {money(payment.total_cents)}</small>
+                </div>
+                <div className="customer-portal-values">
+                  <small>Paid {money(payment.amount_paid_cents)}</small>
+                  <small>Due {money(payment.balance_due_cents)}</small>
+                </div>
+                <select
+                  value={payment.payment_status || "unpaid"}
+                  onChange={(event: any) => void updatePayment(orderId, event.target.value)}
+                  disabled={!orderId}
+                >
+                  <option value="unpaid">Unpaid</option>
+                  <option value="deposit_due">Deposit due</option>
+                  <option value="deposit_paid">Deposit paid</option>
+                  <option value="partially_paid">Partially paid</option>
+                  <option value="paid">Paid</option>
+                  <option value="refunded">Refunded</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+            );
+          }) : <p>No Payment Freedom records yet.</p>}
+        </div>
+      </section>
+
+      <footer className="customer-portal-footer">
+        <span>{store?.brand || "I AM THE ONE™"}</span>
+        <span>Private customer account · tenant isolated</span>
+      </footer>
+    </main>
+  );
+}
+
+function CustomerPortalRouter() {
+  const readCustomerPortalRoute = () => {
+    const rawRoute = window.location.hash
+      ? window.location.hash.replace(/^#/, "")
+      : window.location.pathname;
+
+    return rawRoute.startsWith("/") ? rawRoute : `/${rawRoute}`;
+  };
+
+  const [customerPortalRoute, setCustomerPortalRoute] = useState(
+    readCustomerPortalRoute
+  );
+
+  useEffect(() => {
+    const syncCustomerPortalRoute = () => {
+      setCustomerPortalRoute(readCustomerPortalRoute());
+    };
+
+    window.addEventListener("hashchange", syncCustomerPortalRoute);
+    window.addEventListener("popstate", syncCustomerPortalRoute);
+
+    return () => {
+      window.removeEventListener("hashchange", syncCustomerPortalRoute);
+      window.removeEventListener("popstate", syncCustomerPortalRoute);
+    };
+  }, []);
+
+  if (customerPortalRoute.startsWith("/customer-owner")) {
+    return <CustomerOwnerPortal />;
+  }
+
+  return <App />;
+}
+
+export default CustomerPortalRouter;
