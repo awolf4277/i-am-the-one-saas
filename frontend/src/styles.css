@@ -5276,6 +5276,8 @@ html.blacklight-mode .premium-cta-box {
 /* WOLF_OS_TENANT_STOREFRONT_SAFETY_V2 */
 
 /* Do not expose global WOLF OS figures on customer storefronts. */
+/* WOLF_OS_TENANT_COCKPIT_SELECTOR_FIX_V1 */
+.tenant-storefront-mode .site-cockpit-ribbon,
 .tenant-storefront-mode .cockpit-ribbon,
 .tenant-storefront-mode .wolf-cockpit-ribbon,
 .tenant-storefront-mode .wolf-cockpit-panel {

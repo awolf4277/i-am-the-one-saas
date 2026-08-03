@@ -5264,6 +5264,7 @@ function CustomerOwnerPortal() {
         customerPortalList<CustomerPortalPayment>(
           paymentData,
           "records",
+          "payment_records",
           "payments",
           "payment_freedom",
           "items"

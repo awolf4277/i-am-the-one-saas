@@ -3043,9 +3043,11 @@ def create_app() -> Flask:
         finally:
             con.close()
 
+    # WOLF_OS_CUSTOMER_PAYMENT_FREEDOM_ORDER_FEED_V1
     @app.get("/api/customer-owner/payment-freedom")
     def customer_owner_payment_freedom():
         ok, error = require_customer_owner()
+
         if not ok:
             return error
 
@@ -3056,28 +3058,117 @@ def create_app() -> Flask:
             rows = con.execute(
                 """
                 SELECT
-                    r.*,
+                    o.id AS order_id,
                     o.store_id,
                     o.store_slug,
                     o.buyer_name,
                     o.buyer_email,
                     o.total_cents,
-                    o.created_at
-                FROM payment_freedom_records AS r
-                JOIN orders AS o
-                    ON o.id = r.order_id
+                    o.created_at,
+
+                    COALESCE(
+                        NULLIF(r.payment_status, ''),
+                        NULLIF(o.payment_status, ''),
+                        'unpaid'
+                    ) AS payment_status,
+
+                    COALESCE(
+                        NULLIF(r.payment_method, ''),
+                        'manual'
+                    ) AS payment_method,
+
+                    COALESCE(
+                        NULLIF(r.provider, ''),
+                        'owner_directed'
+                    ) AS provider,
+
+                    COALESCE(r.payment_link, '') AS payment_link,
+                    COALESCE(r.payment_reference, '') AS payment_reference,
+                    COALESCE(r.amount_cents, 0) AS amount_cents,
+                    COALESCE(r.note, '') AS note,
+
+                    COALESCE(
+                        p.payment_plan,
+                        'full'
+                    ) AS payment_plan,
+
+                    COALESCE(
+                        p.deposit_percent,
+                        100
+                    ) AS deposit_percent,
+
+                    COALESCE(
+                        p.amount_due_now_cents,
+                        o.total_cents
+                    ) AS amount_due_now_cents,
+
+                    COALESCE(
+                        p.amount_paid_cents,
+                        CASE
+                            WHEN LOWER(
+                                COALESCE(o.payment_status, 'unpaid')
+                            ) = 'paid'
+                            THEN o.total_cents
+                            ELSE 0
+                        END
+                    ) AS amount_paid_cents,
+
+                    COALESCE(
+                        p.balance_due_cents,
+                        CASE
+                            WHEN LOWER(
+                                COALESCE(o.payment_status, 'unpaid')
+                            ) = 'paid'
+                            THEN 0
+                            ELSE o.total_cents
+                        END
+                    ) AS balance_due_cents,
+
+                    COALESCE(
+                        p.payment_terms,
+                        'The store owner provides accepted payment instructions directly.'
+                    ) AS payment_terms,
+
+                    COALESCE(
+                        r.updated_at,
+                        o.created_at
+                    ) AS updated_at,
+
+                    CASE
+                        WHEN r.order_id IS NULL THEN 0
+                        ELSE 1
+                    END AS record_saved
+
+                FROM orders AS o
+
+                LEFT JOIN payment_freedom_records AS r
+                    ON r.order_id = o.id
+
+                LEFT JOIN order_payment_plans AS p
+                    ON p.order_id = o.id
+
                 WHERE o.store_id = ?
-                ORDER BY r.updated_at DESC
+
+                ORDER BY
+                    COALESCE(r.updated_at, o.created_at) DESC
+
                 LIMIT 250
                 """,
                 (context.get("store_id"),),
             ).fetchall()
 
+            records = [dict(row) for row in rows]
+
             return jsonify(
                 {
                     "ok": True,
-                    "count": len(rows),
-                    "payment_records": [dict(row) for row in rows],
+                    "count": len(records),
+
+                    # Existing portal compatibility.
+                    "records": records,
+
+                    # Explicit API name retained for other clients.
+                    "payment_records": records,
                 }
             )
         finally:
