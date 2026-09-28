@@ -8,6 +8,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import RevenueCommandCenter from "./components/RevenueCommandCenter";
 
 import PriorityEngine from "./components/PriorityEngine";
+import OwnerActionEngine from "./components/OwnerActionEngine";
 import BuyerPipelineBoard from "./components/BuyerPipelineBoard";
 import DealActivityTimeline from "./components/DealActivityTimeline";
 
@@ -4187,6 +4188,11 @@ function OwnerConsole({
         orders={orders}
         setupRequests={setupRequests}
         analytics={analytics}
+      />
+      <OwnerActionEngine
+        orders={orders}
+        products={products}
+        setupRequests={setupRequests}
       />
       <RevenueCommandCenter orders={orders} />
       <PriorityEngine setupRequests={setupRequests} />
