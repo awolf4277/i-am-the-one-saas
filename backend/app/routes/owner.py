@@ -44,4 +44,3 @@ def owner_session():
             "system": current_app.config["APP_SYSTEM"],
         }
     )
-

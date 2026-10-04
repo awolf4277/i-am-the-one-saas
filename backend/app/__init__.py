@@ -43,11 +43,31 @@ def _clean_owner_env_value(raw: object, fallback: str = "") -> str:
     return value.strip().strip('"').strip("'") or fallback
 
 
+def insecure_local_auth_enabled() -> bool:
+    return os.getenv(
+        "WOLF_ALLOW_INSECURE_LOCAL_AUTH",
+        "",
+    ).strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+
+
 def owner_api_token() -> str:
-    return _clean_owner_env_value(
+    configured = _clean_owner_env_value(
         os.getenv("OWNER_API_TOKEN", ""),
-        "wolf-owner-local-token",
+        "",
     )
+
+    if configured:
+        return configured
+
+    if insecure_local_auth_enabled():
+        return "wolf-owner-local-token"
+
+    return ""
 
 
 OWNER = os.getenv("APP_OWNER", "Andrew Wolverton")
@@ -741,19 +761,32 @@ def customer_temporary_password() -> str:
     return "WOLF-" + secrets.token_urlsafe(12)
 
 def owner_token() -> str:
-    return owner_api_token().strip() or "wolf-owner-local-token"
+    return owner_api_token().strip()
 
 
 def require_owner() -> tuple[bool, Any]:
     auth = request.headers.get("Authorization", "")
     token = ""
+
     if auth.lower().startswith("bearer "):
         token = auth.split(" ", 1)[1].strip()
 
-    if secrets.compare_digest(token, owner_token()):
+    expected_token = owner_token()
+
+    if (
+        expected_token
+        and token
+        and secrets.compare_digest(token, expected_token)
+    ):
         return True, None
 
-    return False, (jsonify({"ok": False, "error": "Unauthorized owner request."}), 401)
+    return False, (
+        jsonify({
+            "ok": False,
+            "error": "Unauthorized owner request.",
+        }),
+        401,
+    )
 
 
 def product_dict(row: Any) -> dict[str, Any]:
@@ -2428,11 +2461,37 @@ def create_app() -> Flask:
         payload = request.get_json(silent=True) or {}
         supplied = str(payload.get("password") or "").strip()
 
-        configured = os.getenv("ADMIN_PASSWORD", "").strip()
-        allowed_passwords = [p for p in [configured, "", "WOLF-DEMO"] if p]
+        configured = _clean_owner_env_value(
+            os.getenv("ADMIN_PASSWORD", ""),
+            "",
+        )
 
-        if not any(secrets.compare_digest(supplied, p) for p in allowed_passwords):
-            return jsonify({"ok": False, "error": "Invalid owner password."}), 401
+        allowed_passwords: list[str] = []
+
+        if configured:
+            allowed_passwords.append(configured)
+
+        if insecure_local_auth_enabled():
+            allowed_passwords.append("WOLF-DEMO")
+
+        if not allowed_passwords:
+            return jsonify(
+                {
+                    "ok": False,
+                    "error": "Owner authentication is not configured.",
+                }
+            ), 503
+
+        if not any(
+            secrets.compare_digest(supplied, password)
+            for password in allowed_passwords
+        ):
+            return jsonify(
+                {
+                    "ok": False,
+                    "error": "Invalid owner password.",
+                }
+            ), 401
 
         return jsonify(
             {

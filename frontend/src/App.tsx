@@ -1,4 +1,4 @@
-// Copyright © 2026 Andrew Wolverton. All Rights Reserved.
+﻿// Copyright © 2026 Andrew Wolverton. All Rights Reserved.
 
 import React, { useEffect, useMemo, useState } from "react";
 
@@ -1252,60 +1252,100 @@ function App() {
   }, [ownerToken]);
 
   function addToCart(product: Product, index: number) {
-    const product_id = String(product.id || "");
-    const sku = String(product.sku || "");
-    const name = product.name || sku || `Product ${index + 1}`;
-    const stock = Math.max(0, Number(product.stock || 0));
-    const price = Number(product.price_cents || 0);
+  const product_id = String(product.id || "");
+  const sku = String(product.sku || "");
+  const name =
+    product.name ||
+    sku ||
+    `Product ${index + 1}`;
 
-    if (!product_id && !sku) {
-      setNotice("This product is missing an ID/SKU.");
-      return;
-    }
+  const stock = Math.max(
+    0,
+    Number(product.stock || 0)
+  );
 
-    if (stock <= 0) {
-      setNotice(`${name} is out of stock.`);
-      return;
-    }
+  const price = Number(
+    product.price_cents || 0
+  );
 
-    setCart((previous) => {
-      const found = previous.find((line) => {
-        return line.product_id === product_id || line.sku === sku;
-      });
-
-      if (found) {
-        if (found.qty >= stock) {
-          setNotice(`Stock limit reached for ${name}.`);
-          return previous;
-        }
-
-        setNotice(`${name} quantity updated.`);
-
-        return previous.map((line) => {
-          if (line.product_id === found.product_id && line.sku === found.sku) {
-            return { ...line, qty: line.qty + 1 };
-          }
-
-          return line;
-        });
-      }
-
-      setNotice(`${name} added to cart.`);
-
-      return [
-        ...previous,
-        {
-          product_id,
-          sku,
-          name,
-          price_cents: price,
-          qty: 1,
-          stock
-        }
-      ];
-    });
+  // Product must have either an ID or SKU.
+  if (!product_id && !sku) {
+    setNotice("This product is missing an ID/SKU.");
+    return;
   }
 
+  // Prevent adding products with no inventory.
+  if (stock <= 0) {
+    setNotice(`${name} is out of stock.`);
+    return;
+  }
+
+  setCart((previous) => {
+    // Look for this product already in the cart.
+    const found = previous.find((line) => {
+      const sameProductId =
+        product_id !== "" &&
+        line.product_id === product_id;
+
+      const sameSku =
+        sku !== "" &&
+        line.sku === sku;
+
+      return sameProductId || sameSku;
+    });
+
+    // Product already exists in cart.
+    if (found) {
+      // Do not allow cart quantity above available inventory.
+      if (found.qty >= stock) {
+        setNotice(
+          `Stock limit reached for ${name}.`
+        );
+
+        return previous;
+      }
+
+      setNotice(
+        `${name} quantity updated.`
+      );
+
+      return previous.map((line) => {
+        const sameProductId =
+          product_id !== "" &&
+          line.product_id === product_id;
+
+        const sameSku =
+          sku !== "" &&
+          line.sku === sku;
+
+        if (sameProductId || sameSku) {
+          return {
+            ...line,
+            qty: line.qty + 1,
+          };
+        }
+
+        return line;
+      });
+    }
+
+    // Product is not already in cart.
+    setNotice(
+      `${name} added to cart.`
+    );
+
+    return [
+      ...previous,
+      {
+        product_id,
+        sku,
+        name,
+        price_cents: price,
+        qty: 1,
+      },
+    ];
+  });
+}
   function removeFromCart(product_id: string, sku: string) {
     setCart((previous) => {
       return previous.filter((line) => {
