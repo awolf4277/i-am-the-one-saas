@@ -20,7 +20,17 @@ type ActionSignal = {
   metric: string;
   button: string;
   selector: string;
+  revenueCents: number;
+  urgency: number;
+  probability: number;
+  nextMove: string;
 };
+
+
+type ActionCandidate = Omit<
+  ActionSignal,
+  "score" | "level"
+>;
 
 
 function asRecord(
@@ -51,9 +61,47 @@ function textValue(
     ) {
       return value.trim();
     }
+
+    if (
+      typeof value === "number" &&
+      Number.isFinite(value)
+    ) {
+      return String(value);
+    }
   }
 
   return "";
+}
+
+
+function parseNumber(
+  value: unknown
+): number {
+  if (typeof value === "number") {
+    return Number.isFinite(value)
+      ? value
+      : 0;
+  }
+
+  if (typeof value !== "string") {
+    return 0;
+  }
+
+  const match = value.match(
+    /-?\$?([\d,]+(?:\.\d+)?)/
+  );
+
+  if (!match) {
+    return 0;
+  }
+
+  const number = Number(
+    match[1].replace(/,/g, "")
+  );
+
+  return Number.isFinite(number)
+    ? number
+    : 0;
 }
 
 
@@ -62,9 +110,9 @@ function numberValue(
   keys: string[]
 ): number {
   for (const key of keys) {
-    const value = Number(record[key]);
+    const value = parseNumber(record[key]);
 
-    if (Number.isFinite(value)) {
+    if (value !== 0) {
       return value;
     }
   }
@@ -89,22 +137,292 @@ function moneyFromCents(
 }
 
 
+function clamp(
+  value: number,
+  min: number,
+  max: number
+): number {
+  return Math.min(
+    max,
+    Math.max(min, value)
+  );
+}
+
+
+function leadValueCents(
+  lead: Record<string, unknown>
+): number {
+  const directCents = numberValue(
+    lead,
+    [
+      "budget_cents",
+      "estimated_value_cents",
+      "deal_value_cents",
+      "value_cents",
+      "amount_cents",
+    ]
+  );
+
+  if (directCents > 0) {
+    return Math.round(directCents);
+  }
+
+  const dollars = numberValue(
+    lead,
+    [
+      "budget",
+      "budget_amount",
+      "estimated_value",
+      "deal_value",
+      "value",
+    ]
+  );
+
+  if (dollars > 0) {
+    return Math.round(
+      dollars * 100
+    );
+  }
+
+  return 0;
+}
+
+
+function leadProbability(
+  lead: Record<string, unknown>
+): number {
+  const stage = textValue(
+    lead,
+    [
+      "stage",
+      "status",
+      "pipeline_stage",
+    ]
+  ).toLowerCase();
+
+  if (
+    stage.includes("negotiat") ||
+    stage.includes("closing")
+  ) {
+    return 85;
+  }
+
+  if (
+    stage.includes("proposal") ||
+    stage.includes("quote")
+  ) {
+    return 72;
+  }
+
+  if (
+    stage.includes("qualified") ||
+    stage.includes("hot")
+  ) {
+    return 58;
+  }
+
+  if (
+    stage.includes("contact") ||
+    stage.includes("follow")
+  ) {
+    return 45;
+  }
+
+  if (
+    stage.includes("new") ||
+    !stage
+  ) {
+    return 30;
+  }
+
+  return 38;
+}
+
+
+function leadUrgency(
+  lead: Record<string, unknown>
+): number {
+  const timeline = textValue(
+    lead,
+    [
+      "timeline",
+      "timeframe",
+      "urgency",
+    ]
+  ).toLowerCase();
+
+  const stage = textValue(
+    lead,
+    [
+      "stage",
+      "status",
+      "pipeline_stage",
+    ]
+  ).toLowerCase();
+
+  let urgency = 45;
+
+  if (
+    timeline.includes("asap") ||
+    timeline.includes("urgent") ||
+    timeline.includes("immediate") ||
+    timeline.includes("now")
+  ) {
+    urgency = 100;
+  } else if (
+    timeline.includes("week")
+  ) {
+    urgency = 88;
+  } else if (
+    timeline.includes("30") ||
+    timeline.includes("month")
+  ) {
+    urgency = 72;
+  } else if (
+    timeline.includes("quarter") ||
+    timeline.includes("90")
+  ) {
+    urgency = 52;
+  }
+
+  if (
+    stage.includes("proposal") ||
+    stage.includes("quote")
+  ) {
+    urgency += 10;
+  }
+
+  if (
+    stage.includes("negotiat") ||
+    stage.includes("closing")
+  ) {
+    urgency += 15;
+  }
+
+  const createdText = textValue(
+    lead,
+    [
+      "created_at",
+      "createdAt",
+      "updated_at",
+      "updatedAt",
+    ]
+  );
+
+  if (createdText) {
+    const created = new Date(createdText);
+
+    if (!Number.isNaN(created.getTime())) {
+      const ageDays =
+        (
+          Date.now() -
+          created.getTime()
+        ) /
+        86400000;
+
+      if (ageDays >= 7) {
+        urgency += 12;
+      } else if (ageDays >= 3) {
+        urgency += 6;
+      }
+    }
+  }
+
+  return clamp(
+    Math.round(urgency),
+    0,
+    100
+  );
+}
+
+
+function leadNextMove(
+  lead: Record<string, unknown>
+): string {
+  const stage = textValue(
+    lead,
+    [
+      "stage",
+      "status",
+      "pipeline_stage",
+    ]
+  ).toLowerCase();
+
+  if (
+    stage.includes("negotiat") ||
+    stage.includes("closing")
+  ) {
+    return "Ask for commitment and lock the payment or launch terms.";
+  }
+
+  if (
+    stage.includes("proposal") ||
+    stage.includes("quote")
+  ) {
+    return "Send the proposal follow-up and ask for a decision.";
+  }
+
+  if (
+    stage.includes("qualified") ||
+    stage.includes("hot")
+  ) {
+    return "Send the tailored offer and move the buyer into proposal.";
+  }
+
+  if (
+    stage.includes("contact") ||
+    stage.includes("follow")
+  ) {
+    return "Follow up now and confirm budget, timeline, and next step.";
+  }
+
+  return "Contact the buyer and qualify budget, timeline, and buying intent.";
+}
+
+
+function levelForScore(
+  score: number
+): ActionSignal["level"] {
+  if (score >= 80) {
+    return "critical";
+  }
+
+  if (score >= 64) {
+    return "high";
+  }
+
+  if (score >= 42) {
+    return "medium";
+  }
+
+  return "clear";
+}
+
+
 export default function OwnerActionEngine({
   orders,
   products,
   setupRequests,
 }: Props) {
   const [status, setStatus] = useState(
-    "WOLF OS is analyzing live owner conditions."
+    "WOLF OS is analyzing revenue impact, urgency, and probability."
   );
 
+
   const intelligence = useMemo(() => {
-    const orderRows = orders.map(asRecord);
-    const productRows = products.map(asRecord);
-    const leadRows = setupRequests.map(asRecord);
+    const orderRows =
+      orders.map(asRecord);
+
+    const productRows =
+      products.map(asRecord);
+
+    const leadRows =
+      setupRequests.map(asRecord);
+
 
     let outstandingCents = 0;
     let unpaidOrders = 0;
+
 
     for (const order of orderRows) {
       const paymentStatus = textValue(
@@ -132,13 +450,14 @@ export default function OwnerActionEngine({
         ]
       );
 
-      const amountPaidCents = numberValue(
-        order,
-        [
-          "amount_paid_cents",
-          "amountPaidCents",
-        ]
-      );
+      const amountPaidCents =
+        numberValue(
+          order,
+          [
+            "amount_paid_cents",
+            "amountPaidCents",
+          ]
+        );
 
       const openBalance = Math.max(
         0,
@@ -151,47 +470,167 @@ export default function OwnerActionEngine({
       }
     }
 
-    const outOfStock = productRows.filter(
-      (product) =>
-        numberValue(
-          product,
-          ["stock", "inventory"]
-        ) <= 0
-    );
 
-    const lowStock = productRows.filter(
-      (product) => {
-        const stock = numberValue(
-          product,
-          ["stock", "inventory"]
-        );
+    const outOfStock =
+      productRows.filter(
+        (product) =>
+          numberValue(
+            product,
+            ["stock", "inventory"]
+          ) <= 0
+      );
 
-        return stock > 0 && stock <= 3;
-      }
-    );
 
-    const activeLeads = leadRows.filter(
-      (lead) => {
-        const statusValue = textValue(
+    const lowStock =
+      productRows.filter(
+        (product) => {
+          const stock = numberValue(
+            product,
+            ["stock", "inventory"]
+          );
+
+          return stock > 0 && stock <= 3;
+        }
+      );
+
+
+    const outOfStockRiskCents =
+      outOfStock.reduce(
+        (sum, product) =>
+          sum +
+          Math.max(
+            0,
+            numberValue(
+              product,
+              [
+                "price_cents",
+                "priceCents",
+              ]
+            )
+          ),
+        0
+      );
+
+
+    const lowStockRiskCents =
+      lowStock.reduce(
+        (sum, product) =>
+          sum +
+          Math.max(
+            0,
+            numberValue(
+              product,
+              [
+                "price_cents",
+                "priceCents",
+              ]
+            )
+          ),
+        0
+      );
+
+
+    const activeLeads =
+      leadRows.filter(
+        (lead) => {
+          const value = textValue(
+            lead,
+            [
+              "status",
+              "stage",
+              "pipeline_stage",
+            ]
+          ).toLowerCase();
+
+          return ![
+            "won",
+            "lost",
+            "closed",
+            "cancelled",
+            "canceled",
+          ].includes(value);
+        }
+      );
+
+
+    const candidates: ActionCandidate[] =
+      [];
+
+
+    if (outstandingCents > 0) {
+      candidates.push({
+        id: "collections",
+        label: "REVENUE WAITING",
+        headline:
+          `${moneyFromCents(
+            outstandingCents
+          )} is ready to collect`,
+        detail:
+          `${unpaidOrders} unpaid order${
+            unpaidOrders === 1
+              ? ""
+              : "s"
+          } ${
+            unpaidOrders === 1
+              ? "is"
+              : "are"
+          } holding cash outside the business.`,
+        metric:
+          moneyFromCents(
+            outstandingCents
+          ),
+        button:
+          "OPEN REVENUE ENGINE",
+        selector:
+          ".revenue-command-center",
+        revenueCents:
+          outstandingCents,
+        urgency: 100,
+        probability: 95,
+        nextMove:
+          "Open the Revenue Engine and collect the unpaid balances.",
+      });
+    }
+
+
+    if (outOfStock.length > 0) {
+      candidates.push({
+        id: "out-of-stock",
+        label: "INVENTORY STOP",
+        headline:
+          `${outOfStock.length} product${
+            outOfStock.length === 1
+              ? " is"
+              : "s are"
+          } blocking buyer flow`,
+        detail:
+          "Restore inventory before the next buyer reaches a dead-end product.",
+        metric:
+          outOfStockRiskCents > 0
+            ? moneyFromCents(
+                outOfStockRiskCents
+              )
+            : `${outOfStock.length} OUT`,
+        button:
+          "VIEW INVENTORY",
+        selector:
+          ".metric-grid",
+        revenueCents:
+          outOfStockRiskCents,
+        urgency: 96,
+        probability: 98,
+        nextMove:
+          "Restock the unavailable products and restore the buyer path.",
+      });
+    }
+
+
+    for (
+      const lead of activeLeads.slice(0, 8)
+    ) {
+      const business =
+        textValue(
           lead,
-          [
-            "status",
-            "stage",
-          ]
-        ).toLowerCase();
-
-        return ![
-          "won",
-          "lost",
-          "closed",
-          "cancelled",
-        ].includes(statusValue);
-      }
-    );
-
-    const firstLead = activeLeads[0]
-      ? textValue(
-          activeLeads[0],
           [
             "business_name",
             "business",
@@ -199,99 +638,82 @@ export default function OwnerActionEngine({
             "store_name",
             "name",
           ]
-        )
-      : "";
+        ) || "Buyer opportunity";
 
-    const signals: ActionSignal[] = [];
+      const stage =
+        textValue(
+          lead,
+          [
+            "stage",
+            "status",
+            "pipeline_stage",
+          ]
+        ) || "Open";
 
-    if (outstandingCents > 0) {
-      signals.push({
-        id: "collections",
-        score:
-          130 +
-          Math.min(
-            40,
-            Math.round(
-              outstandingCents / 10000
-            )
-          ),
-        level: "critical",
-        label: "REVENUE WAITING",
+      const valueCents =
+        leadValueCents(lead);
+
+      const probability =
+        leadProbability(lead);
+
+      const urgency =
+        leadUrgency(lead);
+
+      const id =
+        textValue(
+          lead,
+          [
+            "id",
+            "lead_id",
+            "email",
+          ]
+        ) ||
+        business;
+
+      const closeLanguage =
+        probability >= 70
+          ? "CLOSE"
+          : "FOLLOW UP";
+
+      candidates.push({
+        id: `buyer-${id}`,
+        label:
+          probability >= 70
+            ? "CLOSE OPPORTUNITY"
+            : "BUYER ACTION",
         headline:
-          `${moneyFromCents(
-            outstandingCents
-          )} is still collectible`,
+          `${closeLanguage} ${business}`,
         detail:
-          `${unpaidOrders} order${
-            unpaidOrders === 1 ? "" : "s"
-          } still ${
-            unpaidOrders === 1
-              ? "requires"
-              : "require"
-          } payment action.`,
-        metric: moneyFromCents(
-          outstandingCents
-        ),
-        button: "OPEN REVENUE ENGINE",
-        selector: ".revenue-command-center",
+          `${stage} stage · ${
+            valueCents > 0
+              ? `${moneyFromCents(
+                  valueCents
+                )} opportunity`
+              : "value not yet confirmed"
+          }.`,
+        metric:
+          valueCents > 0
+            ? moneyFromCents(
+                valueCents
+              )
+            : `${probability}% WIN`,
+        button:
+          "OPEN PRIORITY ENGINE",
+        selector:
+          ".priority-engine",
+        revenueCents:
+          valueCents,
+        urgency,
+        probability,
+        nextMove:
+          leadNextMove(lead),
       });
     }
 
-    if (outOfStock.length > 0) {
-      signals.push({
-        id: "out-of-stock",
-        score:
-          120 +
-          outOfStock.length * 5,
-        level: "critical",
-        label: "INVENTORY STOP",
-        headline:
-          `${outOfStock.length} product${
-            outOfStock.length === 1
-              ? " is"
-              : "s are"
-          } out of stock`,
-        detail:
-          "Buyer flow can be interrupted until inventory is restored.",
-        metric: `${outOfStock.length} OUT`,
-        button: "VIEW INVENTORY",
-        selector: ".metric-grid",
-      });
-    }
-
-    if (activeLeads.length > 0) {
-      signals.push({
-        id: "buyers",
-        score:
-          95 +
-          Math.min(
-            25,
-            activeLeads.length * 4
-          ),
-        level: "high",
-        label: "BUYER ACTION",
-        headline:
-          `${activeLeads.length} active buyer${
-            activeLeads.length === 1
-              ? ""
-              : "s"
-          } need attention`,
-        detail: firstLead
-          ? `${firstLead} is currently at the front of the opportunity queue.`
-          : "The Priority Engine has active revenue opportunities waiting.",
-        metric: `${activeLeads.length} ACTIVE`,
-        button: "OPEN PRIORITY ENGINE",
-        selector: ".priority-engine",
-      });
-    }
 
     if (lowStock.length > 0) {
-      signals.push({
+      candidates.push({
         id: "low-stock",
-        score:
-          70 +
-          lowStock.length * 3,
-        level: "medium",
         label: "STOCK WARNING",
         headline:
           `${lowStock.length} product${
@@ -300,15 +722,29 @@ export default function OwnerActionEngine({
               : "s are"
           } running low`,
         detail:
-          "Inventory is still sellable, but replenishment should be planned.",
-        metric: `${lowStock.length} LOW`,
-        button: "VIEW INVENTORY",
-        selector: ".metric-grid",
+          "Inventory is still sellable, but revenue exposure is rising.",
+        metric:
+          lowStockRiskCents > 0
+            ? moneyFromCents(
+                lowStockRiskCents
+              )
+            : `${lowStock.length} LOW`,
+        button:
+          "VIEW INVENTORY",
+        selector:
+          ".metric-grid",
+        revenueCents:
+          lowStockRiskCents,
+        urgency: 62,
+        probability: 90,
+        nextMove:
+          "Replenish low-stock products before they interrupt buyer flow.",
       });
     }
 
-    if (signals.length === 0) {
-      signals.push({
+
+    if (candidates.length === 0) {
+      const clear: ActionSignal = {
         id: "clear",
         score: 0,
         level: "clear",
@@ -318,14 +754,94 @@ export default function OwnerActionEngine({
         detail:
           "Revenue, buyer activity, and inventory are currently inside normal operating ranges.",
         metric: "CLEAR",
-        button: "OPEN PRIORITY ENGINE",
-        selector: ".priority-engine",
-      });
+        button:
+          "OPEN PRIORITY ENGINE",
+        selector:
+          ".priority-engine",
+        revenueCents: 0,
+        urgency: 0,
+        probability: 100,
+        nextMove:
+          "Keep selling and monitor the next incoming buyer or order.",
+      };
+
+      return {
+        signals: [clear],
+        primary: clear,
+        outstandingCents,
+        unpaidOrders,
+        outOfStockCount:
+          outOfStock.length,
+        lowStockCount:
+          lowStock.length,
+        activeLeadCount:
+          activeLeads.length,
+        opportunityCents: 0,
+      };
     }
 
-    signals.sort(
-      (a, b) => b.score - a.score
+
+    const maxRevenueCents = Math.max(
+      1,
+      ...candidates.map(
+        (candidate) =>
+          candidate.revenueCents
+      )
     );
+
+
+    const signals: ActionSignal[] =
+      candidates
+        .map((candidate) => {
+          const moneyImpact =
+            candidate.revenueCents > 0
+              ? (
+                  candidate.revenueCents /
+                  maxRevenueCents
+                ) *
+                45
+              : 0;
+
+          const urgencyImpact =
+            candidate.urgency * 0.30;
+
+          const probabilityImpact =
+            candidate.probability * 0.25;
+
+          const score = clamp(
+            Math.round(
+              moneyImpact +
+              urgencyImpact +
+              probabilityImpact
+            ),
+            0,
+            100
+          );
+
+          return {
+            ...candidate,
+            score,
+            level:
+              levelForScore(score),
+          };
+        })
+        .sort(
+          (a, b) =>
+            b.score - a.score
+        );
+
+
+    const opportunityCents =
+      signals.reduce(
+        (sum, signal) =>
+          sum +
+          Math.max(
+            0,
+            signal.revenueCents
+          ),
+        0
+      );
+
 
     return {
       signals,
@@ -338,6 +854,7 @@ export default function OwnerActionEngine({
         lowStock.length,
       activeLeadCount:
         activeLeads.length,
+      opportunityCents,
     };
   }, [
     orders,
@@ -363,33 +880,53 @@ export default function OwnerActionEngine({
       });
 
       setStatus(
-        `${signal.label}: focus moved to the operating panel.`
+        `${signal.label}: ${signal.nextMove}`
       );
 
       return;
     }
 
     setStatus(
-      `${signal.label}: operating panel is not currently visible.`
+      `${signal.label}: ${signal.nextMove}`
     );
   };
 
 
   const copyAction = async () => {
-    const signal = intelligence.primary;
+    const signal =
+      intelligence.primary;
+
+    const expectedValue =
+      Math.round(
+        signal.revenueCents *
+        (
+          signal.probability /
+          100
+        )
+      );
 
     const plan = [
-      "WOLF OS? NEXT BEST ACTION",
+      "WOLF OS™ NEXT BEST ACTION",
       "",
       signal.label,
       signal.headline,
       signal.detail,
       "",
-      `Priority score: ${signal.score}`,
-      `Open revenue: ${moneyFromCents(
+      `NEXT MOVE: ${signal.nextMove}`,
+      "",
+      `Priority score: ${signal.score}/100`,
+      `Revenue impact: ${moneyFromCents(
+        signal.revenueCents
+      )}`,
+      `Expected value: ${moneyFromCents(
+        expectedValue
+      )}`,
+      `Urgency: ${signal.urgency}/100`,
+      `Probability: ${signal.probability}%`,
+      "",
+      `Open cash: ${moneyFromCents(
         intelligence.outstandingCents
       )}`,
-      `Unpaid orders: ${intelligence.unpaidOrders}`,
       `Active buyers: ${intelligence.activeLeadCount}`,
       `Out of stock: ${intelligence.outOfStockCount}`,
       `Low stock: ${intelligence.lowStockCount}`,
@@ -401,7 +938,7 @@ export default function OwnerActionEngine({
       );
 
       setStatus(
-        "Next Best Action copied."
+        "Revenue-ranked action copied."
       );
     } catch {
       setStatus(
@@ -414,6 +951,7 @@ export default function OwnerActionEngine({
   const primary =
     intelligence.primary;
 
+
   return (
     <section
       className={`owner-action-engine action-${primary.level}`}
@@ -423,7 +961,7 @@ export default function OwnerActionEngine({
       <header className="owner-action-header">
         <div>
           <p className="owner-action-kicker">
-            WOLF OS? OWNER ACTION ENGINE
+            WOLF OS™ OWNER ACTION ENGINE
           </p>
 
           <h2>
@@ -431,8 +969,7 @@ export default function OwnerActionEngine({
           </h2>
 
           <p className="owner-action-subtitle">
-            Live orders, buyers, and inventory
-            ranked into one owner directive.
+            Revenue impact, urgency, and probability ranked into one owner directive.
           </p>
         </div>
 
@@ -441,6 +978,7 @@ export default function OwnerActionEngine({
           DECISION ENGINE LIVE
         </div>
       </header>
+
 
       <div className="owner-action-layout">
         <article className="owner-action-primary">
@@ -468,6 +1006,11 @@ export default function OwnerActionEngine({
             {primary.detail}
           </p>
 
+          <p>
+            <strong>NEXT MOVE:</strong>{" "}
+            {primary.nextMove}
+          </p>
+
           <div className="owner-action-buttons">
             <button
               type="button"
@@ -489,32 +1032,42 @@ export default function OwnerActionEngine({
           </div>
         </article>
 
+
         <aside className="owner-action-side">
           <div className="owner-action-stat">
-            <span>OPEN CASH</span>
+            <span>
+              REVENUE IMPACT
+            </span>
+
             <strong>
               {moneyFromCents(
-                intelligence.outstandingCents
+                primary.revenueCents
               )}
             </strong>
           </div>
 
           <div className="owner-action-stat">
-            <span>ACTIVE BUYERS</span>
+            <span>
+              URGENCY
+            </span>
+
             <strong>
-              {intelligence.activeLeadCount}
+              {primary.urgency}/100
             </strong>
           </div>
 
           <div className="owner-action-stat">
-            <span>STOCK RISK</span>
+            <span>
+              WIN PROBABILITY
+            </span>
+
             <strong>
-              {intelligence.outOfStockCount +
-                intelligence.lowStockCount}
+              {primary.probability}%
             </strong>
           </div>
         </aside>
       </div>
+
 
       {intelligence.signals.length > 1 && (
         <div className="owner-action-secondary">
@@ -530,7 +1083,7 @@ export default function OwnerActionEngine({
                 }
               >
                 <span>
-                  {signal.label}
+                  #{signal.score} · {signal.label}
                 </span>
 
                 <strong>
@@ -544,6 +1097,7 @@ export default function OwnerActionEngine({
             ))}
         </div>
       )}
+
 
       <footer className="owner-action-footer">
         <span className="owner-action-footer-light" />
