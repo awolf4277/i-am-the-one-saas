@@ -892,6 +892,432 @@ export default function OwnerActionEngine({
   };
 
 
+  const findLeadForSignal = (
+    signal: ActionSignal
+  ): Record<string, unknown> => {
+    if (
+      !signal.id.startsWith(
+        "buyer-"
+      )
+    ) {
+      return {};
+    }
+
+    const leadRows =
+      setupRequests.map(asRecord);
+
+    for (const lead of leadRows) {
+      const business =
+        textValue(
+          lead,
+          [
+            "business_name",
+            "business",
+            "company",
+            "store_name",
+            "name",
+          ]
+        ) || "Buyer opportunity";
+
+      const id =
+        textValue(
+          lead,
+          [
+            "id",
+            "lead_id",
+            "email",
+          ]
+        ) || business;
+
+      if (
+        `buyer-${id}` === signal.id
+      ) {
+        return lead;
+      }
+    }
+
+    return {};
+  };
+
+
+  const findTopUnpaidOrder = () => {
+    const candidates =
+      orders
+        .map(asRecord)
+        .map((order) => {
+          const paymentStatus =
+            textValue(
+              order,
+              [
+                "payment_status",
+                "paymentStatus",
+                "status",
+              ]
+            ).toLowerCase();
+
+          if (
+            paymentStatus === "paid" ||
+            paymentStatus === "refunded" ||
+            paymentStatus === "cancelled" ||
+            paymentStatus === "canceled"
+          ) {
+            return {
+              order,
+              openBalance: 0,
+            };
+          }
+
+          const totalCents =
+            numberValue(
+              order,
+              [
+                "total_cents",
+                "totalCents",
+              ]
+            );
+
+          const paidCents =
+            numberValue(
+              order,
+              [
+                "amount_paid_cents",
+                "amountPaidCents",
+              ]
+            );
+
+          return {
+            order,
+            openBalance:
+              Math.max(
+                0,
+                totalCents - paidCents
+              ),
+          };
+        })
+        .filter(
+          (candidate) =>
+            candidate.openBalance > 0
+        )
+        .sort(
+          (a, b) =>
+            b.openBalance -
+            a.openBalance
+        );
+
+    return candidates[0] || null;
+  };
+
+
+  const findStockProduct = (
+    signal: ActionSignal
+  ): Record<string, unknown> => {
+    const rows =
+      products.map(asRecord);
+
+    const matches =
+      rows.filter((product) => {
+        const stock =
+          numberValue(
+            product,
+            [
+              "stock",
+              "inventory",
+            ]
+          );
+
+        if (
+          signal.id ===
+          "out-of-stock"
+        ) {
+          return stock <= 0;
+        }
+
+        if (
+          signal.id ===
+          "low-stock"
+        ) {
+          return (
+            stock > 0 &&
+            stock <= 3
+          );
+        }
+
+        return false;
+      });
+
+    matches.sort(
+      (a, b) =>
+        numberValue(
+          b,
+          [
+            "price_cents",
+            "priceCents",
+          ]
+        ) -
+        numberValue(
+          a,
+          [
+            "price_cents",
+            "priceCents",
+          ]
+        )
+    );
+
+    return matches[0] || {};
+  };
+
+
+  const buildExecutableAction = (
+    signal: ActionSignal
+  ) => {
+    if (
+      signal.id === "collections"
+    ) {
+      const candidate =
+        findTopUnpaidOrder();
+
+      if (!candidate) {
+        return {
+          message:
+            signal.nextMove,
+          email: "",
+          subject:
+            "Payment follow-up",
+          status:
+            "No unpaid order could be isolated.",
+        };
+      }
+
+      const order =
+        candidate.order;
+
+      const orderId =
+        textValue(
+          order,
+          [
+            "id",
+            "order_id",
+            "orderId",
+          ]
+        ) || "current order";
+
+      const buyer =
+        textValue(
+          order,
+          [
+            "customer_name",
+            "customerName",
+            "buyer_name",
+            "buyerName",
+            "name",
+          ]
+        ) || "there";
+
+      const email =
+        textValue(
+          order,
+          [
+            "customer_email",
+            "customerEmail",
+            "buyer_email",
+            "buyerEmail",
+            "email",
+          ]
+        );
+
+      const openBalance =
+        candidate.openBalance;
+
+      const message = [
+        `Hi ${buyer},`,
+        "",
+        `I'm following up on the remaining ${moneyFromCents(
+          openBalance
+        )} balance for order ${orderId}.`,
+        "",
+        "Please let me know once payment is complete or if you need anything from me to finish it.",
+        "",
+        "Thank you,",
+        "Andrew Wolverton",
+      ].join("\n");
+
+      return {
+        message,
+        email,
+        subject:
+          `Payment follow-up - ${orderId}`,
+        status:
+          `${moneyFromCents(
+            openBalance
+          )} collection action prepared for ${orderId}.`,
+      };
+    }
+
+
+    if (
+      signal.id.startsWith(
+        "buyer-"
+      )
+    ) {
+      const lead =
+        findLeadForSignal(signal);
+
+      const buyer =
+        textValue(
+          lead,
+          [
+            "name",
+            "contact_name",
+            "contact",
+          ]
+        ) || "there";
+
+      const business =
+        textValue(
+          lead,
+          [
+            "business_name",
+            "business",
+            "company",
+            "store_name",
+          ]
+        ) || "your business";
+
+      const email =
+        textValue(
+          lead,
+          [
+            "email",
+            "contact_email",
+            "owner_email",
+          ]
+        );
+
+      const message = [
+        `Hi ${buyer},`,
+        "",
+        `I wanted to follow up on ${business}.`,
+        "",
+        signal.nextMove,
+        "",
+        "If you're ready to move forward, reply and I'll lock in the next step.",
+        "",
+        "Andrew Wolverton",
+        "I AM THE ONE™ / WOLF OS™",
+      ].join("\n");
+
+      return {
+        message,
+        email,
+        subject:
+          `Next step for ${business}`,
+        status:
+          email
+            ? `Follow-up prepared for ${business}.`
+            : `Follow-up copied for ${business}; no buyer email is currently loaded.`,
+      };
+    }
+
+
+    if (
+      signal.id === "out-of-stock" ||
+      signal.id === "low-stock"
+    ) {
+      const product =
+        findStockProduct(signal);
+
+      const productName =
+        textValue(
+          product,
+          [
+            "name",
+            "product_name",
+            "sku",
+          ]
+        ) || "inventory item";
+
+      const stock =
+        numberValue(
+          product,
+          [
+            "stock",
+            "inventory",
+          ]
+        );
+
+      const message = [
+        "WOLF OS™ INVENTORY ACTION",
+        "",
+        `Product: ${productName}`,
+        `Current stock: ${stock}`,
+        `Revenue exposure: ${moneyFromCents(
+          signal.revenueCents
+        )}`,
+        "",
+        signal.nextMove,
+      ].join("\n");
+
+      return {
+        message,
+        email: "",
+        subject:
+          `Inventory action - ${productName}`,
+        status:
+          `Inventory action prepared for ${productName}.`,
+      };
+    }
+
+
+    return {
+      message:
+        signal.nextMove,
+      email: "",
+      subject:
+        "WOLF OS next action",
+      status:
+        signal.nextMove,
+    };
+  };
+
+
+  const executeAction = async (
+    signal: ActionSignal
+  ) => {
+    const action =
+      buildExecutableAction(
+        signal
+      );
+
+    executeFocus(signal);
+
+    let copied = false;
+
+    try {
+      await navigator.clipboard.writeText(
+        action.message
+      );
+
+      copied = true;
+    } catch {
+      copied = false;
+    }
+
+    setStatus(
+      copied
+        ? `${action.status} Action copied.`
+        : action.status
+    );
+
+    if (action.email) {
+      setStatus(
+        copied
+          ? `${action.status} Email copied for ${action.email}.`
+          : `${action.status} Buyer email: ${action.email}.`
+      );
+    }
+  };
+
+
   const copyAction = async () => {
     const signal =
       intelligence.primary;
@@ -969,7 +1395,7 @@ export default function OwnerActionEngine({
           </h2>
 
           <p className="owner-action-subtitle">
-            Revenue impact, urgency, and probability ranked into one owner directive.
+            Revenue impact, urgency, and probability ranked into one executable owner directive.
           </p>
         </div>
 
@@ -1015,11 +1441,13 @@ export default function OwnerActionEngine({
             <button
               type="button"
               className="owner-action-button primary"
-              onClick={() =>
-                executeFocus(primary)
-              }
+              onClick={() => {
+                void executeAction(primary);
+              }}
             >
-              {primary.button}
+              {primary.id === "clear"
+                ? primary.button
+                : "EXECUTE NEXT MOVE"}
             </button>
 
             <button
