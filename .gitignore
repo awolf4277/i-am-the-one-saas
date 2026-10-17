@@ -32,3 +32,5 @@ start-local.before-*.ps1
 scripts/harden_owner_auth.py
 scripts/upgrade_owner_action_engine_v2.py
 backups/
+scripts/remove_owner_action_mailto.py
+scripts/upgrade_owner_action_engine_v3.py
