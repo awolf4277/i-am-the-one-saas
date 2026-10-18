@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
 
+import { useUnifiedPipeline } from "../lib/pipelineState";
+
 import "./OwnerActionEngine.css";
 
 
@@ -399,11 +401,61 @@ function levelForScore(
 }
 
 
+function ownerActionPipelineKey(
+  lead: Record<string, unknown>,
+  index: number
+): string {
+  const business =
+    textValue(
+      lead,
+      [
+        "business_name",
+        "businessName",
+        "business",
+      ]
+    ) ||
+    `Buyer Lead ${index + 1}`;
+
+  const name =
+    textValue(
+      lead,
+      [
+        "name",
+        "contact_name",
+        "contactName",
+      ]
+    ) ||
+    "Buyer";
+
+  const email =
+    textValue(
+      lead,
+      ["email"]
+    );
+
+  const id =
+    textValue(
+      lead,
+      [
+        "id",
+        "request_id",
+        "created_at",
+      ]
+    );
+
+  return (
+    id ||
+    `${business}-${email || name}-${index}`
+  );
+}
+
+
 export default function OwnerActionEngine({
   orders,
   products,
   setupRequests,
 }: Props) {
+  const { pipeline } = useUnifiedPipeline();
   const [status, setStatus] = useState(
     "WOLF OS is analyzing revenue impact, urgency, and probability."
   );
@@ -638,9 +690,26 @@ export default function OwnerActionEngine({
             "store_name",
             "name",
           ]
-        ) || "Buyer opportunity";
+        ) ||
+        "Buyer opportunity";
+
+      const leadIndex =
+        Math.max(
+          0,
+          leadRows.indexOf(lead)
+        );
+
+      const pipelineKey =
+        ownerActionPipelineKey(
+          lead,
+          leadIndex
+        );
+
+      const deal =
+        pipeline[pipelineKey];
 
       const stage =
+        deal?.stage ||
         textValue(
           lead,
           [
@@ -648,10 +717,38 @@ export default function OwnerActionEngine({
             "status",
             "pipeline_stage",
           ]
-        ) || "Open";
+        ) ||
+        "Open";
+
+      if (
+        [
+          "won",
+          "lost",
+          "closed",
+          "cancelled",
+          "canceled",
+        ].includes(
+          stage.toLowerCase()
+        )
+      ) {
+        continue;
+      }
+
+      const postgresDealValue =
+        Number(
+          deal?.dealValue ||
+          0
+        );
 
       const valueCents =
-        leadValueCents(lead);
+        Number.isFinite(
+          postgresDealValue
+        ) &&
+        postgresDealValue > 0
+          ? Math.round(
+              postgresDealValue * 100
+            )
+          : leadValueCents(lead);
 
       const probability =
         leadProbability(lead);
@@ -676,7 +773,8 @@ export default function OwnerActionEngine({
           : "FOLLOW UP";
 
       candidates.push({
-        id: `buyer-${id}`,
+        id:
+          `buyer-${id}`,
         label:
           probability >= 70
             ? "CLOSE OPPORTUNITY"
@@ -684,7 +782,7 @@ export default function OwnerActionEngine({
         headline:
           `${closeLanguage} ${business}`,
         detail:
-          `${stage} stage · ${
+          `${stage} stage ? ${
             valueCents > 0
               ? `${moneyFromCents(
                   valueCents
@@ -706,6 +804,7 @@ export default function OwnerActionEngine({
         urgency,
         probability,
         nextMove:
+          deal?.nextAction?.trim() ||
           leadNextMove(lead),
       });
     }
@@ -860,6 +959,7 @@ export default function OwnerActionEngine({
     orders,
     products,
     setupRequests,
+    pipeline,
   ]);
 
 
