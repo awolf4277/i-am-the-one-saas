@@ -1747,7 +1747,19 @@ function App() {
 
       <SiteCockpitRibbon
         health={health}
-        productCount={products.length || ownerProducts.length || health?.counts?.products || 0}
+        productCount={
+          isOwner
+            ? (
+                ownerProducts.length ||
+                health?.counts?.products ||
+                0
+              )
+            : (
+                products.length ||
+                health?.counts?.products ||
+                0
+              )
+        }
         orderCount={orders.length || health?.counts?.orders || 0}
         leadCount={setupRequests.length}
       />
