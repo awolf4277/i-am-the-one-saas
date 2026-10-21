@@ -1670,31 +1670,64 @@ function App() {
       return;
     }
 
-    const slug = product.store_slug || storeSlug;
-    const id = product.id;
+    const id = String(product.id || "").trim();
+
+    const matchedStore = stores.find((store) => {
+      return (
+        String(store.id || "").trim() ===
+        String(product.store_id || "").trim()
+      );
+    });
+
+    const slug = String(
+      product.store_slug ||
+      matchedStore?.slug ||
+      storeSlug ||
+      "demo"
+    ).trim();
 
     if (!id) {
       setError("Product ID missing.");
       return;
     }
 
+    if (!slug) {
+      setError(
+        `Store slug missing for ${product.name || product.sku || id}.`
+      );
+      return;
+    }
+
+    const safeStock = Math.max(
+      0,
+      Math.floor(Number(nextStock) || 0)
+    );
+
     try {
+      setError("");
+
       await apiJson<any>(
-        `/api/stores/${slug}/products/${id}`,
+        `/api/stores/${encodeURIComponent(slug)}/products/${encodeURIComponent(id)}`,
         {
           method: "PUT",
           body: JSON.stringify({
-            stock: Math.max(0, nextStock)
+            stock: safeStock
           })
         },
         ownerToken
       );
 
-      setNotice("Stock updated.");
+      setNotice(
+        `${product.name || product.sku || "Product"} stock updated to ${safeStock}.`
+      );
+
       await bootStorefront();
       await loadOwnerData(ownerToken);
     } catch (err: any) {
-      setError(err?.message || "Stock update failed.");
+      setError(
+        err?.message ||
+        `Stock update failed for ${product.name || product.sku || id}.`
+      );
     }
   }
 
@@ -4182,8 +4215,61 @@ function OwnerConsole({
     window.open(link, "_blank", "noopener,noreferrer");
   }
 
+  // WOLF_OS_PITCH_MODE_RENDER_FILTER_V2
+  const [pitchMode, setPitchMode] = useState(false);
+
+  // WOLF_OS_PITCH_MODE_DATA_CLEANUP_V1
+  // Full Console retains every QA and regression record.
+  // Pitch Mode suppresses internal test rows visually only.
+  const pitchProductSkus = new Set([
+    "WOLF-AUDIT",
+    "WOLF-CUSTOM",
+    "WOLF-LAUNCH-KIT",
+    "WOLF-PRO",
+    "WOLF-STARTER",
+    "WOLF-001",
+    "IATO-LAUNCH",
+    "WOLF-OPERATOR",
+    "WOLF-CORE",
+  ]);
+
+  const isPitchProduct = (
+    product: Product
+  ) =>
+    pitchProductSkus.has(
+      String(
+        product.sku || ""
+      )
+        .trim()
+        .toUpperCase()
+    );
+
+  const isPitchStore = (
+    store: Store
+  ) =>
+    String(
+      store.slug || ""
+    )
+      .trim()
+      .toLowerCase() === "demo";
+
+  const isPitchOrder = (
+    order: Order
+  ) =>
+    String(
+      order.id || ""
+    )
+      .trim()
+      .toUpperCase()
+      .startsWith(
+        "ORD-DEMO-"
+      );
+
   return (
-    <section id="owner-console" className="owner-console">
+    <section
+      id="owner-console"
+      className={`owner-console ${pitchMode ? "pitch-mode" : ""}`}
+    >
       <div className="owner-hero">
         <div>
           <p className="v3-kicker">Operator Mode</p>
@@ -4199,28 +4285,26 @@ function OwnerConsole({
             <span>Sales tools active · Leads loaded · Close Kit ready</span>
           </div>
 
-          <p id="pitch-mode-note" className="pitch-mode-note" hidden>
-            Pitch Mode is showing the clean sales view: checklist, close kit, leads, orders, and proof.
+          <p
+            id="pitch-mode-note"
+            className="pitch-mode-note"
+            hidden={!pitchMode}
+          >
+            Pitch Mode is showing buyer-ready sales proof. Internal QA, regression, and test rows are hidden; Full Console keeps the complete operating record.
           </p>
         </div>
 
         <div className="owner-actions">
           <button
             type="button"
-            className="v3-button secondary"
-            onClick={(event) => {
-              const consoleEl = document.getElementById("owner-console");
-              const note = document.getElementById("pitch-mode-note");
-              const enabled = consoleEl?.classList.toggle("pitch-mode") ?? false;
-
-              if (note) note.hidden = !enabled;
-
-              event.currentTarget.textContent = enabled ? "Full Console" : "Pitch Mode";
-              event.currentTarget.classList.toggle("primary", enabled);
-              event.currentTarget.classList.toggle("secondary", !enabled);
-            }}
+            className={`v3-button ${
+              pitchMode ? "primary" : "secondary"
+            }`}
+            onClick={() =>
+              setPitchMode((current) => !current)
+            }
           >
-            Pitch Mode
+            {pitchMode ? "Full Console" : "Pitch Mode"}
           </button>
 
           <button className="v3-button secondary" onClick={onRefresh} disabled={loading}>
@@ -4992,8 +5076,19 @@ Thanks for requesting setup help for ${
 
           {orders.length ? (
             <div className="owner-table">
-              {orders.map((order) => (
-                <div className="owner-table-row" key={order.id}>
+              {(
+              pitchMode
+                ? orders.filter(isPitchOrder)
+                : orders
+            ).map((order) => (
+                <div
+                  className={`owner-table-row${
+                    isPitchOrder(order)
+                      ? ""
+                      : " pitch-noise"
+                  }`}
+                  key={order.id}
+                >
                   <strong>{order.id}</strong>
                   <span>{order.buyer_name || "Unknown buyer"}</span>
                   <span>{money(order.total_cents)}</span>
@@ -5151,8 +5246,19 @@ Thanks for requesting setup help for ${
 
         {products.length ? (
           <div className="inventory-grid">
-            {products.map((product, index) => (
-              <div className="inventory-card" key={productKey(product, index)}>
+            {(
+              pitchMode
+                ? products.filter(isPitchProduct)
+                : products
+            ).map((product, index) => (
+              <div
+                className={`inventory-card${
+                  isPitchProduct(product)
+                    ? ""
+                    : " pitch-noise"
+                }`}
+                key={productKey(product, index)}
+              >
                 <strong>{product.name || product.sku}</strong>
                 <span>{product.store_slug || product.store_name || "demo"}</span>
                 <span>{product.sku || "NO-SKU"}</span>
@@ -5192,8 +5298,19 @@ Thanks for requesting setup help for ${
 
         {stores.length ? (
           <div className="owner-table">
-            {stores.map((store, index) => (
-              <div className="owner-table-row" key={store.id || store.slug || index}>
+            {(
+              pitchMode
+                ? stores.filter(isPitchStore)
+                : stores
+            ).map((store, index) => (
+              <div
+                className={`owner-table-row${
+                  isPitchStore(store)
+                    ? ""
+                    : " pitch-noise"
+                }`}
+                key={store.id || store.slug || index}
+              >
                 <strong>{store.name || store.slug}</strong>
                 <span>{store.slug}</span>
                 <span>{store.plan || "v3"}</span>
