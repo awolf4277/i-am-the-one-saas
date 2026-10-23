@@ -1,4 +1,4 @@
-﻿// Copyright © 2026 Andrew Wolverton. All Rights Reserved.
+// Copyright © 2026 Andrew Wolverton. All Rights Reserved.
 
 import React, { useEffect, useMemo, useState } from "react";
 
@@ -11,6 +11,7 @@ import PriorityEngine from "./components/PriorityEngine";
 import OwnerActionEngine from "./components/OwnerActionEngine";
 import BuyerPipelineBoard from "./components/BuyerPipelineBoard";
 import DealActivityTimeline from "./components/DealActivityTimeline";
+import { useUnifiedPipeline } from "./lib/pipelineState";
 
 function copyCloseKitText(label: string, copyText: string) {
   navigator.clipboard
@@ -622,7 +623,7 @@ function SiteCockpitRibbon({
       </div>
 
       <div className="cockpit-ribbon-stat">
-        <small>LEADS</small>
+        <small>BUYERS</small>
         <strong>{leadCount}</strong>
       </div>
     </section>
@@ -2240,8 +2241,8 @@ function WolfActivityFeed({
       status: orderCount > 0 ? "online" : "standby"
     },
     {
-      label: `${leadCount} BUYER LEADS ACTIVE`,
-      detail: "Setup requests are available for follow-up.",
+      label: `${leadCount} BUYERS CAPTURED`,
+      detail: "Setup requests captured in the owner system.",
       status: leadCount > 0 ? "hot" : "standby"
     },
     {
@@ -2403,6 +2404,43 @@ function BusinessIntelligencePanel({
   }).length;
 
   const totalVisits = Number(analytics?.total_visits || 0);
+  // WOLF_OS_BUYER_TRUTH_V1
+  const { pipeline: buyerTruthPipeline } =
+    useUnifiedPipeline();
+
+  const buyerTruthDeals =
+    Object.values(buyerTruthPipeline) as Array<{
+      stage?: string;
+    }>;
+
+  const wonDealCount =
+    buyerTruthDeals.filter((deal) => {
+      return (
+        String(deal?.stage || "")
+          .trim()
+          .toLowerCase() === "won"
+      );
+    }).length;
+
+  const activeOpportunityCount =
+    buyerTruthDeals.filter((deal) => {
+      const stage =
+        String(deal?.stage || "")
+          .trim()
+          .toLowerCase();
+
+      return ![
+        "won",
+        "lost",
+        "closed",
+        "cancelled",
+        "canceled"
+      ].includes(stage);
+    }).length;
+
+  const capturedBuyerCount =
+    setupRequests.length;
+
   const visitsToday = Number(analytics?.visits_today || 0);
 
   const leadRate = totalVisits > 0
@@ -2480,7 +2518,7 @@ function BusinessIntelligencePanel({
         <BiMetric
           label="Buyer Conversion"
           value={`${leadRate}%`}
-          detail={`${setupRequests.length} live buyer leads captured.`}
+          detail={`${capturedBuyerCount} captured | ${activeOpportunityCount} active | ${wonDealCount} won.`}
           status={leadRate > 0 ? "gold" : "muted"}
         />
 
@@ -2531,7 +2569,7 @@ function BusinessIntelligencePanel({
           <p className="bi-kicker">PIPELINE SIGNAL</p>
           <h3>
             {setupRequests.length > 0
-              ? `${setupRequests.length} buyer leads active`
+              ? `${activeOpportunityCount} active opportunities`
               : "Waiting for buyer activity"}
           </h3>
 
@@ -2539,11 +2577,14 @@ function BusinessIntelligencePanel({
             <span>Orders</span>
             <strong>{orders.length}</strong>
 
-            <span>Leads</span>
-            <strong>{setupRequests.length}</strong>
+            <span>Captured</span>
+            <strong>{capturedBuyerCount}</strong>
 
-            <span>Lead Rate</span>
-            <strong>{leadRate}%</strong>
+            <span>Active</span>
+            <strong>{activeOpportunityCount}</strong>
+
+            <span>Won</span>
+            <strong>{wonDealCount}</strong>
           </div>
         </article>
 
@@ -2562,7 +2603,7 @@ function BusinessIntelligencePanel({
               percent={Math.min(100, 50 + orders.length * 8)}
             />
             <BiReadiness
-              label="Leads"
+              label="Buyer Capture"
               percent={Math.min(100, 55 + setupRequests.length * 10)}
             />
           </div>
@@ -4378,8 +4419,8 @@ function OwnerConsole({
             <div className="launch-check-item">
               <span className="launch-check-icon">✓</span>
               <div>
-                <strong>Buyer leads active</strong>
-                <span>{setupRequests.length} live setup request leads ready for follow-up.</span>
+                <strong>Buyer requests captured</strong>
+                <span>{setupRequests.length} setup requests captured in the owner system.</span>
               </div>
             </div>
 
@@ -4541,7 +4582,7 @@ Includes:
 - Launch-ready structure
 
 Current Demo Strength:
-- ${setupRequests.length} live buyer leads loaded
+- ${setupRequests.length} captured buyer requests loaded
 - Commercial product catalog active
 - Owner console online
 - Demo orders visible
@@ -4564,7 +4605,7 @@ If the demo direction looks good, the next step is confirming content, pricing, 
               <h2>Buyer Leads</h2>
             </div>
 
-            <span className="v3-pill online">{setupRequests.length} LIVE</span>
+            <span className="v3-pill online">{setupRequests.length} CAPTURED</span>
           </div>
 
           {setupRequests.length ? (
