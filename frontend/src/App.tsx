@@ -3982,6 +3982,80 @@ function OwnerConsole({
     note: ""
   });
 
+  // WOLF_OS_COLLECTION_TARGET_BRIDGE_V1
+  // Owner Action Engine can point Payment Freedom at the
+  // exact unpaid order selected for collection.
+  // Selection/focus only: no status mutation and no email.
+  useEffect(() => {
+    const handleCollectionTarget = (
+      event: Event
+    ) => {
+      const detail = (
+        event as CustomEvent<{
+          orderId?: string;
+        }>
+      ).detail;
+
+      const orderId = String(
+        detail?.orderId || ""
+      ).trim();
+
+      if (!orderId) return;
+
+      const targetOrder = orders.find(
+        (order) =>
+          String(order.id || "").trim() ===
+          orderId
+      );
+
+      if (!targetOrder) {
+        setPaymentMessage(
+          `Collection target ${orderId} ` +
+          "was not found in the current order list."
+        );
+
+        return;
+      }
+
+      setSelectedPaymentOrderId(
+        orderId
+      );
+
+      setPaymentMessage(
+        `COLLECTION TARGET: ${orderId} | ` +
+        `${targetOrder.buyer_name || "Unknown buyer"} | ` +
+        `${money(targetOrder.total_cents)}. ` +
+        "Payment status was not changed."
+      );
+
+      window.requestAnimationFrame(
+        () => {
+          const center =
+            document.querySelector(
+              ".payment-freedom-center"
+            );
+
+          center?.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+        }
+      );
+    };
+
+    window.addEventListener(
+      "wolf-os-collection-target-v1",
+      handleCollectionTarget
+    );
+
+    return () => {
+      window.removeEventListener(
+        "wolf-os-collection-target-v1",
+        handleCollectionTarget
+      );
+    };
+  }, [orders]);
+
   const selectedPaymentOrder =
     orders.find((order) => String(order.id || "") === selectedPaymentOrderId) ||
     orders.find((order) => Boolean(order.id)) ||

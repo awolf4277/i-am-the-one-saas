@@ -1250,6 +1250,16 @@ export default function OwnerActionEngine({
           `${moneyFromCents(
             openBalance
           )} collection action prepared for ${orderId}.`,
+
+        // WOLF_OS_COLLECTION_TARGET_BRIDGE_V1
+        // Expose target metadata only.
+        // This does not mutate order/payment state.
+        orderId:
+          orderId === "current order"
+            ? ""
+            : orderId,
+        buyer,
+        openBalance,
       };
     }
 
@@ -1389,6 +1399,34 @@ export default function OwnerActionEngine({
       );
 
     executeFocus(signal);
+
+    // WOLF_OS_COLLECTION_TARGET_BRIDGE_V1
+    // Route collection work to the exact unpaid order.
+    // No automatic payment update and no automatic email.
+    if (signal.id === "collections") {
+      const targetOrderId = String(
+        (
+          action as {
+            orderId?: string;
+          }
+        ).orderId || ""
+      ).trim();
+
+      if (targetOrderId) {
+        window.setTimeout(() => {
+          window.dispatchEvent(
+            new CustomEvent(
+              "wolf-os-collection-target-v1",
+              {
+                detail: {
+                  orderId: targetOrderId
+                }
+              }
+            )
+          );
+        }, 0);
+      }
+    }
 
     let copied = false;
 
