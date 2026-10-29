@@ -4065,6 +4065,35 @@ function OwnerConsole({
     (record) => record.order_id === selectedPaymentOrder?.id
   ) || null;
 
+  // WOLF_OS_COLLECTION_COMMAND_V2: guidance only; saved record is not a ledger.
+  const collectionStatus = String(
+    selectedPaymentRecord?.payment_status ||
+    selectedPaymentOrder?.payment_status ||
+    "unpaid"
+  ).trim().toLowerCase();
+  const collectionOrderCents = Math.max(
+    0, Number(selectedPaymentOrder?.total_cents || 0)
+  );
+  const collectionRecordedCents = Math.max(
+    0, Number(selectedPaymentRecord?.amount_cents || 0)
+  );
+  const collectionRemainingCents: number | null =
+    ["cancelled", "refunded"].includes(collectionStatus)
+      ? null
+      : collectionStatus === "paid"
+        ? 0
+        : ["deposit_paid", "partially_paid"].includes(collectionStatus)
+          ? Math.max(0, collectionOrderCents - collectionRecordedCents)
+          : collectionOrderCents;
+  const collectionNextMove =
+    collectionStatus === "paid"
+      ? "Verify settlement. This order is marked paid."
+      : ["cancelled", "refunded"].includes(collectionStatus)
+        ? "Review this order before attempting collection."
+        : ["deposit_paid", "partially_paid"].includes(collectionStatus)
+          ? "Reconcile received funds, then request the remaining balance."
+          : "Confirm terms and send the buyer a verified payment follow-up.";
+
   const paidPaymentCount = paymentRecords.filter(
     (record) => String(record.payment_status || "").trim().toLowerCase() === "paid"
   ).length;
@@ -4279,6 +4308,46 @@ function OwnerConsole({
     await copyCustomerLaunchValue(handoff, "Customer handoff draft");
   }
 
+  // Preparing a payment never writes to PostgreSQL. Only Save does.
+  function prepareCollectionPayment(status: "deposit_paid" | "partially_paid") {
+    setPaymentDraft((previous) => ({
+      ...previous,
+      payment_status: status,
+      amount_dollars: ""
+    }));
+    setPaymentMessage(
+      "Enter the amount actually received, then review and save the record."
+    );
+  }
+
+  async function copyCollectionFollowup() {
+    if (!selectedPaymentOrder?.id || collectionRemainingCents === null) {
+      return;
+    }
+
+    const message = [
+      `Hi ${selectedPaymentOrder.buyer_name || "there"},`,
+      "",
+      `Following up on order ${selectedPaymentOrder.id}.`,
+      `Estimated amount remaining: ${money(collectionRemainingCents)}.`,
+      "Please confirm the amount and let me know when payment is complete.",
+      "",
+      "Thank you"
+    ].join("\n");
+
+    try {
+      await navigator.clipboard.writeText(message);
+
+      setPaymentMessage(
+        "Buyer follow-up copied. Review the amount before sending."
+      );
+    } catch {
+      setPaymentMessage(
+        "Could not copy follow-up. Check clipboard permissions."
+      );
+    }
+  }
+
   async function submitPaymentFreedom(event: React.FormEvent) {
     event.preventDefault();
 
@@ -4287,6 +4356,18 @@ function OwnerConsole({
       return;
     }
 
+    if (["deposit_paid", "partially_paid", "paid"].includes(paymentDraft.payment_status)) {
+      const received = Number(
+        String(paymentDraft.amount_dollars || "").replace(/[$,]/g, "").trim()
+      );
+      if (!Number.isFinite(received) || received <= 0) {
+        setPaymentMessage("Enter an amount actually received before saving a paid status.");
+        return;
+      }
+      if (!window.confirm(
+        `Confirm ${received.toFixed(2)} actually received for ${selectedPaymentOrder.id}?`
+      )) return;
+    }
     try {
       setPaymentSaving(true);
       setPaymentMessage("");
@@ -4999,6 +5080,43 @@ Thanks for requesting setup help for ${
             <div><span>Paid</span><strong>{paidPaymentCount}</strong></div>
           </div>
 
+          {/* WOLF_OS_COLLECTION_COMMAND_V2 */}
+          {selectedPaymentOrder ? (
+            <div className="ghost-card" aria-live="polite">
+              <p className="v3-kicker">COLLECTION COMMAND V2</p>
+              <h3>{selectedPaymentOrder.buyer_name || "Unknown buyer"} - {selectedPaymentOrder.id}</h3>
+              <div className="payment-freedom-selected">
+                <span>Order total<strong>{money(collectionOrderCents)}</strong></span>
+                <span>Saved status<strong>{collectionStatus}</strong></span>
+                <span>Saved amount<strong>{money(collectionRecordedCents)}</strong></span>
+                <span>Estimated remaining<strong>{
+                  collectionRemainingCents === null ? "Review required" : money(collectionRemainingCents)
+                }</strong></span>
+              </div>
+              <p><strong>NEXT MOVE:</strong> {collectionNextMove}</p>
+              <p className="muted">
+                Estimate based on the latest saved payment snapshot, not a transaction ledger.
+                Verify actual deposits and balances before requesting or recording payment.
+              </p>
+              <div className="payment-freedom-actions">
+                <button type="button" className="v3-button secondary"
+                  disabled={["paid", "refunded", "cancelled"].includes(collectionStatus)}
+                  onClick={() => prepareCollectionPayment("deposit_paid")}>
+                  Prepare deposit received
+                </button>
+                <button type="button" className="v3-button secondary"
+                  disabled={["paid", "refunded", "cancelled"].includes(collectionStatus)}
+                  onClick={() => prepareCollectionPayment("partially_paid")}>
+                  Prepare partial payment
+                </button>
+                <button type="button" className="v3-button secondary"
+                  disabled={collectionRemainingCents === null || collectionRemainingCents === 0}
+                  onClick={() => void copyCollectionFollowup()}>
+                  Copy collection follow-up
+                </button>
+              </div>
+            </div>
+          ) : null}
           <form className="payment-freedom-form" onSubmit={submitPaymentFreedom}>
             <div className="payment-freedom-grid">
               <label>
